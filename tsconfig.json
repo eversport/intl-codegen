@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "diagnostics": true,
+    "lib": ["es2018", "esnext"],
+
+    "target": "es2017",
+
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "esModuleInterop": true,
+
+    "jsx": "react",
+
+    "declarationDir": "dist/types",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    // "noEmit": true,
+    "inlineSourceMap": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+  },
+  "include": [
+    "src"
+  ]
+}
