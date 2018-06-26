@@ -5,9 +5,9 @@
 
 If you want to translate your react app, you usually end up using [react-intl][react-intl]. But doing so has a few problems.
 
-- _react-intl_ is [42k minified][react-intl-bundle], which is quite a lot.
+- `react-intl` is [42k minified][react-intl-bundle], which is quite a lot.
 - it also parses all your translation strings at start time, which might hurt performance.
-- while _react-intl_ itself has _@types_, there is no way actually validate the correct usage of your translations.
+- while `react-intl` itself has `@types`, there is no way actually validate the correct usage of your translations.
 
 [react-intl]: https://github.com/yahoo/react-intl
 [react-intl-bundle]: https://bundlephobia.com/result?p=react-intl
@@ -121,4 +121,5 @@ type Consumer = React.Provider<Intl>;
   - [ ] number formatting, including currencies
   - [ ] date formatting
 - [ ] make react usage optional, so projects not using react can have further codesize savings
+- [ ] benchmark and compare startup and runtime performance to `react-intl` / `intl-messageformat`
 - [ ] support fluent translation syntax
