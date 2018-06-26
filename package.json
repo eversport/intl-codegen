@@ -45,6 +45,11 @@
       "json",
       "text-summary"
     ],
+    "coveragePathIgnorePatterns": [
+      ".testoutput",
+      "src/__tests__",
+      "/node_modules/"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -57,6 +62,9 @@
       "^.+\\.(ts|tsx)$": "ts-jest",
       "^.+\\.jsx?$": "babel-jest"
     },
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
     "testMatch": [
       "**/__tests__/**/*.+(spec|test).(ts|tsx)",
       "**/?(*.)+(spec|test).(ts|tsx)"

@@ -32,8 +32,16 @@ describe("Codegen", () => {
     expect(lang.test()).toEqual("en");
   });
 
+  ensureCompiledFixture("dashed-ids", async dir => {
+    const { loadLanguage } = require(dir);
+    let lang;
+
+    lang = await loadLanguage("en");
+    expect(lang.aDashedId()).toEqual("dashed!");
+  });
+
   ensureCompiledFixture("react", async dir => {
-    const { loadLanguage, Provider, Localized } = require(dir);
+    const { loadLanguage, Consumer, Provider, Localized } = require(dir);
     let lang, rendered;
 
     lang = await loadLanguage("en");
@@ -51,6 +59,19 @@ describe("Codegen", () => {
       </Provider>,
     );
     expect(rendered).toEqual("ein <strong>react</strong> element");
+
+    lang = await loadLanguage("de");
+    rendered = renderToStaticMarkup(
+      <Provider value={lang}>
+        <Consumer>
+          {(intl: any) => {
+            const text = intl.test({ react: "text" });
+            return `${typeof text}: ${text}`;
+          }}
+        </Consumer>
+      </Provider>,
+    );
+    expect(rendered).toEqual("string: ein text element");
   });
 
   ensureCompiledFixture("typings-correct", async dir => {

@@ -51,7 +51,7 @@ export class TsCodegen {
       const params = typelist ? `params: { ${typelist} }` : "";
 
       props.push(`    ${msg.id}(${params}): string;`);
-      components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ''}\n  }`);
+      components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ""}\n  }`);
     }
 
     template = template.replace(`__PROPS__`, props.join("\n"));
@@ -106,10 +106,14 @@ export class LanguageCodegen {
     // @ts-ignore: can’t correctly typecheck this
     const fn = this[`generate_${node.type}`];
 
+    /* istanbul ignore else  */
     if (fn) {
       return fn.call(this, node, this.language);
     }
+
+    /* istanbul ignore next */
     console.log("Unknown node type in Codegen:", node);
+    /* istanbul ignore next */
     return "";
   };
 
@@ -136,6 +140,8 @@ export class LanguageCodegen {
       return `  parts.push(${arg.id});`;
     }
     const { format } = arg;
+
+    /* istanbul ignore else  */
     if (format.type === "selectFormat") {
       const branches = format.options.map(option => {
         const condition = `${arg.id} == ${option.selector}`;
@@ -143,6 +149,8 @@ export class LanguageCodegen {
       });
       return `  ` + branches.join(" else ") + `\n`;
     }
+
+    /* istanbul ignore next */
     console.log("Unknown format type in Codegen:", format);
   }
 }
