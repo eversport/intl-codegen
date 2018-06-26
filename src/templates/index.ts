@@ -13,7 +13,7 @@ export async function loadLanguage(locale) {
   // __LOADERS__
 
   language = {};
-  for (const [id, fn] of Object.entries(fns)) {
+  for (const [id, fn] of Object.entries(fns.default)) {
     language[id] = createTextWrapper(fn);
     language[\`__react__\${id}\`] = createReactWrapper(fn);
   }
@@ -23,19 +23,15 @@ export async function loadLanguage(locale) {
 }
 
 function createTextWrapper(fn) {
-  return params => {
-    return fn(params).join("");
-  };
+  return params => fn(params).join("");
 }
 
 function createReactWrapper(fn) {
-  return params => {
-    return React.createElement(React.Fragment, undefined, ...fn(params));
-  };
+  return params => React.createElement(React.Fragment, undefined, ...fn(params));
 }
 
 export function Localized({ id, params }) {
-  return React.createElement(Consumer, undefined, intl => intl(\`__react__\${id}\`, params));
+  return React.createElement(Consumer, undefined, intl => intl[\`__react__\${id}\`](params));
 }
 `.trim();
 
@@ -47,12 +43,10 @@ export as namespace Intl;
 
 declare namespace Intl {
   interface Intl {
-    // __PROPS__
+__PROPS__
   }
 
-  const Localized: React.SFC<
-    // __COMPONENTS__
-  >;
+  const Localized: React.SFC<__COMPONENTS__>;
 
   type Provider = React.Provider<Intl>;
   type Consumer = React.Provider<Intl>;

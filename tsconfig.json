@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "noEmitOnError": true,
     "diagnostics": true,
-    "lib": ["es2018", "esnext"],
+    "lib": ["dom", "es2018", "esnext"],
 
     "target": "es2017",
 

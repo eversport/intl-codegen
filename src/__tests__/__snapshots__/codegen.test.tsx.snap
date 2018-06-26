@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Codegen typings-wrong-id 1`] = `
+Array [
+  "typings-wrong-id/index.tsx (4,13): Types of property 'id' are incompatible.
+  Type '\\"non-existant\\"' is not assignable to type '\\"test\\"'.",
+]
+`;
+
+exports[`Codegen typings-wrong-param 1`] = `
+Array [
+  "typings-wrong-param/index.tsx (4,32): Types of property 'params' are incompatible.
+  Type '{ prmtr: string; }' is not assignable to type '{ parameter: any; }'.
+    Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
+]
+`;

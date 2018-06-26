@@ -42,8 +42,10 @@ class IntlCodegen {
     const files = this.generateFiles();
     for (const [_fileName, contents] of Object.entries(files)) {
       const fileName = path.join(outputDirectory, _fileName);
+      await fse.ensureFile(fileName);
       await fse.outputFile(fileName, contents);
     }
+    return files;
   }
 }
 

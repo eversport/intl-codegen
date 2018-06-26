@@ -50,12 +50,12 @@ export class TsCodegen {
       const typelist = this.generateTypeList(msg.expressions);
       const params = typelist ? `params: { ${typelist} }` : "";
 
-      props.push(`  ${msg.id}(${params}): string;`);
-      components.push(`{ id: ${JSON.stringify(id)}, ${params} }`);
+      props.push(`    ${msg.id}(${params}): string;`);
+      components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ''}\n  }`);
     }
 
-    template = template.replace(`// __PROPS__`, props.join("\n"));
-    template = template.replace(`// __COMPONENTS__`, components.join(" | "));
+    template = template.replace(`__PROPS__`, props.join("\n"));
+    template = template.replace(`__COMPONENTS__`, components.join(" | "));
 
     return template;
   }
@@ -68,9 +68,9 @@ export class MainCodegen {
     let template = Templates.main;
     const loaders: Array<string> = [];
     for (const locale of this.languages.keys()) {
-      loaders.push(`if (locale === "${locale}") {\n  fns = await import("${locale}.js");\n}`);
+      loaders.push(`if (locale === "${locale}") {\n    fns = await import("./${locale}.js");\n  }`);
     }
-    loaders.push(`{\n  return loadLanguage(${JSON.stringify(defaultLocale)});\n}`)
+    loaders.push(`{\n    return loadLanguage(${JSON.stringify(defaultLocale)});\n  }`);
     template = template.replace(`// __LOADERS__`, loaders.join(" else "));
     return template;
   }
@@ -89,7 +89,7 @@ export class LanguageCodegen {
         `function ${message.id}(${params}) {\n` +
         `  const parts = [];\n` +
         this.generate_messageFormatPattern(message.node) +
-        `  return parts;\n}\n`;
+        `\n  return parts;\n}\n`;
     }
 
     // then generate the export
@@ -133,7 +133,7 @@ export class LanguageCodegen {
   // @ts-ignore this is called
   private generate_argumentElement(arg: Argument) {
     if (!arg.format) {
-      return `parts.push(${arg.id})`;
+      return `  parts.push(${arg.id});`;
     }
     const { format } = arg;
     if (format.type === "selectFormat") {
