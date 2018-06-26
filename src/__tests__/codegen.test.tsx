@@ -125,7 +125,7 @@ function ensureCompiledFixture(name: string, fn: (dir: string) => Promise<void>)
 
       await fn(output);
     } finally {
-      fse.remove(outputDir);
+      await fse.remove(outputDir);
     }
   });
 }
