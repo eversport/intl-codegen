@@ -54,8 +54,11 @@ export class TsCodegen {
       components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ""}\n  }`);
     }
 
+    const locales = [...this.languages.keys()].map(locale => JSON.stringify(locale));
+
     template = template.replace(`__PROPS__`, props.join("\n"));
     template = template.replace(`__COMPONENTS__`, components.join(" | "));
+    template = template.replace(`__LOCALES__`, locales.join(" | "));
 
     return template;
   }

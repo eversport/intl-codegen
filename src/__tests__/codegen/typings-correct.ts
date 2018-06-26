@@ -6,8 +6,21 @@ export default {
   },
   code: `
 import React from "react";
-import { Localized } from "./lang";
+import { Provider, Consumer, Localized, loadLanguage } from "./lang";
 
-(<Localized id="test" params={{ parameter: "parameter" }} />)
+(async function test() {
+  const lang = await loadLanguage("en");
+
+  lang.test({ parameter: "parameter" });
+
+  return (
+    <Provider value={lang}>
+      <Localized id="test" params={{ parameter: "parameter" }} />
+      <Consumer>
+        {intl => intl.test({ parameter: "parameter" })}
+      </Consumer>
+    </Provider>
+  )
+})();
   `
 }

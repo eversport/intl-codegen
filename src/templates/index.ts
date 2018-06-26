@@ -49,12 +49,11 @@ declare namespace Intl {
   interface Intl {
 __PROPS__
   }
+  function loadLanguage(locale: __LOCALES__): Promise<Intl>;
+
+  const Provider: React.Provider<Intl>;
+  const Consumer: React.Consumer<Intl>;
 
   const Localized: React.SFC<__COMPONENTS__>;
-
-  type Provider = React.Provider<Intl>;
-  type Consumer = React.Provider<Intl>;
-
-  function loadLanguage(locale: string): Promise<Intl>;
 }
 `.trim();

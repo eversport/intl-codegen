@@ -74,21 +74,18 @@ describe("Codegen", () => {
     expect(rendered).toEqual("string: ein text element");
   });
 
-  ensureCompiledFixture("typings-correct", async dir => {
-    const diagnostics = await getDiagnostics(path.join(dir, "index.tsx"));
-    expect(diagnostics).toEqual([]);
-  });
-
-  ensureCompiledFixture("typings-wrong-id", async dir => {
-    const diagnostics = await getDiagnostics(path.join(dir, "index.tsx"));
-    expect(diagnostics).toMatchSnapshot();
-  });
-
-  ensureCompiledFixture("typings-wrong-param", async dir => {
-    const diagnostics = await getDiagnostics(path.join(dir, "index.tsx"));
-    expect(diagnostics).toMatchSnapshot();
-  });
+  testTypings("typings-correct");
+  testTypings("typings-wrong-locale");
+  testTypings("typings-wrong-id");
+  testTypings("typings-wrong-param");
 });
+
+function testTypings(name: string) {
+  ensureCompiledFixture(name, async dir => {
+    const diagnostics = await getDiagnostics(path.join(dir, "index.tsx"));
+    expect(diagnostics).toMatchSnapshot();
+  });
+}
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
 const tsConfig = path.join(__dirname, "..", "..", "tsconfig.json");

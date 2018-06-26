@@ -3,6 +3,10 @@ import Language from "./Language";
 import path from "path";
 import fse from "fs-extra";
 
+interface GeneratedCode {
+  [fileName: string]: string;
+}
+
 class IntlCodegen {
   private languages = new Map<string, Language>();
   constructor(private defaultLocale: string = "en") {
@@ -19,7 +23,7 @@ class IntlCodegen {
     return language;
   }
 
-  public generateFiles() {
+  public generateFiles(): GeneratedCode {
     const { languages, defaultLocale } = this;
     const files: { [key: string]: string } = {};
 

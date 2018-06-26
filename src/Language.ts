@@ -13,6 +13,7 @@ export default class Language {
     this._messages.set(identifier, msg);
   }
 
+  /** @internal */
   public messages() {
     return this._messages.entries();
   }
