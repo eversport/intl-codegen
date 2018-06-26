@@ -15,6 +15,8 @@ interface Fixture {
   debug?: string;
 }
 
+jest.setTimeout(20 * 1000);
+
 describe("Codegen", () => {
   ensureCompiledFixture("simple", async dir => {
     const { loadLanguage } = require(dir);
