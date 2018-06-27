@@ -56,6 +56,13 @@ async function App() {
 
 ```
 
+## MessageFormat Syntax
+
+There is a great explanation of the *MessageFormat* syntax on the
+[formatjs.io](https://formatjs.io/guides/message-syntax/) website!
+So far, `intl-codegen` only supports a very limited set of features, but other
+features will be added as we go forward.
+
 ## Codegen API
 
 The codegen API looks like this (in typescript syntax):

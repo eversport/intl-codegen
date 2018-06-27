@@ -18,8 +18,7 @@
     "test": "tsc && jest"
   },
   "dependencies": {
-    "fs-extra": "^6.0.1",
-    "intl-messageformat-parser": "^1.4.0"
+    "fs-extra": "^6.0.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.3",
@@ -29,10 +28,12 @@
     "@types/react-dom": "^16.0.6",
     "babel-plugin-dynamic-import-node": "^1.2.0",
     "intl-messageformat": "^2.2.0",
+    "intl-messageformat-parser": "^1.4.0",
     "jest": "^23.1.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "rollup": "^0.61.2",
+    "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-sucrase": "^1.0.0",
     "ts-jest": "^22.4.6",

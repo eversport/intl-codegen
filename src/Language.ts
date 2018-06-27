@@ -1,4 +1,4 @@
-import * as MessageFormat from "intl-messageformat-parser";
+import MessageFormat from "intl-messageformat-parser";
 import Message from "./Message";
 
 export default class Language {
