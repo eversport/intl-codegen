@@ -2,7 +2,8 @@ export default {
   languages: {
     en: {
       test: "with a {parameter}",
-    }
+      test2: "another simple string",
+    },
   },
   code: `
 import React from "react";
@@ -22,5 +23,5 @@ import { Provider, Consumer, Localized, loadLanguage } from "./lang";
     </Provider>
   )
 })();
-  `
-}
+  `,
+};

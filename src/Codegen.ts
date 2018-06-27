@@ -83,23 +83,18 @@ export class LanguageCodegen {
   constructor(private language: Language) {}
 
   public generate() {
-    let code = "";
+    let code = "export default {\n";
 
-    // first generate function bodies
-    for (const [, message] of this.language.messages()) {
-      let params = this.generateParams(message.expressions);
-      code +=
-        `function ${message.id}(${params}) {\n` +
-        `  const parts = [];\n` +
-        this.generate_messageFormatPattern(message.node) +
-        `\n  return parts;\n}\n`;
+    // sort messages so we have a stable sort order
+    const messages = [...this.language.messages()].map(m => m[1]);
+    messages.sort((a, b) => a.id.localeCompare(b.id));
+
+    for (const message of messages) {
+      const params = this.generateParams(message.expressions);
+      const toplevel = this.generate_toplevelPattern(message.node);
+      code += `  ${message.id}(${params}) {\n${toplevel}\n  },\n`;
     }
 
-    // then generate the export
-    code += "\nexport default {\n";
-    for (const [key, message] of this.language.messages()) {
-      code += `  ${JSON.stringify(key)}: ${message.id},\n`;
-    }
     code += "};";
 
     return code;
@@ -127,6 +122,15 @@ export class LanguageCodegen {
     return `{ ${[...params.keys()].join(", ")} }`;
   }
 
+  private generate_toplevelPattern(pat: Pattern) {
+    // TODO: shortcut for single elements
+    return (
+      `    const parts = [];\n` +
+      this.generate_messageFormatPattern(pat) +
+      `\n    return parts;\n`
+    );
+  }
+
   private generate_messageFormatPattern(pat: Pattern) {
     const elements = pat.elements.map(this.gen);
     return elements.join("\n");
@@ -134,13 +138,13 @@ export class LanguageCodegen {
 
   // @ts-ignore this is called
   private generate_messageTextElement(el: TextElement) {
-    return `  parts.push(${JSON.stringify(el.value)});`;
+    return `    parts.push(${JSON.stringify(el.value)});`;
   }
 
   // @ts-ignore this is called
   private generate_argumentElement(arg: Argument) {
     if (!arg.format) {
-      return `  parts.push(${arg.id});`;
+      return `    parts.push(${arg.id});`;
     }
     const { format } = arg;
 
@@ -148,9 +152,9 @@ export class LanguageCodegen {
     if (format.type === "selectFormat") {
       const branches = format.options.map(option => {
         const condition = `${arg.id} == ${option.selector}`;
-        return `if (${condition}) {\n${this.generate_messageFormatPattern(option.value)}\n  }`;
+        return `if (${condition}) {\n${this.generate_messageFormatPattern(option.value)}\n    }`;
       });
-      return `  ` + branches.join(" else ") + `\n`;
+      return `    ` + branches.join(" else ") + `\n`;
     }
 
     /* istanbul ignore next */

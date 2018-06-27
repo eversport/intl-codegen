@@ -3,17 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
-  "license": "LGPL-3.0",
+  "license": "MIT",
   "main": "dist/intl-codegen.cjs.js",
   "module": "dist/intl-codegen.esm.js",
   "browser": "dist/intl-codegen.umd.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc && rollup -c",
+    "build": "rimraf dist && rollup -c && cp src/index.d.ts dist/index.d.ts",
     "prepublishOnly": "npm run test && npm run build",
     "test": "tsc && jest"
   },
@@ -69,17 +69,19 @@
     "testMatch": [
       "**/__tests__/**/*.+(spec|test).(ts|tsx)",
       "**/?(*.)+(spec|test).(ts|tsx)"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfigFile": "tsconfig.test.json"
-      }
-    }
+    ]
   },
   "babel": {
     "plugins": [
       "dynamic-import-node",
       "transform-es2015-modules-commonjs"
     ]
+  },
+  "prettier": {
+    "printWidth": 100,
+    "useTabs": false,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "avoid"
   }
 }

@@ -4,8 +4,8 @@ import React from "react";
 const { Provider, Consumer } = React.createContext(undefined);
 export { Provider, Consumer };
 
-function camelify(str) {
-  return str.replace(/-(\\w|$)/g, (_, ch) => ch.toUpperCase());
+function dashify(str) {
+  return str.replace(/([A-Z])/g, "-$1").toLowerCase();
 }
 
 const cachedLanguage = new Map();
@@ -18,8 +18,8 @@ export async function loadLanguage(locale) {
 
   language = {};
   for (const [id, fn] of Object.entries(fns.default)) {
-    language[camelify(id)] = createTextWrapper(fn);
-    language[\`__react__\${id}\`] = createReactWrapper(fn);
+    language[id] = createTextWrapper(fn);
+    language[\`__react__\${dashify(id)}\`] = createReactWrapper(fn);
   }
 
   cachedLanguage.set(locale, language);
@@ -27,7 +27,7 @@ export async function loadLanguage(locale) {
 }
 
 function createTextWrapper(fn) {
-  return params => fn(params).join("");
+  return params => fn(params).map(String).join("");
 }
 
 function createReactWrapper(fn) {
