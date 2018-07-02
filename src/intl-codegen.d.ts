@@ -1,14 +1,15 @@
-interface GeneratedCode {
+export interface GeneratedCode {
   [fileName: string]: string;
 }
 
-interface Language {
+export interface Language {
   addMessage(identifier: string, message: string): void;
   addMessages(messages: { [identifier: string]: string }): void;
 }
 
-interface Options {
+export interface Options {
   defaultLocale?: string;
+  formats?: any;
 }
 
 declare class IntlCodegen {

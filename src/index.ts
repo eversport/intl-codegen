@@ -1,13 +1,11 @@
-import { LanguageCodegen, MainCodegen, TsCodegen } from "./Codegen";
-import Language from "./Language";
-import path from "path";
 import fse from "fs-extra";
+import path from "path";
 // @ts-ignore: doesn’t deal with json files
 import { version } from "../package.json";
-
-interface GeneratedCode {
-  [fileName: string]: string;
-}
+import { LanguageCodegen, MainCodegen, TsCodegen } from "./Codegen";
+import mergeFormats from "./formats";
+import { GeneratedCode, Options } from "./intl-codegen";
+import Language from "./Language";
 
 const BANNER =
   `
@@ -17,23 +15,21 @@ const BANNER =
 // DO NOT MODIFY
   `.trim() + "\n\n";
 
-interface Options {
-  defaultLocale?: string;
-}
-
 class IntlCodegen {
   private languages = new Map<string, Language>();
-  private defaultLocale: string;
+  private options: Required<Options>;
 
   // TODO: remove fallback to string with v2
   constructor(options: Options | string = {}) {
     if (typeof options === "string") {
-      this.defaultLocale = options;
-    } else {
-      const { defaultLocale = "en" } = options;
-      this.defaultLocale = defaultLocale;
+      options = { defaultLocale: options };
     }
-    this.getLanguage(this.defaultLocale);
+    this.options = {
+      defaultLocale: options.defaultLocale || "en",
+      formats: mergeFormats(options.formats),
+    };
+
+    this.getLanguage(this.options.defaultLocale);
   }
 
   public getLanguage(locale: string) {
@@ -47,19 +43,19 @@ class IntlCodegen {
   }
 
   public generateFiles(): GeneratedCode {
-    const { languages, defaultLocale } = this;
+    const { languages, options } = this;
     const files: { [key: string]: string } = {};
 
     for (const [locale, language] of languages) {
       const fileName = `${locale}.js`;
-      const codegen = new LanguageCodegen(language);
+      const codegen = new LanguageCodegen(language, options);
       files[fileName] = BANNER + codegen.generate();
     }
 
-    const mainCodegen = new MainCodegen(languages);
-    files["index.js"] = BANNER + mainCodegen.generate(defaultLocale);
+    const mainCodegen = new MainCodegen(languages, options);
+    files["index.js"] = BANNER + mainCodegen.generate();
 
-    const tsCodegen = new TsCodegen(languages);
+    const tsCodegen = new TsCodegen(languages, options);
     files["index.d.ts"] = BANNER + tsCodegen.generate();
 
     return files;

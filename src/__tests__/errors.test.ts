@@ -21,6 +21,20 @@ describe("Errors", () => {
     );
   });
 
+  it("should warn on invalid format style", () => {
+    const codegen = new IntlCodegen();
+
+    codegen
+      .getLanguage("en")
+      .addMessage("test", "{num, number, invalid}, {date, date, invalid}, {time, time, invalid}");
+
+    codegen.generateFiles();
+
+    expect(console.warn).toHaveBeenNthCalledWith(1, `Format "number.invalid" not defined, falling back to default formatting.`);
+    expect(console.warn).toHaveBeenNthCalledWith(2, `Format "date.invalid" not defined, falling back to default formatting.`);
+    expect(console.warn).toHaveBeenNthCalledWith(3, `Format "time.invalid" not defined, falling back to default formatting.`);
+  });
+
   ensureCompiledFixture("locale-overwrite", async dir => {
     const { loadLanguage } = require(dir);
     const lang = await loadLanguage(loadLanguage.locales[0]);

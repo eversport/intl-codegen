@@ -1,4 +1,5 @@
-import { AllNodes, TextElement, Argument, Pattern } from "intl-messageformat-parser";
+import { AllNodes, Argument, Pattern, TextElement } from "intl-messageformat-parser";
+import { Options } from "./intl-codegen";
 import Language from "./Language";
 import { Expressions } from "./Message";
 import * as Templates from "./templates";
@@ -9,7 +10,7 @@ interface MergedMessage {
 }
 
 export class TsCodegen {
-  constructor(private languages: Map<string, Language>) {}
+  constructor(private languages: Map<string, Language>, _options: Options) {}
 
   private getMessageTypes() {
     const messages = new Map<string, MergedMessage>();
@@ -74,9 +75,10 @@ export class TsCodegen {
 }
 
 export class MainCodegen {
-  constructor(private languages: Map<string, Language>) {}
+  constructor(private languages: Map<string, Language>, private options: Options) {}
 
-  public generate(defaultLocale: string) {
+  public generate() {
+    const { defaultLocale } = this.options;
     let template = Templates.main;
 
     const locales = [...this.languages.keys()];
@@ -94,8 +96,15 @@ export class MainCodegen {
   }
 }
 
+interface Formatter {
+  id: string;
+  code: string;
+}
+
 export class LanguageCodegen {
-  constructor(private language: Language) {}
+  private formatters = new Map<string, Formatter>();
+
+  constructor(private language: Language, private options: Options) {}
 
   public generate() {
     let code = "export default {\n";
@@ -107,10 +116,12 @@ export class LanguageCodegen {
     for (const message of messages) {
       const params = this.generateParams(message.expressions);
       const toplevel = this.generate_toplevelPattern(message.node);
-      code += `  ${message.id}(${params}) {\n${toplevel}\n  },\n`;
+      code += `  ${message.id}(${params}) {\n${toplevel}  },\n`;
     }
 
     code += "};";
+
+    code = [...this.formatters.values()].map(f => f.code).join("\n") + `\n` + code;
 
     return code;
   }
@@ -154,6 +165,43 @@ export class LanguageCodegen {
     return `    parts.push(${JSON.stringify(el.value)});`;
   }
 
+  private getFormatter(type: string, style?: string) {
+    const {
+      language: { locale },
+      formatters,
+      options: { formats },
+    } = this;
+    style = style || undefined;
+
+    const formatterKey = `${type}.${style}`;
+    let formatter = formatters.get(formatterKey);
+    if (formatter) {
+      return formatter;
+    }
+
+    let formatArgs;
+    if (style) {
+      formatArgs = formats[type][style];
+      if (!formatArgs) {
+        console.warn(`Format "${type}.${style}" not defined, falling back to default formatting.`);
+      }
+    }
+
+    const id = `format_${type}_${formatters.size}`;
+    const constructor = type === "number" ? "Intl.NumberFormat" : "Intl.DateTimeFormat";
+    const code = `const ${id} = new ${constructor}("${locale}"${
+      formatArgs ? `, ${JSON.stringify(formatArgs)}` : ""
+    });`;
+
+    formatter = {
+      id,
+      code,
+    };
+    formatters.set(formatterKey, formatter);
+
+    return formatter;
+  }
+
   // @ts-ignore this is called
   private generate_argumentElement(arg: Argument) {
     if (!arg.format) {
@@ -168,6 +216,16 @@ export class LanguageCodegen {
         return `if (${condition}) {\n${this.generate_messageFormatPattern(option.value)}\n    }`;
       });
       return `    ` + branches.join(" else ") + `\n`;
+    } else if (format.type === "numberFormat") {
+      // TODO: support custom things like:
+      // * inline currency: {value, number, currency:EUR}
+      // * dynamic currency: {value, number, currency:$currency}
+      const formatter = this.getFormatter("number", format.style);
+      return `    parts.push(${formatter.id}.format(${arg.id}));`;
+    } else if (format.type === "timeFormat" || format.type === "dateFormat") {
+      const formatterKey = format.type === "timeFormat" ? "time" : "date";
+      const formatter = this.getFormatter(formatterKey, format.style);
+      return `    parts.push(${formatter.id}.format(${arg.id}));`;
     }
 
     /* istanbul ignore next */

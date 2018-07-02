@@ -76,6 +76,7 @@ interface Language {
 
 interface Options {
   defaultLocale?: string;
+  formats?: any;
 }
 
 class IntlCodegen {
@@ -135,19 +136,24 @@ type Consumer = React.Provider<Intl>;
 
 ### 1.1.0 NOT RELEASED YET
 
-- `IntlCodegen` constructor now takes an optional `Options` object
+- `IntlCodegen` constructor now takes an optional `Options` object, which can take
+  custom formats.
 - Generated code now includes a `locales` export, which is a list of all defined locales.
   This is also exposed as `loadLanguage.locales`.
 - In a similar way, the loaded locales now have a `locale: string` prop.
 - `IntlCodegen` will warn if you define a message that conflicts with any reserved key,
   such as the `locale` prop mentioned above.
+- You can now use the `number`, `date` and `time` formats.
 
 ## Roadmap
 
 - [ ] support all of MessageFormat:
-  - [ ] date formatting
-  - [ ] number formatting, including currencies
+  - [x] date formatting
+  - [x] number formatting, including currencies
   - [ ] pluralization
+- [ ] validate types for number / date
+- [ ] generate shorter code for branchless messages
+- [ ] support dynamic currency usage
 - [ ] make react usage optional, so projects not using react can have further codesize savings
 - [ ] benchmark and compare startup and runtime performance to `react-intl` / `intl-messageformat`
 - [ ] support fluent translation syntax

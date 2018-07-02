@@ -1,19 +1,19 @@
 {
   "name": "intl-codegen",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
   "license": "MIT",
   "main": "dist/intl-codegen.cjs.js",
   "module": "dist/intl-codegen.esm.js",
   "browser": "dist/intl-codegen.umd.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/intl-codegen.d.ts",
   "sideEffects": false,
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && rollup -c && cp src/index.d.ts dist/index.d.ts",
+    "build": "rimraf dist && rollup -c && cp src/intl-codegen.d.ts dist/",
     "prepublishOnly": "npm run test && npm run build",
     "test": "tsc && jest"
   },

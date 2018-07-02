@@ -9,11 +9,23 @@ declare module "intl-messageformat-parser" {
     value: Pattern;
   }
 
-  interface Select extends Node {
+  interface NumberFormat extends Node {
+    type: "numberFormat";
+    style: string;
+  }
+  interface DateFormat extends Node {
+    type: "dateFormat";
+    style: string;
+  }
+  interface TimeFormat extends Node {
+    type: "timeFormat";
+    style: string;
+  }
+  interface SelectFormat extends Node {
     type: "selectFormat";
     options: Array<Option>;
   }
-  type Format = Select;
+  type Format = NumberFormat | DateFormat | TimeFormat | SelectFormat;
 
   interface TextElement extends Node {
     type: "messageTextElement";

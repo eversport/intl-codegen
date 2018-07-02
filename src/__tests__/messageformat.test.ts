@@ -8,6 +8,7 @@ interface FixtureCase {
   params?: { [key: string]: any };
   formats?: any;
   debug?: boolean;
+  skip?: boolean;
 }
 
 interface Fixture extends FixtureCase {
@@ -19,20 +20,32 @@ interface Fixture extends FixtureCase {
 export const fixturesDir = path.join(__dirname, "messageformat");
 
 describe("Compare to MessageFormat", () => {
+  beforeAll(() => {
+    // hm, looks like intl-messageformat has no way to specify the output timezone.
+    process.env.TZ = "Europe/Vienna";
+  });
   forEachFixture(fixturesDir, runFixture);
 });
 
 export function runFixture(fixture: Fixture) {
-  const { message, debug: _debug } = fixture;
+  const { message, debug: _debug, skip: _skip, formats: _formats } = fixture;
   const cases = fixture.cases || [fixture];
   for (const [i, example] of cases.entries()) {
-    const { locale = "en", params = {}, debug = _debug } = example;
+    const {
+      locale = "en",
+      params = {},
+      debug = _debug,
+      skip = _skip,
+      formats = _formats,
+    } = example;
     const name = `${fixture.name} #${i + 1}`;
-    it(name, () => {
-      const msg = new IntlMessageFormat(message, locale);
+    const fn = !skip ? it : it.skip;
+
+    fn(name, () => {
+      const msg = new IntlMessageFormat(message, locale, formats);
       const expected = msg.format(params);
 
-      const codegen = new IntlCodegen();
+      const codegen = new IntlCodegen({ formats });
       const lang = codegen.getLanguage(locale);
       lang.addMessage("test", message);
       let files = codegen.generateFiles();
@@ -41,6 +54,7 @@ export function runFixture(fixture: Fixture) {
 
       if (debug) {
         console.log(code);
+        console.log(expected);
       }
 
       const generatedMsg = Function(code)().test;
