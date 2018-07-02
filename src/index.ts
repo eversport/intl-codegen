@@ -17,10 +17,23 @@ const BANNER =
 // DO NOT MODIFY
   `.trim() + "\n\n";
 
+interface Options {
+  defaultLocale?: string;
+}
+
 class IntlCodegen {
   private languages = new Map<string, Language>();
-  constructor(private defaultLocale: string = "en") {
-    this.getLanguage(defaultLocale);
+  private defaultLocale: string;
+
+  // TODO: remove fallback to string with v2
+  constructor(options: Options | string = {}) {
+    if (typeof options === "string") {
+      this.defaultLocale = options;
+    } else {
+      const { defaultLocale = "en" } = options;
+      this.defaultLocale = defaultLocale;
+    }
+    this.getLanguage(this.defaultLocale);
   }
 
   public getLanguage(locale: string) {

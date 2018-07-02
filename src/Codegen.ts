@@ -46,12 +46,21 @@ export class TsCodegen {
     const props: Array<string> = [];
     const components: Array<string> = [];
 
-    for (const [id, msg] of this.getMessageTypes()) {
+    const messages = [...this.getMessageTypes()];
+    messages.sort((a, b) => a[0].localeCompare(b[0]));
+    const ids = new Set<string>();
+
+    for (const [id, msg] of messages) {
       const typelist = this.generateTypeList(msg.expressions);
       const params = typelist ? `params: { ${typelist} }` : "";
+      ids.add(msg.id);
 
       props.push(`    ${msg.id}(${params}): string;`);
       components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ""}\n  }`);
+    }
+
+    if (!ids.has("locale")) {
+      props.push(`    locale: Locales;`);
     }
 
     const locales = [...this.languages.keys()].map(locale => JSON.stringify(locale));
@@ -69,12 +78,18 @@ export class MainCodegen {
 
   public generate(defaultLocale: string) {
     let template = Templates.main;
+
+    const locales = [...this.languages.keys()];
+    locales.sort((a, b) => a.localeCompare(b));
+
     const loaders: Array<string> = [];
-    for (const locale of this.languages.keys()) {
+    for (const locale of locales) {
       loaders.push(`if (locale === "${locale}") {\n    fns = await import("./${locale}.js");\n  }`);
     }
     loaders.push(`{\n    return loadLanguage(${JSON.stringify(defaultLocale)});\n  }`);
-    template = template.replace(`// __LOADERS__`, loaders.join(" else "));
+    template = template.replace(`__LOADERS__`, loaders.join(" else "));
+
+    template = template.replace(`__LOCALES__`, locales.map(l => JSON.stringify(l)).join(", "));
     return template;
   }
 }
@@ -125,9 +140,7 @@ export class LanguageCodegen {
   private generate_toplevelPattern(pat: Pattern) {
     // TODO: shortcut for single elements
     return (
-      `    const parts = [];\n` +
-      this.generate_messageFormatPattern(pat) +
-      `\n    return parts;\n`
+      `    const parts = [];\n` + this.generate_messageFormatPattern(pat) + `\n    return parts;\n`
     );
   }
 

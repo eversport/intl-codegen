@@ -46,19 +46,16 @@ async function App() {
         {/* Use the React API that renders React Nodes: */}
         <Localized id="id" params={{ parameter: <span>react elem</span> }} />
         {/* Or use intl object directly via React Context: */}
-        <Consumer>
-          {intl => intl.id({ parameter: "string" })}
-        </Consumer>
+        <Consumer>{intl => intl.id({ parameter: "string" })}</Consumer>
       </>
     </Provider>
-  )
+  );
 }
-
 ```
 
 ## MessageFormat Syntax
 
-There is a great explanation of the *MessageFormat* syntax on the
+There is a great explanation of the _MessageFormat_ syntax on the
 [formatjs.io](https://formatjs.io/guides/message-syntax/) website!
 So far, `intl-codegen` only supports a very limited set of features, but other
 features will be added as we go forward.
@@ -74,9 +71,15 @@ interface GeneratedCode {
 
 interface Language {
   addMessage(identifier: string, message: string): void;
+  addMessages(messages: { [identifier: string]: string }): void;
+}
+
+interface Options {
+  defaultLocale?: string;
 }
 
 class IntlCodegen {
+  constructor(options?: Options);
   constructor(defaultLocale?: string);
   getLanguage(locale: string): Language;
   generateFiles(): GeneratedCode;
@@ -90,19 +93,26 @@ Your generated code exports the following API (in typescript syntax):
 
 ```ts
 /**
- * This will dynamically load one of your locales and returns an `Intl` instance
- * described below.
- */
-function loadLanguage(locale: string): Promise<Intl>;
-
-/**
  * The Intl object has one function property per translation string you defined.
  * In this example, the translation string `string with {param1}.` with identifier
  * `test` will generate the following signature:
  */
 interface Intl {
   test(params: { param1: any }): string;
+  locale: string;
 }
+
+/**
+ * This will dynamically load one of your locales and returns an `Intl` instance
+ * described below.
+ */
+interface LoadLanguage {
+  (locale: string): Promise<Intl>;
+  locales: Array<string>;
+}
+
+const locales: Array<string>;
+const loadLanguage: LoadLanguage;
 
 /**
  * This is the main Component you will use in your React app, like so:
@@ -121,12 +131,23 @@ type Provider = React.Provider<Intl>;
 type Consumer = React.Provider<Intl>;
 ```
 
+## ChangeLog
+
+### 1.1.0 NOT RELEASED YET
+
+- `IntlCodegen` constructor now takes an optional `Options` object
+- Generated code now includes a `locales` export, which is a list of all defined locales.
+  This is also exposed as `loadLanguage.locales`.
+- In a similar way, the loaded locales now have a `locale: string` prop.
+- `IntlCodegen` will warn if you define a message that conflicts with any reserved key,
+  such as the `locale` prop mentioned above.
+
 ## Roadmap
 
 - [ ] support all of MessageFormat:
-  - [ ] pluralization
-  - [ ] number formatting, including currencies
   - [ ] date formatting
+  - [ ] number formatting, including currencies
+  - [ ] pluralization
 - [ ] make react usage optional, so projects not using react can have further codesize savings
 - [ ] benchmark and compare startup and runtime performance to `react-intl` / `intl-messageformat`
 - [ ] support fluent translation syntax
