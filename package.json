@@ -1,7 +1,7 @@
 {
   "name": "intl-codegen",
   "version": "1.1.0",
-  "description": "",
+  "description": "generate code and type definitions from translations",
   "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
   "license": "MIT",
   "main": "dist/intl-codegen.cjs.js",
@@ -60,7 +60,7 @@
       "node"
     ],
     "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest",
+      "^.+\\.tsx?$": "ts-jest",
       "^.+\\.jsx?$": "babel-jest"
     },
     "transformIgnorePatterns": [

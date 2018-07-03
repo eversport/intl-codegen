@@ -3,6 +3,10 @@ import Message from "./Message";
 
 const RESERVED = new Set(["locale"]);
 
+function camelify(str: string) {
+  return str.replace(/-(\w|$)/g, (_, ch) => ch.toUpperCase());
+}
+
 export default class Language {
   private _messages = new Map<string, Message>();
 
@@ -24,7 +28,7 @@ export default class Language {
 
     const node = MessageFormat.parse(message);
 
-    const msg = new Message(identifier, node);
+    const msg = new Message(camelify(identifier), node);
     this._messages.set(identifier, msg);
   }
 

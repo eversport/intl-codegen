@@ -2,7 +2,9 @@ import fse from "fs-extra";
 import path from "path";
 // @ts-ignore: doesn’t deal with json files
 import { version } from "../package.json";
-import { LanguageCodegen, MainCodegen, TsCodegen } from "./Codegen";
+import LanguageCodegen from "./codegen/language";
+import MainCodegen from "./codegen/main";
+import TsCodegen from "./codegen/typings";
 import mergeFormats from "./formats";
 import { GeneratedCode, Options } from "./intl-codegen";
 import Language from "./Language";

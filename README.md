@@ -134,7 +134,7 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
-### 1.1.0 NOT RELEASED YET
+### 1.1.0 2018-07-03
 
 - `IntlCodegen` constructor now takes an optional `Options` object, which can take
   custom formats.
@@ -152,7 +152,7 @@ type Consumer = React.Provider<Intl>;
   - [x] number formatting, including currencies
   - [ ] pluralization
 - [ ] validate types for number / date
-- [ ] generate shorter code for branchless messages
+- [x] generate shorter code for branchless messages
 - [ ] support dynamic currency usage
 - [ ] make react usage optional, so projects not using react can have further codesize savings
 - [ ] benchmark and compare startup and runtime performance to `react-intl` / `intl-messageformat`
