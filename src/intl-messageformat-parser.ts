@@ -25,7 +25,13 @@ declare module "intl-messageformat-parser" {
     type: "selectFormat";
     options: Array<Option>;
   }
-  type Format = NumberFormat | DateFormat | TimeFormat | SelectFormat;
+  interface PluralFormat extends Node {
+    type: "pluralFormat";
+    ordinal: boolean;
+    offset: number;
+    options: Array<Option>;
+  }
+  type Format = NumberFormat | DateFormat | TimeFormat | SelectFormat | PluralFormat;
 
   interface TextElement extends Node {
     type: "messageTextElement";

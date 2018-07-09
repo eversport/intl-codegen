@@ -136,6 +136,8 @@ type Consumer = React.Provider<Intl>;
 
 ### 1.2.0 UNRELEASED
 
+- Simple plurals, with `=X` and `other` selectors are now supported.
+
 ### 1.1.0 2018-07-03
 
 - `IntlCodegen` constructor now takes an optional `Options` object, which can take
@@ -152,7 +154,7 @@ type Consumer = React.Provider<Intl>;
 - [ ] support all of MessageFormat:
   - [x] date formatting
   - [x] number formatting, including currencies
-  - [ ] basic pluralization
+  - [x] basic pluralization
   - [ ] full pluralization, with all cases, offsets and ordinals
 - [ ] validate types for number / date
 - [x] generate shorter code for branchless messages

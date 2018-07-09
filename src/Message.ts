@@ -85,7 +85,11 @@ export default class Message {
     }
 
     /* istanbul ignore else */
-    if (format.type === "selectFormat") {
+    if (format.type === "selectFormat" || format.type === "pluralFormat") {
+      if (format.type === "pluralFormat" && (format.ordinal || format.offset)) {
+        console.warn("Plural `ordinal` and `offset` are not yet supported.");
+      }
+
       const { body } = this;
       const branches: Array<Branch> = [];
       body.push({
@@ -94,10 +98,20 @@ export default class Message {
       });
       let other: Branch | undefined;
       for (const option of format.options) {
-        const condition =
-          option.selector === "other"
-            ? undefined
-            : `String(${a.id}) == ${JSON.stringify(option.selector)}`;
+        let condition: string | undefined;
+        if (option.selector !== "other") {
+          if (format.type === "selectFormat") {
+            condition = `String(${a.id}) == ${JSON.stringify(option.selector)}`;
+          } else {
+            const isNumber = option.selector.startsWith("=");
+            if (isNumber) {
+              const num = Number(option.selector.substr(1));
+              condition = `${a.id} == ${num}`;
+            } else {
+              console.warn("Plural forms other than `=X` or `other` are not yet supported.");
+            }
+          }
+        }
         const body: BlockBody = [];
         let branch = {
           condition,
@@ -117,6 +131,7 @@ export default class Message {
       this.body = body;
       return;
     }
+
     /* istanbul ignore next */
     console.log("Unknown format type in Codegen:", format);
   }

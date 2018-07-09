@@ -30,9 +30,50 @@ describe("Errors", () => {
 
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenNthCalledWith(1, `Format "number.invalid" not defined, falling back to default formatting.`);
-    expect(console.warn).toHaveBeenNthCalledWith(2, `Format "date.invalid" not defined, falling back to default formatting.`);
-    expect(console.warn).toHaveBeenNthCalledWith(3, `Format "time.invalid" not defined, falling back to default formatting.`);
+    expect(console.warn).toHaveBeenNthCalledWith(
+      1,
+      `Format "number.invalid" not defined, falling back to default formatting.`,
+    );
+    expect(console.warn).toHaveBeenNthCalledWith(
+      2,
+      `Format "date.invalid" not defined, falling back to default formatting.`,
+    );
+    expect(console.warn).toHaveBeenNthCalledWith(
+      3,
+      `Format "time.invalid" not defined, falling back to default formatting.`,
+    );
+  });
+
+  it("should warn on unsupported plural syntax", () => {
+    let codegen;
+
+    codegen = new IntlCodegen();
+    codegen.getLanguage("en").addMessage("test", "plural with {plural, plural, one {one}}");
+    codegen.generateFiles();
+
+    expect(console.warn).toHaveBeenLastCalledWith(
+      "Plural forms other than `=X` or `other` are not yet supported.",
+    );
+
+    codegen = new IntlCodegen();
+    codegen
+      .getLanguage("en")
+      .addMessage("test", "plural with {plural, plural, offset: 1 other {offset}}");
+    codegen.generateFiles();
+
+    expect(console.warn).toHaveBeenLastCalledWith(
+      "Plural `ordinal` and `offset` are not yet supported.",
+    );
+
+    codegen = new IntlCodegen();
+    codegen
+      .getLanguage("en")
+      .addMessage("test", "plural with {plural, selectordinal, other {ordinal}}");
+    codegen.generateFiles();
+
+    expect(console.warn).toHaveBeenLastCalledWith(
+      "Plural `ordinal` and `offset` are not yet supported.",
+    );
   });
 
   ensureCompiledFixture("locale-overwrite", async dir => {
