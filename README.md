@@ -134,7 +134,7 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
-### 1.2.0 UNRELEASED
+### 1.2.0 2018-07-09
 
 - Simple plurals, with `=X` and `other` selectors are now supported.
 
