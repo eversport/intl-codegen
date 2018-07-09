@@ -111,7 +111,7 @@ export default class Message {
           branches.push(branch);
         }
       }
-      if (other) {
+      if (other && other.body.length) {
         branches.push(other);
       }
       this.body = body;

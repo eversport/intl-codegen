@@ -24,13 +24,18 @@ export default class LanguageCodegen {
       const params = this.generateParams(message.expressions);
       code += `  ${message.id}(${params}) {\n`;
 
-      const { body } = message;
+      let { body } = message;
       const firstBlock = body[0];
       if (body.length === 1 && firstBlock.type === "block") {
         code += `${this.i()}return [${this.generateBlock(firstBlock.expressions)}];\n`;
       } else {
-        code += `${this.i()}const parts = [];\n`;
-        code += this.generateBody(body);
+        if (firstBlock.type === "block") {
+          code += `${this.i()}const parts = [${this.generateBlock(firstBlock.expressions)}];\n`;
+          code += this.generateBody(body.slice(1));
+        } else {
+          code += `${this.i()}const parts = [];\n`;
+          code += this.generateBody(body);
+        }
         code += `${this.i()}return parts;\n`;
       }
 
@@ -63,7 +68,7 @@ export default class LanguageCodegen {
       } else {
         const branches = block.branches.map(branch => {
           const { condition, body } = branch;
-          let code = `${condition ? `if (${condition}) ` : ""} {\n`;
+          let code = `${condition ? `if (${condition}) ` : ""}{\n`;
           this.indent++;
           code += this.generateBody(body);
           this.indent--;
