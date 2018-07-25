@@ -55,18 +55,18 @@ export default class TsCodegen {
       const params = typelist ? `params: { ${typelist} }` : "";
       ids.add(msg.id);
 
-      props.push(`    ${msg.id}(${params}): string;`);
-      components.push(`{\n    id: ${JSON.stringify(id)}${params ? `,\n    ${params}` : ""}\n  }`);
+      props.push(`  ${msg.id}(${params}): string;`);
+      components.push(`{\n  id: ${JSON.stringify(id)}${params ? `,\n  ${params}` : ""}\n  }`);
     }
 
     if (!ids.has("locale")) {
-      props.push(`    locale: Locales;`);
+      props.push(`  locale: Locales;`);
     }
 
     const locales = [...this.languages.keys()].map(locale => JSON.stringify(locale));
 
     template = template.replace(`__PROPS__`, props.join("\n"));
-    template = template.replace(`__COMPONENTS__`, components.join(" | "));
+    template = template.replace(`__COMPONENTS__`, components.join(" | ") || "never");
     template = template.replace(`__LOCALES__`, locales.join(" | "));
 
     return template;

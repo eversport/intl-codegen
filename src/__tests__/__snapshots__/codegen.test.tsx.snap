@@ -8,6 +8,12 @@ Array [
 ]
 `;
 
+exports[`Codegen typings-no-strings 1`] = `
+Array [
+  "typings-no-strings/index.tsx (9,8): Type '{}' is not assignable to type 'never'.",
+]
+`;
+
 exports[`Codegen typings-wrong-id 1`] = `
 Array [
   "typings-wrong-id/index.tsx (7,8): Property 'nonExistant' does not exist on type 'Intl'.",

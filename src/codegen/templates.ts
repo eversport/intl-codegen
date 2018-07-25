@@ -45,27 +45,22 @@ export function Localized({ id, params }) {
 export const types = `
 import React from "react";
 
-export = Intl;
-export as namespace Intl;
+type Locales = __LOCALES__;
 
-declare namespace Intl {
-  type Locales = __LOCALES__;
-
-  interface Intl {
+interface Intl {
 __PROPS__
-  }
-
-  interface LoadLanguage {
-    (locale: Locales): Promise<Intl>;
-    locales: Array<Locales>;
-  }
-
-  const locales: Array<Locales>;
-  const loadLanguage: LoadLanguage;
-
-  const Provider: React.Provider<Intl>;
-  const Consumer: React.Consumer<Intl>;
-
-  const Localized: React.SFC<__COMPONENTS__>;
 }
+
+interface LoadLanguage {
+  (locale: Locales): Promise<Intl>;
+  locales: Array<Locales>;
+}
+
+export const locales: Array<Locales>;
+export const loadLanguage: LoadLanguage;
+
+export const Provider: React.Provider<Intl>;
+export const Consumer: React.Consumer<Intl>;
+
+export const Localized: React.SFC<__COMPONENTS__>;
 `.trim();
