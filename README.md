@@ -134,7 +134,7 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
-### 1.3.0 2018-07-25
+### 1.3.1 2018-07-25
 
 - Gracefully handle wrong usage of generated React Components.
 - Warn at compile time about missing translations. It will now fall back to the
