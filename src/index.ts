@@ -6,7 +6,7 @@ import LanguageCodegen from "./codegen/language";
 import MainCodegen from "./codegen/main";
 import TsCodegen from "./codegen/typings";
 import mergeFormats from "./formats";
-import { GeneratedCode, Options } from "./intl-codegen";
+import { GeneratedCode, Options, default as IIntlCodegen } from "./types";
 import Language from "./Language";
 
 const BANNER =
@@ -17,7 +17,7 @@ const BANNER =
 // DO NOT MODIFY
   `.trim() + "\n\n";
 
-class IntlCodegen {
+class IntlCodegen implements IIntlCodegen {
   private languages = new Map<string, Language>();
   private options: Required<Options>;
 

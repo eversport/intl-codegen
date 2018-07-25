@@ -1,4 +1,4 @@
-import { Options } from "../intl-codegen";
+import { Options } from "../types";
 import Language from "../Language";
 import { BasicBlockElement, BlockBody, Expressions } from "../Message";
 

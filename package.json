@@ -13,7 +13,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && rollup -c && cp src/intl-codegen.d.ts dist/",
+    "build": "rimraf dist && rollup -c && cp src/types.d.ts dist/intl-codegen.d.ts",
     "prepublishOnly": "npm run test && npm run build",
     "test": "tsc && jest"
   },

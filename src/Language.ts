@@ -1,5 +1,6 @@
 import MessageFormat from "intl-messageformat-parser";
 import Message from "./Message";
+import { Language as ILanguage } from "./types";
 
 const RESERVED = new Set(["locale"]);
 
@@ -7,7 +8,7 @@ function camelify(str: string) {
   return str.replace(/-(\w|$)/g, (_, ch) => ch.toUpperCase());
 }
 
-export default class Language {
+export default class Language implements ILanguage {
   private _messages = new Map<string, Message>();
 
   public constructor(public locale: string) {}

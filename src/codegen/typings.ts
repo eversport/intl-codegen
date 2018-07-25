@@ -1,4 +1,4 @@
-import { Options } from "../intl-codegen";
+import { Options } from "../types";
 import Language from "../Language";
 import { Expressions } from "../Message";
 import * as Templates from "./templates";
