@@ -13,8 +13,8 @@ export interface Options {
 }
 
 declare var IntlCodegen: {
-  constructor(options?: Options): IntlCodegen;
-  constructor(defaultLocale?: string): IntlCodegen;
+  new (options?: Options): IntlCodegen;
+  new (defaultLocale?: string): IntlCodegen;
 };
 
 interface IntlCodegen {
