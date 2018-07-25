@@ -37,8 +37,26 @@ function createReactWrapper(fn) {
 const { Provider, Consumer } = React.createContext(undefined);
 export { Provider, Consumer };
 
+const warned = {};
+function warnOnce(msg) {
+  if (warned[msg]) { return; }
+  console.warn(msg);
+  warned[msg] = true;
+}
+
 export function Localized({ id, params }) {
-  return React.createElement(Consumer, undefined, intl => intl[\`__react__\${id}\`](params));
+  return React.createElement(Consumer, undefined, intl => {
+    if (!intl) {
+      warnOnce("Localization not initialized correctly.\\nMake sure to include \`<Provider value={await loadLanguage(__LOCALE__)}>\` in your component tree.");
+      return;
+    }
+    const fn = intl[\`__react__\${id}\`];
+    if (fn) {
+      return fn(params);
+    }
+    warnOnce(\`The translation key "\${id}" is not defined.\`);
+    return id;
+  });
 }
 `.trim();
 

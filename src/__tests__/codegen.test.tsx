@@ -29,14 +29,24 @@ describe("Codegen", () => {
     expect(lang.aDashedId()).toEqual("dashed!");
   });
 
+  beforeEach(() => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   ensureCompiledFixture("react", async dir => {
     const { loadLanguage, Consumer, Provider, Localized } = require(dir);
     let lang, rendered;
 
+    const params = { react: <strong>react</strong> };
+
     lang = await loadLanguage("en");
     rendered = renderToStaticMarkup(
       <Provider value={lang}>
-        <Localized id="test" params={{ react: <strong>react</strong> }} />
+        <Localized id="test" params={params} />
       </Provider>,
     );
     expect(rendered).toEqual("a <strong>react</strong> element");
@@ -44,7 +54,7 @@ describe("Codegen", () => {
     lang = await loadLanguage("de");
     rendered = renderToStaticMarkup(
       <Provider value={lang}>
-        <Localized id="test" params={{ react: <strong>react</strong> }} />
+        <Localized id="test" params={params} />
       </Provider>,
     );
     expect(rendered).toEqual("ein <strong>react</strong> element");
@@ -61,6 +71,34 @@ describe("Codegen", () => {
       </Provider>,
     );
     expect(rendered).toEqual("string: ein text element");
+
+    rendered = renderToStaticMarkup(
+      <>
+        <Localized id="test" params={params} />
+        <Localized id="test2" params={params} />
+      </>,
+    );
+    expect(rendered).toEqual("");
+    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(console.warn).toHaveBeenCalledWith(
+      "Localization not initialized correctly.\nMake sure to include `<Provider value={await loadLanguage(__LOCALE__)}>` in your component tree.",
+    );
+
+    jest.resetAllMocks();
+
+    lang = await loadLanguage("de");
+    rendered = renderToStaticMarkup(
+      <Provider value={lang}>
+        <>
+          <Localized id="invalid" params={params} /> <Localized id="invalid" params={params} />{" "}
+          <Localized id="invalid2" params={params} />
+        </>
+      </Provider>,
+    );
+    expect(rendered).toEqual("invalid invalid invalid2");
+    expect(console.warn).toHaveBeenCalledTimes(2);
+    expect(console.warn).toHaveBeenNthCalledWith(1, `The translation key "invalid" is not defined.`);
+    expect(console.warn).toHaveBeenNthCalledWith(2, `The translation key "invalid2" is not defined.`);
   });
 
   testTypings("typings-correct");
