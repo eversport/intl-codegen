@@ -134,6 +134,13 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
+### 1.3.0 2018-07-25
+
+- Gracefully handle wrong usage of generated React Components.
+- Warn at compile time about missing translations. It will now fall back to the
+  messages defined in the `defaultLocale` if any other locale does not have those
+  messages defined.
+
 ### 1.2.0 2018-07-09
 
 - Simple plurals, with `=X` and `other` selectors are now supported.
