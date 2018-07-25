@@ -20,10 +20,8 @@ export default class Language {
 
   public addMessage(identifier: string, message: string) {
     if (RESERVED.has(identifier)) {
-      console.warn(
-        `The key "${identifier}" is used internally by intl-codegen.\n` +
-          `Consider using a different key instead.`,
-      );
+      console.warn(`The key "${identifier}" is used internally by intl-codegen.`);
+      console.warn(`Consider using a different key instead.`);
     }
 
     const node = MessageFormat.parse(message);

@@ -15,10 +15,8 @@ describe("Errors", () => {
     const codegen = new IntlCodegen();
 
     codegen.getLanguage("en").addMessage("locale", "foo");
-    expect(console.warn).toHaveBeenCalledWith(
-      `The key "locale" is used internally by intl-codegen.\n` +
-        `Consider using a different key instead.`,
-    );
+    expect(console.warn).toHaveBeenNthCalledWith(1, `The key "locale" is used internally by intl-codegen.`);
+    expect(console.warn).toHaveBeenNthCalledWith(2, `Consider using a different key instead.`);
   });
 
   it("should warn on invalid format style", () => {
@@ -51,29 +49,19 @@ describe("Errors", () => {
     codegen.getLanguage("en").addMessage("test", "plural with {plural, plural, one {one}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith(
-      "Plural forms other than `=X` or `other` are not yet supported.",
-    );
+    expect(console.warn).toHaveBeenLastCalledWith("Plural forms other than `=X` or `other` are not yet supported.");
 
     codegen = new IntlCodegen();
-    codegen
-      .getLanguage("en")
-      .addMessage("test", "plural with {plural, plural, offset: 1 other {offset}}");
+    codegen.getLanguage("en").addMessage("test", "plural with {plural, plural, offset: 1 other {offset}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith(
-      "Plural `ordinal` and `offset` are not yet supported.",
-    );
+    expect(console.warn).toHaveBeenLastCalledWith("Plural `ordinal` and `offset` are not yet supported.");
 
     codegen = new IntlCodegen();
-    codegen
-      .getLanguage("en")
-      .addMessage("test", "plural with {plural, selectordinal, other {ordinal}}");
+    codegen.getLanguage("en").addMessage("test", "plural with {plural, selectordinal, other {ordinal}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith(
-      "Plural `ordinal` and `offset` are not yet supported.",
-    );
+    expect(console.warn).toHaveBeenLastCalledWith("Plural `ordinal` and `offset` are not yet supported.");
   });
 
   ensureCompiledFixture("locale-overwrite", async dir => {

@@ -5,6 +5,6 @@ export default {
     },
     de: {
       test: "de",
-    }
-  }
-}
+    },
+  },
+};

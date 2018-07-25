@@ -69,13 +69,8 @@ export default class Message {
     }
     const { format } = a;
 
-    if (
-      format.type === "numberFormat" ||
-      format.type === "timeFormat" ||
-      format.type === "dateFormat"
-    ) {
-      const type =
-        format.type === "numberFormat" ? "number" : format.type === "dateFormat" ? "date" : "time";
+    if (format.type === "numberFormat" || format.type === "timeFormat" || format.type === "dateFormat") {
+      const type = format.type === "numberFormat" ? "number" : format.type === "dateFormat" ? "date" : "time";
       this.pushPart({
         id: a.id,
         type,

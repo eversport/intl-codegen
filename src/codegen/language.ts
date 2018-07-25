@@ -121,9 +121,7 @@ export default class LanguageCodegen {
 
     const id = `format_${type}_${formatters.size}`;
     const constructor = type === "number" ? "Intl.NumberFormat" : "Intl.DateTimeFormat";
-    const code = `const ${id} = new ${constructor}("${locale}"${
-      formatArgs ? `, ${JSON.stringify(formatArgs)}` : ""
-    });`;
+    const code = `const ${id} = new ${constructor}("${locale}"${formatArgs ? `, ${JSON.stringify(formatArgs)}` : ""});`;
 
     formatter = {
       id,

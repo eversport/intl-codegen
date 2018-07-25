@@ -2,7 +2,7 @@ export default {
   languages: {
     en: {
       test: "test",
-    }
+    },
   },
   code: `
 import { loadLanguage, locales } from "./lang";
@@ -14,5 +14,5 @@ export async function main() {
 
   return lang.locale === "foo";
 }
-  `
-}
+  `,
+};
