@@ -48,6 +48,23 @@ class IntlCodegen implements IIntlCodegen {
     const { languages, options } = this;
     const files: { [key: string]: string } = {};
 
+    // make sure every message defined in the defaultLocale is also defined as
+    // a fallback in every locale
+    const defaultLanguage = languages.get(options.defaultLocale)!;
+    for (const [key, message] of defaultLanguage.messages) {
+      for (const [locale, language] of languages) {
+        if (locale === options.defaultLocale) {
+          continue;
+        }
+        if (!language.messages.has(key)) {
+          console.warn(
+            `Translation key "${key}" was not defined for locale "${locale}". Falling back to default locale.`,
+          );
+          language.addMessage(key, message.message);
+        }
+      }
+    }
+
     for (const [locale, language] of languages) {
       const fileName = `${locale}.js`;
       const codegen = new LanguageCodegen(language, options);

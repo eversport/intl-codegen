@@ -15,7 +15,7 @@ export default class TsCodegen {
     const messages = new Map<string, MergedMessage>();
 
     for (const language of this.languages.values()) {
-      for (const [id, msg] of language.messages()) {
+      for (const [id, msg] of language.messages) {
         const existing = messages.get(id);
         if (!existing) {
           messages.set(id, { id: msg.id, expressions: new Map(msg.expressions) });

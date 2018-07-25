@@ -17,7 +17,7 @@ export default class LanguageCodegen {
     let code = "export default {\n";
 
     // sort messages so we have a stable sort order
-    const messages = [...this.language.messages()].map(m => m[1]);
+    const messages = [...this.language.messages].map(m => m[1]);
     messages.sort((a, b) => a.id.localeCompare(b.id));
 
     for (const message of messages) {

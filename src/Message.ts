@@ -1,4 +1,4 @@
-import { Pattern, Argument } from "intl-messageformat-parser";
+import { Pattern, Argument, default as MessageFormat } from "intl-messageformat-parser";
 
 type ExpressionType = "string" | "any";
 export type Expressions = Map<string, ExpressionType>;
@@ -32,7 +32,9 @@ export default class Message {
   public expressions: Expressions = new Map();
   public body: BlockBody;
 
-  constructor(public id: string, node: Pattern) {
+  constructor(public id: string, public message: string) {
+    const node = MessageFormat.parse(message);
+
     this.body = [];
     this.walkPattern(node);
   }

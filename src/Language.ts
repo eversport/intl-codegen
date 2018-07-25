@@ -1,4 +1,3 @@
-import MessageFormat from "intl-messageformat-parser";
 import Message from "./Message";
 import { Language as ILanguage } from "./types";
 
@@ -9,7 +8,7 @@ function camelify(str: string) {
 }
 
 export default class Language implements ILanguage {
-  private _messages = new Map<string, Message>();
+  public messages = new Map<string, Message>();
 
   public constructor(public locale: string) {}
 
@@ -25,14 +24,7 @@ export default class Language implements ILanguage {
       console.warn(`Consider using a different key instead.`);
     }
 
-    const node = MessageFormat.parse(message);
-
-    const msg = new Message(camelify(identifier), node);
-    this._messages.set(identifier, msg);
-  }
-
-  /** @internal */
-  public messages() {
-    return this._messages.entries();
+    const msg = new Message(camelify(identifier), message);
+    this.messages.set(identifier, msg);
   }
 }

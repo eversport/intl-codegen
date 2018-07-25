@@ -69,4 +69,21 @@ describe("Errors", () => {
     const lang = await loadLanguage(loadLanguage.locales[0]);
     expect(lang.locale()).toEqual("locale overwritten");
   });
+
+  it("should warn when falling back because of missing messages", () => {
+    const codegen = new IntlCodegen();
+    codegen.getLanguage("en").addMessage("foo", "bar");
+    codegen.getLanguage("de");
+
+    let files = codegen.generateFiles();
+    let code = files[`de.js`];
+    code = code.replace("export default", "return");
+
+    const generatedMsg = Function(code)().foo;
+
+    expect(console.warn).toHaveBeenLastCalledWith(
+      `Translation key "foo" was not defined for locale "de". Falling back to default locale.`,
+    );
+    expect(generatedMsg().join("")).toEqual("bar");
+  });
 });
