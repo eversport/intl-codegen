@@ -38,7 +38,7 @@ describe("Codegen", () => {
   });
 
   ensureCompiledFixture("react", async dir => {
-    const { loadLanguage, Consumer, Provider, Localized } = require(dir);
+    const { loadLanguage, Consumer, Provider, Localized, withIntl } = require(dir);
     let lang, rendered;
 
     const params = { react: <strong>react</strong> };
@@ -68,6 +68,19 @@ describe("Codegen", () => {
             return `${typeof text}: ${text}`;
           }}
         </Consumer>
+      </Provider>,
+    );
+    expect(rendered).toEqual("string: ein text element");
+
+    const MyComponent = withIntl(({ prop, intl }: { prop: string; intl: any }) => {
+      const text = intl.test({ react: prop });
+      return `${typeof text}: ${text}`;
+    });
+
+    lang = await loadLanguage("de");
+    rendered = renderToStaticMarkup(
+      <Provider value={lang}>
+        <MyComponent prop="text" />
       </Provider>,
     );
     expect(rendered).toEqual("string: ein text element");
@@ -106,6 +119,7 @@ describe("Codegen", () => {
   testTypings("typings-no-strings");
 
   testTypings("typings-ids");
+  testTypings("typings-withIntl");
 
   testTypings("typings-wrong-locale");
   testTypings("typings-wrong-id");

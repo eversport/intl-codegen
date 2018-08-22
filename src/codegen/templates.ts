@@ -37,6 +37,14 @@ function createReactWrapper(fn) {
 const { Provider, Consumer } = React.createContext(undefined);
 export { Provider, Consumer };
 
+export function withIntl(Component) {
+  return React.forwardRef((props, ref) =>
+    React.createElement(Consumer, undefined, intl => {
+      return React.createElement(Component, { ...props, ref, intl })
+    })
+  );
+}
+
 const warned = {};
 function warnOnce(msg) {
   if (warned[msg]) { return; }
@@ -63,9 +71,9 @@ export function Localized({ id, params }) {
 export const types = `
 import React from "react";
 
-type Locales = __LOCALES__;
+export type Locales = __LOCALES__;
 
-interface Intl {
+export interface Intl {
 __PROPS__
 }
 
@@ -81,6 +89,9 @@ export const loadLanguage: LoadLanguage;
 
 export const Provider: React.Provider<Intl>;
 export const Consumer: React.Consumer<Intl>;
+
+export function withIntl<P extends { intl: Intl }>(Component: React.ComponentType<P>):
+  React.SFC<Pick<P, Exclude<keyof P, "intl">>>;
 
 export const Localized: React.SFC<__COMPONENTS__>;
 `.trim();

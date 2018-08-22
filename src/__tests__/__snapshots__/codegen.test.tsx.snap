@@ -20,6 +20,15 @@ Array [
 ]
 `;
 
+exports[`Codegen typings-withIntl 1`] = `
+Array [
+  "typings-withIntl/index.tsx (30,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
+  Property 'prop' is missing in type '{}'.",
+  "typings-withIntl/index.tsx (31,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
+  Property 'prop' is missing in type '{}'.",
+]
+`;
+
 exports[`Codegen typings-wrong-id 1`] = `
 Array [
   "typings-wrong-id/index.tsx (7,8): Property 'nonExistant' does not exist on type 'Intl'.",
