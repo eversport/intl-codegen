@@ -134,6 +134,11 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
+### 1.4.0 2018-08-22
+
+- Export all the message Ids as `Ids` typescript type
+- Provide a `withIntl` HOC
+
 ### 1.3.1 2018-07-25
 
 - Gracefully handle wrong usage of generated React Components.
