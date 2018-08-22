@@ -4,7 +4,7 @@ exports[`Codegen typings-correct 1`] = `Array []`;
 
 exports[`Codegen typings-locales 1`] = `
 Array [
-  "typings-locales/index.tsx (8,10): Operator '===' cannot be applied to types '\\"en\\"' and '\\"foo\\"'.",
+  "typings-locales/index.tsx (8,10): This condition will always return 'false' since the types '\\"en\\"' and '\\"foo\\"' have no overlap.",
 ]
 `;
 
@@ -17,8 +17,7 @@ Array [
 exports[`Codegen typings-wrong-id 1`] = `
 Array [
   "typings-wrong-id/index.tsx (7,8): Property 'nonExistant' does not exist on type 'Intl'.",
-  "typings-wrong-id/index.tsx (11,18): Types of property 'id' are incompatible.
-  Type '\\"non-existant\\"' is not assignable to type '\\"test\\"'.",
+  "typings-wrong-id/index.tsx (11,18): Type '\\"non-existant\\"' is not assignable to type '\\"test\\"'.",
   "typings-wrong-id/index.tsx (13,23): Property 'nonExistant' does not exist on type 'Intl'.",
 ]
 `;
@@ -33,9 +32,8 @@ exports[`Codegen typings-wrong-param 1`] = `
 Array [
   "typings-wrong-param/index.tsx (7,15): Argument of type '{ prmtr: string; }' is not assignable to parameter of type '{ parameter: any; }'.
   Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
-  "typings-wrong-param/index.tsx (11,38): Types of property 'params' are incompatible.
-  Type '{ prmtr: string; }' is not assignable to type '{ parameter: any; }'.
-    Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
+  "typings-wrong-param/index.tsx (11,38): Type '{ prmtr: string; }' is not assignable to type '{ parameter: any; }'.
+  Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
   "typings-wrong-param/index.tsx (13,30): Argument of type '{ prmtr: string; }' is not assignable to parameter of type '{ parameter: any; }'.
   Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
 ]
