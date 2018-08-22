@@ -74,6 +74,8 @@ interface LoadLanguage {
   locales: Array<Locales>;
 }
 
+export type Ids = __IDS__;
+
 export const locales: Array<Locales>;
 export const loadLanguage: LoadLanguage;
 

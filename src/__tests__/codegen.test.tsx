@@ -105,6 +105,8 @@ describe("Codegen", () => {
   testTypings("typings-locales");
   testTypings("typings-no-strings");
 
+  testTypings("typings-ids");
+
   testTypings("typings-wrong-locale");
   testTypings("typings-wrong-id");
   testTypings("typings-wrong-param");

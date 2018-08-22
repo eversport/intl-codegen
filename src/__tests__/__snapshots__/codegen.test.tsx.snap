@@ -2,6 +2,12 @@
 
 exports[`Codegen typings-correct 1`] = `Array []`;
 
+exports[`Codegen typings-ids 1`] = `
+Array [
+  "typings-ids/index.tsx (7,3): Property 'invalid' does not exist on type 'MyType'.",
+]
+`;
+
 exports[`Codegen typings-locales 1`] = `
 Array [
   "typings-locales/index.tsx (8,10): This condition will always return 'false' since the types '\\"en\\"' and '\\"foo\\"' have no overlap.",

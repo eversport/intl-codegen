@@ -68,6 +68,7 @@ export default class TsCodegen {
     template = template.replace(`__PROPS__`, props.join("\n"));
     template = template.replace(`__COMPONENTS__`, components.join(" | ") || "never");
     template = template.replace(`__LOCALES__`, locales.join(" | "));
+    template = template.replace(`__IDS__`, [...ids].map(id => JSON.stringify(id)).join(" | ") || "never");
 
     return template;
   }
