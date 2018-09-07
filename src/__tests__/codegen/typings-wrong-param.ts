@@ -2,6 +2,7 @@ export default {
   languages: {
     en: {
       test: "with a {parameter}",
+      "test-dashed": "a dashed id with {second} parameter",
     },
   },
   code: `
@@ -12,10 +13,13 @@ import { Provider, Consumer, Localized, loadLanguage } from "./lang";
   const lang = await loadLanguage("en");
 
   lang.test({ prmtr: "parameter" });
+  lang.testDashed({ parameter: "parameter" });
+  lang["test-dashed"]({ parameter: "parameter" });
 
   return (
     <Provider value={lang}>
       <Localized id="test" params={{ prmtr: "parameter" }} />
+      <Localized id="test-dashed" params={{ parameter: "parameter" }} />
       <Consumer>
         {intl => intl.test({ prmtr: "parameter" })}
       </Consumer>

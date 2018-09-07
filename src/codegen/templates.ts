@@ -17,7 +17,11 @@ export async function loadLanguage(locale) {
 
   language = { locale };
   for (const [id, fn] of Object.entries(fns.default)) {
+    const dashed = dashify(id);
     language[id] = createTextWrapper(fn);
+    if (dashed !== id) {
+      language[dashed] = language[id];
+    }
     language[\`__react__\${dashify(id)}\`] = createReactWrapper(fn);
   }
 

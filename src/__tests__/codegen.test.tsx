@@ -27,6 +27,7 @@ describe("Codegen", () => {
 
     lang = await loadLanguage("en");
     expect(lang.aDashedId()).toEqual("dashed!");
+    expect(lang["a-dashed-id"]()).toEqual("dashed!");
   });
 
   beforeEach(() => {

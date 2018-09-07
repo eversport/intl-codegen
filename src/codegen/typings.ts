@@ -54,9 +54,11 @@ export default class TsCodegen {
       const typelist = this.generateTypeList(msg.expressions);
       const params = typelist ? `params: { ${typelist} }` : "";
       ids.add(msg.id);
+      const idStr = JSON.stringify(id);
 
       props.push(`  ${msg.id}(${params}): string;`);
-      components.push(`{\n  id: ${JSON.stringify(id)}${params ? `,\n  ${params}` : ""}\n  }`);
+      props.push(`  [${idStr}](${params}): string;`);
+      components.push(`{\n  id: ${idStr}${params ? `,\n  ${params}` : ""}\n  }`);
     }
 
     if (!ids.has("locale")) {
