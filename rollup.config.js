@@ -10,12 +10,16 @@ export default {
       name: "IntlCodegen",
       file: pkg.browser,
       format: "umd",
+      globals: {
+        "fs-extra": "undefined",
+        path: "undefined",
+      },
     },
     { file: pkg.main, format: "cjs" },
     { file: pkg.module, format: "es" },
   ],
 
-  external: ["fs-extra"],
+  external: ["fs-extra", "path"],
 
   plugins: [
     resolve({
