@@ -134,6 +134,10 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
+### 1.5.0 2018-09-07
+
+- Also expose dashed Ids on the `Intl` object: `intl["my-dashed-id"]()`
+
 ### 1.4.0 2018-08-22
 
 - Export all the message Ids as `Ids` typescript type
