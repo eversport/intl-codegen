@@ -134,6 +134,10 @@ type Consumer = React.Provider<Intl>;
 
 ## ChangeLog
 
+### 1.5.1 2018-10-19
+
+- Improve codegen a bit, and allow camelCase Ids on `<Localized />` Component.
+
 ### 1.5.0 2018-09-07
 
 - Also expose dashed Ids on the `Intl` object: `intl["my-dashed-id"]()`
