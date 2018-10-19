@@ -53,12 +53,17 @@ Array [
   Object literal may only specify known properties, and 'parameter' does not exist in type '{ second: any; }'.",
   "typings-wrong-param/index.tsx (13,38): Type '{ prmtr: string; }' is not assignable to type '{ parameter: any; } | { second: any; }'.
   Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; } | { second: any; }'.",
-  "typings-wrong-param/index.tsx (14,45): Type '{ id: \\"test-dashed\\"; params: { parameter: string; }; }' is not assignable to type '(IntrinsicAttributes & { id: \\"test\\"; params: { parameter: any; }; } & { children?: ReactNode; }) | (IntrinsicAttributes & { id: \\"test-dashed\\"; params: { second: any; }; } & { children?: ReactNode; })'.
-  Type '{ id: \\"test-dashed\\"; params: { parameter: string; }; }' is not assignable to type '{ id: \\"test-dashed\\"; params: { second: any; }; }'.
+  "typings-wrong-param/index.tsx (14,45): Type '{ id: \\"test-dashed\\"; params: { parameter: string; }; }' is not assignable to type '(IntrinsicAttributes & { id: \\"test\\"; params: { parameter: any; }; } & { children?: ReactNode; }) | (IntrinsicAttributes & { id: \\"test-dashed\\" | \\"testDashed\\"; params: { second: any; }; } & { ...; })'.
+  Type '{ id: \\"test-dashed\\"; params: { parameter: string; }; }' is not assignable to type '{ id: \\"test-dashed\\" | \\"testDashed\\"; params: { second: any; }; }'.
     Types of property 'params' are incompatible.
       Type '{ parameter: string; }' is not assignable to type '{ second: any; }'.
         Object literal may only specify known properties, and 'parameter' does not exist in type '{ second: any; }'.",
-  "typings-wrong-param/index.tsx (16,30): Argument of type '{ prmtr: string; }' is not assignable to parameter of type '{ parameter: any; }'.
+  "typings-wrong-param/index.tsx (15,44): Type '{ id: \\"testDashed\\"; params: { parameter: string; }; }' is not assignable to type '(IntrinsicAttributes & { id: \\"test\\"; params: { parameter: any; }; } & { children?: ReactNode; }) | (IntrinsicAttributes & { id: \\"test-dashed\\" | \\"testDashed\\"; params: { second: any; }; } & { ...; })'.
+  Type '{ id: \\"testDashed\\"; params: { parameter: string; }; }' is not assignable to type '{ id: \\"test-dashed\\" | \\"testDashed\\"; params: { second: any; }; }'.
+    Types of property 'params' are incompatible.
+      Type '{ parameter: string; }' is not assignable to type '{ second: any; }'.
+        Object literal may only specify known properties, and 'parameter' does not exist in type '{ second: any; }'.",
+  "typings-wrong-param/index.tsx (17,30): Argument of type '{ prmtr: string; }' is not assignable to parameter of type '{ parameter: any; }'.
   Object literal may only specify known properties, and 'prmtr' does not exist in type '{ parameter: any; }'.",
 ]
 `;

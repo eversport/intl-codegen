@@ -17,6 +17,9 @@ const BANNER =
 // DO NOT MODIFY
   `.trim() + "\n\n";
 
+const ESLINT = `/* eslint-disable */\n\n`;
+const TSLINT = `/* tslint:disable */\n\n`;
+
 class IntlCodegen implements IIntlCodegen {
   private languages = new Map<string, Language>();
   private options: Required<Options>;
@@ -68,14 +71,14 @@ class IntlCodegen implements IIntlCodegen {
     for (const [locale, language] of languages) {
       const fileName = `${locale}.js`;
       const codegen = new LanguageCodegen(language, options);
-      files[fileName] = BANNER + codegen.generate();
+      files[fileName] = ESLINT + BANNER + codegen.generate();
     }
 
     const mainCodegen = new MainCodegen(languages, options);
-    files["index.js"] = BANNER + mainCodegen.generate();
+    files["index.js"] = ESLINT + BANNER + mainCodegen.generate();
 
     const tsCodegen = new TsCodegen(languages, options);
-    files["index.d.ts"] = BANNER + tsCodegen.generate();
+    files["index.d.ts"] = TSLINT + BANNER + tsCodegen.generate();
 
     return files;
   }

@@ -57,7 +57,7 @@ export default class LanguageCodegen {
     if (!params.size) {
       return "";
     }
-    return `{ ${[...params.keys()].join(", ")} }`;
+    return `{ ${[...params.keys()].join(", ")} } = {}`;
   }
 
   private generateBody(body: BlockBody) {

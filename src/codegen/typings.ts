@@ -50,15 +50,21 @@ export default class TsCodegen {
     messages.sort((a, b) => a[0].localeCompare(b[0]));
     const ids = new Set<string>();
 
-    for (const [id, msg] of messages) {
+    for (const [dashedId, msg] of messages) {
       const typelist = this.generateTypeList(msg.expressions);
       const params = typelist ? `params: { ${typelist} }` : "";
-      ids.add(msg.id);
-      const idStr = JSON.stringify(id);
+      const camelId = msg.id;
+      ids.add(camelId);
+      ids.add(dashedId);
 
-      props.push(`  ${msg.id}(${params}): string;`);
-      props.push(`  [${idStr}](${params}): string;`);
-      components.push(`{\n  id: ${idStr}${params ? `,\n  ${params}` : ""}\n  }`);
+      let idStr = JSON.stringify(dashedId);
+
+      props.push(`  ${camelId}(${params}): string;`);
+      if (camelId !== dashedId) {
+        props.push(`  [${idStr}](${params}): string;`);
+        idStr += ` | ` + JSON.stringify(camelId);
+      }
+      components.push(`{\n  id: ${idStr}${params ? `,\n  ${params}` : ""}\n}`);
     }
 
     if (!ids.has("locale")) {
@@ -70,7 +76,7 @@ export default class TsCodegen {
     template = template.replace(`__PROPS__`, props.join("\n"));
     template = template.replace(`__COMPONENTS__`, components.join(" | ") || "never");
     template = template.replace(`__LOCALES__`, locales.join(" | "));
-    template = template.replace(`__IDS__`, [...ids].map(id => JSON.stringify(id)).join(" | ") || "never");
+    template = template.replace(`__IDS__`, [...ids].map(id => JSON.stringify(id)).join(" |\n  ") || "never");
 
     return template;
   }

@@ -47,10 +47,10 @@ describe("Codegen", () => {
     lang = await loadLanguage("en");
     rendered = renderToStaticMarkup(
       <Provider value={lang}>
-        <Localized id="test" params={params} />
+        <Localized id="test" params={params} /> <Localized id="aDashedId" />
       </Provider>,
     );
-    expect(rendered).toEqual("a <strong>react</strong> element");
+    expect(rendered).toEqual("a <strong>react</strong> element dashed!");
 
     lang = await loadLanguage("de");
     rendered = renderToStaticMarkup(

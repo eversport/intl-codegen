@@ -20,6 +20,7 @@ import { Provider, Consumer, Localized, loadLanguage } from "./lang";
     <Provider value={lang}>
       <Localized id="test" params={{ prmtr: "parameter" }} />
       <Localized id="test-dashed" params={{ parameter: "parameter" }} />
+      <Localized id="testDashed" params={{ parameter: "parameter" }} />
       <Consumer>
         {intl => intl.test({ prmtr: "parameter" })}
       </Consumer>
