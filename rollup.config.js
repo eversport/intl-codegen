@@ -19,7 +19,10 @@ export default {
     { file: pkg.module, format: "es" },
   ],
 
-  external: ["fs-extra", "path"],
+  external: ["fs-extra", "path", "@babel/code-frame"],
+  treeshake: {
+    pureExternalModules: true,
+  },
 
   plugins: [
     resolve({
