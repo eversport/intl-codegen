@@ -1,6 +1,5 @@
 import fse from "fs-extra";
 import path from "path";
-// @ts-ignore: doesn’t deal with json files
 import { version } from "../package.json";
 import LanguageCodegen from "./codegen/language";
 import MainCodegen from "./codegen/main";
@@ -24,7 +23,10 @@ class IntlCodegen implements IIntlCodegen {
   private languages = new Map<string, Language>();
   private options: Required<Options>;
 
+  // constructor(options?: Options);
   // TODO: remove fallback to string with v2
+  // constructor(defaultLocale?: string);
+
   constructor(options: Options | string = {}) {
     if (typeof options === "string") {
       options = { defaultLocale: options };

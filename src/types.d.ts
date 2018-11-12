@@ -12,12 +12,10 @@ export interface Options {
   formats?: any;
 }
 
-declare var IntlCodegen: {
-  new (options?: Options): IntlCodegen;
-  new (defaultLocale?: string): IntlCodegen;
-};
+class IntlCodegen {
+  constructor(options?: Options);
+  constructor(defaultLocale?: string);
 
-interface IntlCodegen {
   getLanguage(locale: string): Language;
   generateFiles(): GeneratedCode;
   writeFiles(outputDirectory: string): Promise<GeneratedCode>;
