@@ -6,11 +6,10 @@ export default {
   },
   code: `
 import React from "react";
-import { Intl, withIntl } from "./lang";
+import { withIntl, WithIntl } from "./lang";
 
-interface MyProps {
+interface MyProps extends WithIntl {
   prop: string;
-  intl: Intl;
 }
 
 // @ts-ignore: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

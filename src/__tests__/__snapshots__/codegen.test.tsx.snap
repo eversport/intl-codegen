@@ -22,9 +22,9 @@ Array [
 
 exports[`Codegen typings-withIntl 1`] = `
 Array [
-  "typings-withIntl/index.tsx (30,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
+  "typings-withIntl/index.tsx (29,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
   Property 'prop' is missing in type '{}'.",
-  "typings-withIntl/index.tsx (31,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
+  "typings-withIntl/index.tsx (30,8): Type '{}' is not assignable to type 'Pick<MyProps, \\"prop\\">'.
   Property 'prop' is missing in type '{}'.",
 ]
 `;

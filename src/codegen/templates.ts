@@ -97,7 +97,10 @@ export const loadLanguage: LoadLanguage;
 export const Provider: React.Provider<Intl>;
 export const Consumer: React.Consumer<Intl>;
 
-export function withIntl<P extends { intl: Intl }>(Component: React.ComponentType<P>):
+export interface WithIntl {
+  intl: Intl
+}
+export function withIntl<P extends WithIntl>(Component: React.ComponentType<P>):
   React.SFC<Pick<P, Exclude<keyof P, "intl">>>;
 
 export const Localized: React.SFC<__COMPONENTS__>;

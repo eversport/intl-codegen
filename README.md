@@ -137,6 +137,7 @@ type Consumer = React.Provider<Intl>;
 ### 1.6.0 2018-11-12
 
 - Massively improved error messages when encountering invalid / unsupported syntax
+- Add a `WithIntl` type to accompany the `withIntl` HOC
 
 ### 1.5.1 2018-10-19
 
