@@ -25,18 +25,19 @@ function getCodeFrame(): typeof codeFrameColumns | undefined {
     const { codeFrameColumns } = require("@babel/code-frame");
     return codeFrameColumns;
   } catch {}
+  // istanbul ignore next
   return undefined;
 }
 
 export function logFormatError(msg: string, { locale, id, code, loc, message }: FormatErrorOptions) {
   console.warn(`[${locale}: ${id}]: ${msg}`);
-  if (code) {
-    const codeFrame = getCodeFrame();
-    if (codeFrame) {
-      console.log(codeFrame(code, loc, { message }));
-    } else {
-      console.log(code);
-      console.log(message);
-    }
+
+  const codeFrame = getCodeFrame();
+  // istanbul ignore else
+  if (codeFrame) {
+    console.log(codeFrame(code, loc, { message }));
+  } else {
+    console.log(code);
+    console.log(message);
   }
 }

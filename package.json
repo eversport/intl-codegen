@@ -27,8 +27,6 @@
     "@types/node": "^10.12.5",
     "@types/react": "^16.7.3",
     "@types/react-dom": "^16.0.9",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "intl-messageformat": "^2.2.0",
     "intl-messageformat-parser": "^1.4.0",
     "jest": "^23.6.0",
@@ -66,8 +64,7 @@
       "node"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest",
-      "^.+\\.jsx?$": "babel-jest"
+      "^.+\\.(j|t)sx?$": "ts-jest"
     },
     "transformIgnorePatterns": [
       "/node_modules/"
@@ -82,12 +79,6 @@
         "isolatedModules": true
       }
     }
-  },
-  "babel": {
-    "plugins": [
-      "dynamic-import-node",
-      "transform-es2015-modules-commonjs"
-    ]
   },
   "prettier": {
     "printWidth": 120,
