@@ -21,6 +21,7 @@
     "fs-extra": "^7.0.1"
   },
   "devDependencies": {
+    "@types/babel__code-frame": "^7.0.0",
     "@types/fs-extra": "^5.0.4",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.5",
@@ -31,6 +32,7 @@
     "intl-messageformat": "^2.2.0",
     "intl-messageformat-parser": "^1.4.0",
     "jest": "^23.6.0",
+    "prettier": "^1.15.2",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "rollup": "^0.67.1",
@@ -39,6 +41,9 @@
     "rollup-plugin-sucrase": "^2.0.0",
     "ts-jest": "^23.10.4",
     "typescript": "3.1.6"
+  },
+  "optionalDependencies": {
+    "@babel/code-frame": "^7.0.0"
   },
   "jest": {
     "collectCoverage": true,

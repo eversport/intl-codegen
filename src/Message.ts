@@ -1,12 +1,14 @@
 import { Pattern, Argument, default as MessageFormat } from "intl-messageformat-parser";
+import { logFormatError, ErrorInfo } from "./errors";
 
 type ExpressionType = "string" | "any";
 export type Expressions = Map<string, ExpressionType>;
 
-interface FormattedArgument {
+export interface FormattedArgument {
   id: string;
   type: "date" | "time" | "number";
   style: string;
+  errorInfo: ErrorInfo;
 }
 
 export type BasicBlockElement = string | FormattedArgument;
@@ -28,15 +30,32 @@ interface Conditional {
 
 export type BlockBody = Array<BasicBlock | Conditional>;
 
+const INVALID_AST = MessageFormat.parse("invalid message syntax");
+
+interface MessageOptions {
+  locale: string;
+  id: string;
+  code: string;
+}
+
 export default class Message {
   public expressions: Expressions = new Map();
   public body: BlockBody;
 
-  constructor(public id: string, public message: string) {
-    const node = MessageFormat.parse(message);
-
+  constructor(public options: MessageOptions) {
     this.body = [];
-    this.walkPattern(node);
+
+    try {
+      const node = MessageFormat.parse(options.code);
+      this.walkPattern(node);
+    } catch (error) {
+      logFormatError(`The message has invalid syntax`, {
+        ...options,
+        message: error.message,
+        loc: error.location,
+      });
+      this.walkPattern(INVALID_AST);
+    }
   }
 
   private pushPart(part: BasicBlockElement) {
@@ -77,6 +96,7 @@ export default class Message {
         id: a.id,
         type,
         style: format.style,
+        errorInfo: { ...this.options, loc: format.location },
       });
       return;
     }
@@ -84,7 +104,11 @@ export default class Message {
     /* istanbul ignore else */
     if (format.type === "selectFormat" || format.type === "pluralFormat") {
       if (format.type === "pluralFormat" && (format.ordinal || format.offset)) {
-        console.warn("Plural `ordinal` and `offset` are not yet supported.");
+        logFormatError("Plural `ordinal` and `offset` are not yet supported.", {
+          ...this.options,
+          // well, the AST does not provide the location for *everything*, so this is the best we can do
+          loc: { start: format.location.start, end: format.options[0].location.start },
+        });
       }
 
       const { body } = this;
@@ -105,7 +129,12 @@ export default class Message {
               const num = Number(option.selector.substr(1));
               condition = `${a.id} == ${num}`;
             } else {
-              console.warn("Plural forms other than `=X` or `other` are not yet supported.");
+              const valStart = option.value.location.start;
+              logFormatError("Plural forms other than `=X` or `other` are not yet supported.", {
+                ...this.options,
+                // again, this is the best we can do
+                loc: { start: option.location.start, end: { line: valStart.line, column: valStart.column - 1 } },
+              });
             }
           }
         }

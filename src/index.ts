@@ -63,7 +63,7 @@ class IntlCodegen implements IIntlCodegen {
           console.warn(
             `Translation key "${key}" was not defined for locale "${locale}". Falling back to default locale.`,
           );
-          language.addMessage(key, message.message);
+          language.addMessage(key, message.options.code);
         }
       }
     }

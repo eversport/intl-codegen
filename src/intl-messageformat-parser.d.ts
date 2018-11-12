@@ -1,6 +1,17 @@
 declare module "intl-messageformat-parser" {
+  interface Location {
+    line: number;
+    column: number;
+  }
+
+  interface Range {
+    start: Location;
+    end: Location;
+  }
+
   interface Node {
     type: string;
+    location: Range;
   }
 
   interface Option extends Node {

@@ -2,12 +2,41 @@ import IntlCodegen from "../";
 import { ensureCompiledFixture } from "./helpers";
 
 describe("Errors", () => {
+  let consoleOutput: Array<any> = [];
   beforeEach(() => {
-    jest.spyOn(console, "warn").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation((...args) => {
+      consoleOutput.push({ warn: args });
+    });
+    jest.spyOn(console, "log").mockImplementation((...args) => {
+      consoleOutput.push({ log: args });
+    });
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
+    consoleOutput = [];
+  });
+
+  it("should warn on invalid messageformat syntax", () => {
+    const codegen = new IntlCodegen();
+
+    codegen.getLanguage("en").addMessage("invalid-message", "invalid stuff {");
+
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "[en: invalid-message]: The message has invalid syntax",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | invalid stuff {
+    |                ^ Expected \\"0\\", [1-9] or [^ \\\\t\\\\n\\\\r,.+={}#] but end of input found.",
+    ],
+  },
+]
+`);
   });
 
   it("should warn on reserved IDs", () => {
@@ -15,8 +44,21 @@ describe("Errors", () => {
     const codegen = new IntlCodegen();
 
     codegen.getLanguage("en").addMessage("locale", "foo");
-    expect(console.warn).toHaveBeenNthCalledWith(1, `The key "locale" is used internally by intl-codegen.`);
-    expect(console.warn).toHaveBeenNthCalledWith(2, `Consider using a different key instead.`);
+
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "The key \\"locale\\" is used internally by intl-codegen.",
+    ],
+  },
+  Object {
+    "warn": Array [
+      "Consider using a different key instead.",
+    ],
+  },
+]
+`);
   });
 
   it("should warn on invalid format style", () => {
@@ -28,18 +70,43 @@ describe("Errors", () => {
 
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenNthCalledWith(
-      1,
-      `Format "number.invalid" not defined, falling back to default formatting.`,
-    );
-    expect(console.warn).toHaveBeenNthCalledWith(
-      2,
-      `Format "date.invalid" not defined, falling back to default formatting.`,
-    );
-    expect(console.warn).toHaveBeenNthCalledWith(
-      3,
-      `Format "time.invalid" not defined, falling back to default formatting.`,
-    );
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "[en: test]: Format \\"number.invalid\\" not defined, falling back to default formatting.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+    |       ^^^^^^^^^^^^^^^",
+    ],
+  },
+  Object {
+    "warn": Array [
+      "[en: test]: Format \\"date.invalid\\" not defined, falling back to default formatting.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+    |                                ^^^^^^^^^^^^^",
+    ],
+  },
+  Object {
+    "warn": Array [
+      "[en: test]: Format \\"time.invalid\\" not defined, falling back to default formatting.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+    |                                                       ^^^^^^^^^^^^^",
+    ],
+  },
+]
+`);
   });
 
   it("should warn on unsupported plural syntax", () => {
@@ -49,19 +116,64 @@ describe("Errors", () => {
     codegen.getLanguage("en").addMessage("test", "plural with {plural, plural, one {one}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith("Plural forms other than `=X` or `other` are not yet supported.");
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "[en: test]: Plural forms other than \`=X\` or \`other\` are not yet supported.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | plural with {plural, plural, one {one}}
+    |                              ^^^^",
+    ],
+  },
+]
+`);
+    consoleOutput = [];
 
     codegen = new IntlCodegen();
     codegen.getLanguage("en").addMessage("test", "plural with {plural, plural, offset: 1 other {offset}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith("Plural `ordinal` and `offset` are not yet supported.");
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | plural with {plural, plural, offset: 1 other {offset}}
+    |                      ^^^^^^^^^^^^^^^^^^",
+    ],
+  },
+]
+`);
+    consoleOutput = [];
 
     codegen = new IntlCodegen();
     codegen.getLanguage("en").addMessage("test", "plural with {plural, selectordinal, other {ordinal}}");
     codegen.generateFiles();
 
-    expect(console.warn).toHaveBeenLastCalledWith("Plural `ordinal` and `offset` are not yet supported.");
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
+    ],
+  },
+  Object {
+    "log": Array [
+      "> 1 | plural with {plural, selectordinal, other {ordinal}}
+    |                      ^^^^^^^^^^^^^^^",
+    ],
+  },
+]
+`);
+    consoleOutput = [];
   });
 
   ensureCompiledFixture("locale-overwrite", async dir => {
@@ -81,9 +193,15 @@ describe("Errors", () => {
 
     const generatedMsg = Function(code)().foo;
 
-    expect(console.warn).toHaveBeenLastCalledWith(
-      `Translation key "foo" was not defined for locale "de". Falling back to default locale.`,
-    );
     expect(generatedMsg().join("")).toEqual("bar");
+    expect(consoleOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "warn": Array [
+      "Translation key \\"foo\\" was not defined for locale \\"de\\". Falling back to default locale.",
+    ],
+  },
+]
+`);
   });
 });

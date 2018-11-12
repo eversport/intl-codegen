@@ -1,6 +1,8 @@
 import { Options } from "../types";
 import Language from "../Language";
-import { BasicBlockElement, BlockBody, Expressions } from "../Message";
+import { BasicBlockElement, BlockBody, Expressions, FormattedArgument } from "../Message";
+import { camelify } from "../utils";
+import { logFormatError } from "../errors";
 
 interface Formatter {
   id: string;
@@ -17,12 +19,13 @@ export default class LanguageCodegen {
     let code = "export default {\n";
 
     // sort messages so we have a stable sort order
-    const messages = [...this.language.messages].map(m => m[1]);
-    messages.sort((a, b) => a.id.localeCompare(b.id));
+    const messages = [...this.language.messages];
+    messages.sort((a, b) => a[0].localeCompare(b[0]));
 
-    for (const message of messages) {
+    for (const [id, message] of messages) {
       const params = this.generateParams(message.expressions);
-      code += `  ${message.id}(${params}) {\n`;
+      code += `  // ${message.options.code.split("\n").join("\n  // ")}\n`;
+      code += `  ${camelify(id)}(${params}) {\n`;
 
       let { body } = message;
       const firstBlock = body[0];
@@ -88,7 +91,7 @@ export default class LanguageCodegen {
         if (typeof b === "string") {
           return b;
         }
-        const formatter = this.getFormatter(b.type, b.style);
+        const formatter = this.getFormatter(b);
         return `${formatter.id}.format(${b.id})`;
       })
       .join(`,\n${this.i()}`);
@@ -97,13 +100,12 @@ export default class LanguageCodegen {
     return code;
   }
 
-  private getFormatter(type: string, style?: string) {
+  private getFormatter({ type, style, errorInfo }: FormattedArgument) {
     const {
       language: { locale },
       formatters,
       options: { formats },
     } = this;
-    style = style || undefined;
 
     const formatterKey = `${type}.${style}`;
     let formatter = formatters.get(formatterKey);
@@ -115,7 +117,7 @@ export default class LanguageCodegen {
     if (style) {
       formatArgs = formats[type][style];
       if (!formatArgs) {
-        console.warn(`Format "${type}.${style}" not defined, falling back to default formatting.`);
+        logFormatError(`Format "${type}.${style}" not defined, falling back to default formatting.`, errorInfo);
       }
     }
 
