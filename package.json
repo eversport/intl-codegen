@@ -1,6 +1,6 @@
 {
   "name": "intl-codegen",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "generate code and type definitions from translations",
   "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
   "license": "MIT",
