@@ -16,7 +16,7 @@ const BANNER =
 // DO NOT MODIFY
   `.trim() + "\n\n";
 
-const ESLINT = `/* eslint-disable */\n\n`;
+const ESLINT = `/* eslint-disable */\n// @ts-nocheck\n\n`;
 const TSLINT = `/* tslint:disable */\n\n`;
 
 class IntlCodegen implements IIntlCodegen {
