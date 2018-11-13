@@ -1,6 +1,6 @@
 import json from "rollup-plugin-json";
 import resolve from "rollup-plugin-node-resolve";
-import sucrase from "rollup-plugin-sucrase";
+import typescript from "rollup-plugin-typescript";
 import pkg from "./package.json";
 
 export default {
@@ -33,9 +33,6 @@ export default {
       preferConst: true,
       indent: "  ",
     }),
-    sucrase({
-      exclude: ["node_modules/**"],
-      transforms: ["typescript"],
-    }),
+    typescript(),
   ],
 };
