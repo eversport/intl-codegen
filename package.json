@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rimraf dist && rollup -c && cp src/types.d.ts dist/intl-codegen.d.ts",
     "prepublishOnly": "npm run test && npm run build",
-    "test": "tsc && jest"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "fs-extra": "^7.0.1"
@@ -45,6 +45,7 @@
     "@babel/code-frame": "^7.0.0"
   },
   "jest": {
+    "preset": "ts-jest/presets/js-with-ts",
     "collectCoverage": true,
     "coverageReporters": [
       "html",
@@ -53,33 +54,12 @@
     ],
     "coveragePathIgnorePatterns": [
       ".testoutput",
-      "src/__tests__",
-      "/node_modules/"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "transform": {
-      "^.+\\.(j|t)sx?$": "ts-jest"
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/"
+      "__tests__",
+      "node_modules"
     ],
     "testMatch": [
-      "**/__tests__/**/*.+(spec|test).(ts|tsx)",
       "**/?(*.)+(spec|test).(ts|tsx)"
-    ],
-    "globals": {
-      "ts-jest": {
-        "diagnostics": false,
-        "isolatedModules": true
-      }
-    }
+    ]
   },
   "prettier": {
     "printWidth": 120,
