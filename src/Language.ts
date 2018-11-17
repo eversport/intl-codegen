@@ -1,14 +1,24 @@
 import Message from "./Message";
-import { Language as ILanguage } from "./types";
 
 const RESERVED = new Set(["locale"]);
 
-export default class Language implements ILanguage {
+// TODO: add TSDocs for these interfaces
+
+export interface Messages {
+  [identifier: string]: string;
+}
+
+export interface ILanguage {
+  addMessage(identifier: string, message: string): void;
+  addMessages(messages: Messages): void;
+}
+
+export class Language implements ILanguage {
   public messages = new Map<string, Message>();
 
   public constructor(public locale: string) {}
 
-  public addMessages(messages: { [identifier: string]: string }) {
+  public addMessages(messages: Messages) {
     for (const [id, msg] of Object.entries(messages)) {
       this.addMessage(id, msg);
     }

@@ -5,8 +5,7 @@ import LanguageCodegen from "./codegen/language";
 import MainCodegen from "./codegen/main";
 import TsCodegen from "./codegen/typings";
 import mergeFormats from "./formats";
-import { GeneratedCode, Options, default as IIntlCodegen } from "./types";
-import Language from "./Language";
+import { Language, ILanguage } from "./Language";
 
 const BANNER =
   `
@@ -19,13 +18,22 @@ const BANNER =
 const ESLINT = `/* eslint-disable */\n// @ts-nocheck\n\n`;
 const TSLINT = `/* tslint:disable */\n\n`;
 
-class IntlCodegen implements IIntlCodegen {
+interface Options {
+  defaultLocale?: string;
+  formats?: any;
+}
+
+interface GeneratedCode {
+  [fileName: string]: string;
+}
+
+class IntlCodegen {
   private languages = new Map<string, Language>();
   private options: Required<Options>;
 
-  // constructor(options?: Options);
+  constructor(options?: Options);
   // TODO: remove fallback to string with v2
-  // constructor(defaultLocale?: string);
+  constructor(defaultLocale?: string);
 
   constructor(options: Options | string = {}) {
     if (typeof options === "string") {
@@ -39,7 +47,7 @@ class IntlCodegen implements IIntlCodegen {
     this.getLanguage(this.options.defaultLocale);
   }
 
-  public getLanguage(locale: string) {
+  public getLanguage(locale: string): ILanguage {
     const { languages } = this;
     let language = languages.get(locale);
     if (!language) {
@@ -95,5 +103,11 @@ class IntlCodegen implements IIntlCodegen {
     return files;
   }
 }
+
+// hm, rollup-plugin-typescript does not like type imports, because it does no
+// type-checking at bundle time, it can’t figure out that an import is a type
+// and remove it. but the importee does not export anything for that type, which
+// leads to problems.
+// export { ILanguage as Language, Messages, Options, GeneratedCode, IntlCodegen };
 
 export default IntlCodegen;
