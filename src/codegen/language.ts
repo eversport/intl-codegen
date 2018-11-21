@@ -1,5 +1,5 @@
 import { Options } from "../types";
-import Language from "../Language";
+import { Language } from "../Language";
 import { BasicBlockElement, BlockBody, Expressions, FormattedArgument } from "../Message";
 import { camelify } from "../utils";
 import { logFormatError } from "../errors";

@@ -5,7 +5,8 @@ import LanguageCodegen from "./codegen/language";
 import MainCodegen from "./codegen/main";
 import TsCodegen from "./codegen/typings";
 import mergeFormats from "./formats";
-import { Language, ILanguage } from "./Language";
+import { Language, ILanguage /*, Messages*/ } from "./Language";
+import { Options } from "./types";
 
 const BANNER =
   `
@@ -17,11 +18,6 @@ const BANNER =
 
 const ESLINT = `/* eslint-disable */\n// @ts-nocheck\n\n`;
 const TSLINT = `/* tslint:disable */\n\n`;
-
-interface Options {
-  defaultLocale?: string;
-  formats?: any;
-}
 
 interface GeneratedCode {
   [fileName: string]: string;
@@ -104,10 +100,6 @@ class IntlCodegen {
   }
 }
 
-// hm, rollup-plugin-typescript does not like type imports, because it does no
-// type-checking at bundle time, it can’t figure out that an import is a type
-// and remove it. but the importee does not export anything for that type, which
-// leads to problems.
 // export { ILanguage as Language, Messages, Options, GeneratedCode, IntlCodegen };
 
 export default IntlCodegen;

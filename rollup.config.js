@@ -2,9 +2,7 @@
 import json from "rollup-plugin-json";
 // @ts-ignore
 import resolve from "rollup-plugin-node-resolve";
-// @ts-ignore
-import typescript from "rollup-plugin-typescript";
-import dts from "rollup-plugin-dts";
+import { ts, dts } from "rollup-plugin-dts";
 import pkg from "./package.json";
 
 const external = ["fs-extra", "path", "@babel/code-frame"];
@@ -17,6 +15,7 @@ const config = [
     input: "./src/index.ts",
     output: [
       {
+        // exports: "named",
         name: "IntlCodegen",
         file: pkg.browser,
         format: "umd",
@@ -25,7 +24,11 @@ const config = [
           path: "undefined",
         },
       },
-      { file: pkg.main, format: "cjs" },
+      {
+        // exports: "named",
+        file: pkg.main,
+        format: "cjs",
+      },
       { file: pkg.module, format: "es" },
     ],
 
@@ -44,7 +47,7 @@ const config = [
         preferConst: true,
         indent: "  ",
       }),
-      typescript(),
+      ts(),
     ],
   },
   {

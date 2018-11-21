@@ -1,5 +1,5 @@
 import { Options } from "../types";
-import Language from "../Language";
+import { Language } from "../Language";
 import * as Templates from "./templates";
 
 export default class MainCodegen {
