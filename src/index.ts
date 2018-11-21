@@ -100,6 +100,8 @@ class IntlCodegen {
   }
 }
 
+// TODO: switch to named exports also for `cjs` builds with v2
+// since it might be a breaking change otherwise -_-
 // export { ILanguage as Language, Messages, Options, GeneratedCode, IntlCodegen };
 
 export default IntlCodegen;
