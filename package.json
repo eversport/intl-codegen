@@ -34,7 +34,7 @@
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "rollup": "^1.0.0",
-    "rollup-plugin-dts": "^0.6.0",
+    "rollup-plugin-dts": "^0.7.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "ts-jest": "^23.10.5",
