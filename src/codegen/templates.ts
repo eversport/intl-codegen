@@ -41,8 +41,9 @@ function createReactWrapper(fn) {
   return params => React.createElement(React.Fragment, undefined, ...fn(params));
 }
 
-const { Provider, Consumer } = React.createContext(undefined);
-export { Provider, Consumer };
+const Context = React.createContext(undefined);
+const { Provider, Consumer } = Context;
+export { Context, Provider, Consumer };
 
 export function withIntl(Component) {
   return React.forwardRef((props, ref) =>
@@ -94,6 +95,7 @@ export type Ids = __IDS__;
 export const locales: Array<Locales>;
 export const loadLanguage: LoadLanguage;
 
+export const Context: React.Context<Intl>;
 export const Provider: React.Provider<Intl>;
 export const Consumer: React.Consumer<Intl>;
 
