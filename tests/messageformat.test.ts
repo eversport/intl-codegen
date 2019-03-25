@@ -9,6 +9,7 @@ interface FixtureCase {
   formats?: any;
   debug?: boolean;
   skip?: boolean;
+  expected?: string;
 }
 
 interface Fixture extends FixtureCase {
@@ -32,12 +33,15 @@ export function runFixture(fixture: Fixture) {
   const cases = fixture.cases || [fixture];
   for (const [i, example] of cases.entries()) {
     const { locale = "en", params = {}, debug = _debug, skip = _skip, formats = _formats } = example;
+    let { expected } = example;
     const name = `${fixture.name} #${i + 1}`;
     const fn = !skip ? it : it.skip;
 
     fn(name, () => {
-      const msg = new IntlMessageFormat(message, locale, formats);
-      const expected = msg.format(params);
+      if (!expected) {
+        const msg = new IntlMessageFormat(message, locale, formats);
+        expected = msg.format(params);
+      }
 
       const codegen = new IntlCodegen({ formats });
       const lang = codegen.getLanguage(locale);

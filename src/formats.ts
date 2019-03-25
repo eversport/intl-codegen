@@ -7,6 +7,22 @@ export const defaultFormats = {
     percent: {
       style: "percent",
     },
+    currency: {
+      style: "currency",
+    },
+    currency0: {
+      style: "currency",
+      minimumFractionDigits: 0,
+    },
+    currencycode: {
+      style: "currency",
+      currencyDisplay: "code",
+    },
+    currencycode0: {
+      style: "currency",
+      currencyDisplay: "code",
+      minimumFractionDigits: 0,
+    },
   },
 
   date: {

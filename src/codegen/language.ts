@@ -91,13 +91,34 @@ export default class LanguageCodegen {
         if (typeof b === "string") {
           return b;
         }
-        const formatter = this.getFormatter(b);
-        return `${formatter.id}.format(${b.id})`;
+        return this.generateFormat(b);
       })
       .join(`,\n${this.i()}`);
     this.indent--;
     code += `,\n${this.i()}`;
     return code;
+  }
+
+  private generateFormat(arg: FormattedArgument) {
+    // oh well, this is *super* ugly, but the best I think I can do
+    // right now without the proper type definitions planned for v2
+    const {
+      language: { locale },
+      options: { formats },
+    } = this;
+    const format = arg.style && formats[arg.type][arg.style];
+    if (format && format.style === "currency" && !format.currency) {
+      const { id } = arg;
+      const props: { [key: string]: string } = {};
+      for (const [key, val] of Object.entries(format)) {
+        props[key] = JSON.stringify(val);
+      }
+      props.currency = `${id}.currency`;
+      const formatArgs = Object.entries(props).map(([key, val]) => `${key}: ${val}`);
+      return `new Intl.NumberFormat("${locale}", { ${formatArgs.join(", ")} }).format(${id}.value)`;
+    }
+    const formatter = this.getFormatter(arg);
+    return `${formatter.id}.format(${arg.id})`;
   }
 
   private getFormatter({ type, style, errorInfo }: FormattedArgument) {
