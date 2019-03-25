@@ -1,4 +1,4 @@
-import IntlCodegen from "../";
+import IntlCodegen from "../src";
 import { ensureCompiledFixture } from "./helpers";
 
 describe("Errors", () => {

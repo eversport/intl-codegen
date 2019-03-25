@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import ts from "typescript";
-import IntlCodegen from "../";
+import IntlCodegen from "../src";
 
 export function forEachFixture<T>(dir: string, fn: (fixture: T) => void) {
   const files = fse.readdirSync(dir);
@@ -17,7 +17,7 @@ export function forEachFixture<T>(dir: string, fn: (fixture: T) => void) {
 }
 
 const fixturesDir = path.join(__dirname, "codegen");
-const outputDir = path.join(__dirname, "..", "..", ".testoutput");
+const outputDir = path.join(__dirname, "..", ".testoutput");
 
 interface Fixture {
   defaultLanguage?: string;
@@ -37,7 +37,7 @@ export function testTypings(name: string, fn?: (dir: string) => Promise<void>) {
 }
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
-const tsConfig = path.join(__dirname, "..", "..", "tsconfig.json");
+const tsConfig = path.join(__dirname, "..", "tsconfig.json");
 const compilerOptions = fse
   .readFile(tsConfig, "utf-8")
   .then(config => new Function(`return ${config}`)().compilerOptions)
