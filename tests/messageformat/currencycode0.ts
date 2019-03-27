@@ -1,5 +1,6 @@
 export default {
   message: `{total, number, currencycode0}`,
+  compress: true,
   cases: [
     // beware! these are not normal spaces!
     {

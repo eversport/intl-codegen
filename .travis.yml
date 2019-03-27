@@ -4,4 +4,7 @@ node_js:
   - node
   - 8
 
+env:
+  - NODE_ICU_DATA=node_modules/full-icu
+
 after_success: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json

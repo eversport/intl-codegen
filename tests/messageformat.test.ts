@@ -10,6 +10,7 @@ interface FixtureCase {
   debug?: boolean;
   skip?: boolean;
   expected?: string;
+  compress?: boolean;
 }
 
 interface Fixture extends FixtureCase {
@@ -29,10 +30,17 @@ describe("Compare to MessageFormat", () => {
 });
 
 export function runFixture(fixture: Fixture) {
-  const { message, debug: _debug, skip: _skip, formats: _formats } = fixture;
+  const { message, debug: _debug, skip: _skip, formats: _formats, compress: _compress } = fixture;
   const cases = fixture.cases || [fixture];
   for (const [i, example] of cases.entries()) {
-    const { locale = "en", params = {}, debug = _debug, skip = _skip, formats = _formats } = example;
+    const {
+      locale = "en",
+      params = {},
+      debug = _debug,
+      skip = _skip,
+      formats = _formats,
+      compress = _compress,
+    } = example;
     let { expected } = example;
     const name = `${fixture.name} #${i + 1}`;
     const fn = !skip ? it : it.skip;
@@ -41,6 +49,10 @@ export function runFixture(fixture: Fixture) {
       if (!expected) {
         const msg = new IntlMessageFormat(message, locale, formats);
         expected = msg.format(params);
+      }
+
+      if (compress) {
+        expected = expected.replace(/\s/, "");
       }
 
       const codegen = new IntlCodegen({ formats });
@@ -57,7 +69,10 @@ export function runFixture(fixture: Fixture) {
 
       const generatedMsg = Function(code)().test;
 
-      const actual = generatedMsg(params).join("");
+      let actual = generatedMsg(params).join("");
+      if (compress) {
+        actual = actual.replace(/\s/, "");
+      }
 
       expect(actual).toEqual(expected);
     });
