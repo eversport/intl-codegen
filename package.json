@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rimraf dist && rollup -c",
     "prepublishOnly": "npm run test && npm run build",
-    "test": "jest --runInBand"
+    "test": "cross-env NODE_ICU_DATA=node_modules/full-icu jest --runInBand"
   },
   "dependencies": {
     "fs-extra": "^7.0.1"
@@ -27,6 +27,7 @@
     "@types/node": "^11.11.6",
     "@types/react": "^16.8.8",
     "@types/react-dom": "^16.8.3",
+    "cross-env": "^5.2.0",
     "full-icu": "^1.2.1",
     "intl-messageformat": "^2.2.0",
     "intl-messageformat-parser": "^1.4.0",
