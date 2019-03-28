@@ -128,6 +128,7 @@ const Localized: React.SFC<{
 /**
  * *intl-codegen* generated code uses the React Context API.
  */
+type Context = React.Context<Intl>;
 type Provider = React.Provider<Intl>;
-type Consumer = React.Provider<Intl>;
+type Consumer = React.Consumer<Intl>;
 ```
