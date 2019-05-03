@@ -103,7 +103,7 @@ export interface WithIntl {
   intl: Intl
 }
 export function withIntl<P extends WithIntl>(Component: React.ComponentType<P>):
-  React.SFC<Pick<P, Exclude<keyof P, "intl">>>;
+  React.FC<Pick<P, Exclude<keyof P, "intl">>>;
 
-export const Localized: React.SFC<__COMPONENTS__>;
+export const Localized: React.FC<__COMPONENTS__>;
 `.trim();
