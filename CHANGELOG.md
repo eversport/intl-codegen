@@ -1,3 +1,7 @@
+### 1.7.1 2019-05-06
+
+- Update deprecated `React.SFC` usage
+
 ### 1.7.0 2019-03-27
 
 - Add special `currency`, `currency0`, `currencycode` and `currencycode0` formats
