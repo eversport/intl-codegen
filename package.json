@@ -29,7 +29,7 @@
     "@types/react-dom": "^16.8.4",
     "cross-env": "^5.2.0",
     "full-icu": "^1.2.1",
-    "intl-messageformat": "^2.2.0",
+    "intl-messageformat": "^3.0.0",
     "intl-messageformat-parser": "^1.5.1",
     "jest": "^24.8.0",
     "prettier": "^1.17.0",
