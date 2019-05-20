@@ -23,20 +23,20 @@ describe("Errors", () => {
     codegen.getLanguage("en").addMessage("invalid-message", "invalid stuff {");
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "[en: invalid-message]: The message has invalid syntax",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | invalid stuff {
-    |                ^ Expected \\"0\\", [1-9] or [^ \\\\t\\\\n\\\\r,.+={}#] but end of input found.",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "[en: invalid-message]: The message has invalid syntax",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | invalid stuff {
+          |                ^ Expected \\"0\\", [1-9], or [^ \\\\t\\\\n\\\\r,.+={}#] but end of input found.",
+          ],
+        },
+      ]
+    `);
   });
 
   it("should warn on reserved IDs", () => {
@@ -46,19 +46,19 @@ Array [
     codegen.getLanguage("en").addMessage("locale", "foo");
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "The key \\"locale\\" is used internally by intl-codegen.",
-    ],
-  },
-  Object {
-    "warn": Array [
-      "Consider using a different key instead.",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "The key \\"locale\\" is used internally by intl-codegen.",
+          ],
+        },
+        Object {
+          "warn": Array [
+            "Consider using a different key instead.",
+          ],
+        },
+      ]
+    `);
   });
 
   it("should warn on invalid format style", () => {
@@ -71,42 +71,42 @@ Array [
     codegen.generateFiles();
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "[en: test]: Format \\"number.invalid\\" not defined, falling back to default formatting.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
-    |       ^^^^^^^^^^^^^^^",
-    ],
-  },
-  Object {
-    "warn": Array [
-      "[en: test]: Format \\"date.invalid\\" not defined, falling back to default formatting.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
-    |                                ^^^^^^^^^^^^^",
-    ],
-  },
-  Object {
-    "warn": Array [
-      "[en: test]: Format \\"time.invalid\\" not defined, falling back to default formatting.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
-    |                                                       ^^^^^^^^^^^^^",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "[en: test]: Format \\"number.invalid\\" not defined, falling back to default formatting.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+          |       ^^^^^^^^^^^^^^^",
+          ],
+        },
+        Object {
+          "warn": Array [
+            "[en: test]: Format \\"date.invalid\\" not defined, falling back to default formatting.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+          |                                ^^^^^^^^^^^^^",
+          ],
+        },
+        Object {
+          "warn": Array [
+            "[en: test]: Format \\"time.invalid\\" not defined, falling back to default formatting.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | {num, number, invalid}, {date, date, invalid}, {time, time, invalid}
+          |                                                       ^^^^^^^^^^^^^",
+          ],
+        },
+      ]
+    `);
   });
 
   it("should warn on unsupported plural syntax", () => {
@@ -117,20 +117,20 @@ Array [
     codegen.generateFiles();
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "[en: test]: Plural forms other than \`=X\` or \`other\` are not yet supported.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | plural with {plural, plural, one {one}}
-    |                              ^^^^",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "[en: test]: Plural forms other than \`=X\` or \`other\` are not yet supported.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | plural with {plural, plural, one {one}}
+          |                              ^^^^",
+          ],
+        },
+      ]
+    `);
     consoleOutput = [];
 
     codegen = new IntlCodegen();
@@ -138,20 +138,20 @@ Array [
     codegen.generateFiles();
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | plural with {plural, plural, offset: 1 other {offset}}
-    |                      ^^^^^^^^^^^^^^^^^^",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | plural with {plural, plural, offset: 1 other {offset}}
+          |                      ^^^^^^^^^^^^^^^^^^",
+          ],
+        },
+      ]
+    `);
     consoleOutput = [];
 
     codegen = new IntlCodegen();
@@ -159,20 +159,20 @@ Array [
     codegen.generateFiles();
 
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
-    ],
-  },
-  Object {
-    "log": Array [
-      "> 1 | plural with {plural, selectordinal, other {ordinal}}
-    |                      ^^^^^^^^^^^^^^^",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "[en: test]: Plural \`ordinal\` and \`offset\` are not yet supported.",
+          ],
+        },
+        Object {
+          "log": Array [
+            "> 1 | plural with {plural, selectordinal, other {ordinal}}
+          |                      ^^^^^^^^^^^^^^^",
+          ],
+        },
+      ]
+    `);
     consoleOutput = [];
   });
 
@@ -195,13 +195,13 @@ Array [
 
     expect(generatedMsg().join("")).toEqual("bar");
     expect(consoleOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "warn": Array [
-      "Translation key \\"foo\\" was not defined for locale \\"de\\". Falling back to default locale.",
-    ],
-  },
-]
-`);
+      Array [
+        Object {
+          "warn": Array [
+            "Translation key \\"foo\\" was not defined for locale \\"de\\". Falling back to default locale.",
+          ],
+        },
+      ]
+    `);
   });
 });
