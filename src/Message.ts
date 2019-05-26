@@ -1,4 +1,4 @@
-import { Pattern, Argument, default as MessageFormat } from "intl-messageformat-parser";
+import MessageFormat, { MessageFormatPattern, ArgumentElement } from "intl-messageformat-parser";
 import { logFormatError, ErrorInfo } from "./errors";
 
 type ExpressionType = "string" | "any";
@@ -70,7 +70,7 @@ export default class Message {
     block.expressions.push(part);
   }
 
-  private walkPattern(p: Pattern) {
+  private walkPattern(p: MessageFormatPattern) {
     const { elements } = p;
     for (const el of elements) {
       if (el.type === "messageTextElement") {
@@ -81,7 +81,7 @@ export default class Message {
     }
   }
 
-  private walkArgument(a: Argument) {
+  private walkArgument(a: ArgumentElement) {
     this.expressions.set(a.id, "any");
 
     if (!a.format) {
