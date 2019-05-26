@@ -1,6 +1,6 @@
 import IntlMessageFormat from "intl-messageformat";
 import path from "path";
-import IntlCodegen from "../src";
+import IntlCodegen from "../src-v1";
 import { forEachFixture } from "./helpers";
 
 interface FixtureCase {

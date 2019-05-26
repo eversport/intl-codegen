@@ -1,4 +1,4 @@
-import IntlCodegen from "../src";
+import IntlCodegen from "../src-v1";
 
 describe("Options", () => {
   it("should take string or object", () => {

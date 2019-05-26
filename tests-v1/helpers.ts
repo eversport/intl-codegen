@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import ts from "typescript";
-import IntlCodegen from "../src";
+import IntlCodegen from "../src-v1";
 
 export function forEachFixture<T>(dir: string, fn: (fixture: T) => void) {
   const files = fse.readdirSync(dir);
