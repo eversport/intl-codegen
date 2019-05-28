@@ -18,6 +18,7 @@
     "test": "cross-env NODE_ICU_DATA=node_modules/full-icu jest --runInBand"
   },
   "dependencies": {
+    "fluent-langneg": "^0.1.1",
     "fluent-syntax": "^0.13.0",
     "fs-extra": "^8.0.1"
   },

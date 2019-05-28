@@ -1,5 +1,5 @@
-import { MessageCollection } from "../parsing";
 import { ErrorCollector } from "../errors";
+import { Bundle } from "../types";
 
 const BUILTIN_TYPES = new Set(["string", "number", "datetime", "monetary", "element"]);
 
@@ -11,8 +11,8 @@ export function validateType(name: string) {
 
 export type TypeDefs = Map<string, Array<string>>;
 
-export function validateParams(errors: ErrorCollector, collection: MessageCollection, typeDefs: TypeDefs): void {
-  const template = collection.get("template")!;
+export function validateParams(errors: ErrorCollector, bundle: Bundle, typeDefs: TypeDefs): void {
+  const template = bundle.get("template")!.messages;
 
   // warn about parameter declarations with unknown types
   for (const id of template.keys()) {

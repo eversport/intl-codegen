@@ -1,7 +1,8 @@
 import { CodegenError, ErrorCollector } from "./errors";
-import { MessageCollection, Locale, parseMsgFmt, parseFluent, MessageDefinitions } from "./parsing";
+import { parseMsgFmt, parseFluent } from "./parsing";
 import { validateCollection, validateParams } from "./validation";
 import { TypeDefs, validateType } from "./validation/validate-params";
+import { LocaleId, Bundle, MessageDefinitions } from "./types";
 
 interface InputParameter {
   /** Name of the parameter */
@@ -25,7 +26,7 @@ interface GenerateResult {
   errors: Array<CodegenError>;
 }
 
-function validateLocale(locale: string): Locale {
+function validateLocale(locale: string): LocaleId {
   if (locale === "template") {
     throw new ReferenceError('Locale "template" is reserved for internal use');
   }
@@ -35,17 +36,17 @@ function validateLocale(locale: string): Locale {
 export class IntlCodegen {
   private errors = new ErrorCollector();
   private typeDefs: TypeDefs = new Map();
-  private collection: MessageCollection = new Map([["template", new Map()]]);
+  private bundle: Bundle = new Map([["template", { locale: "template", messages: new Map() }]]);
 
-  private addParseResult(locale: Locale, definitions: MessageDefinitions) {
-    let localeDefs = this.collection.get(locale);
+  private addParseResult(locale: LocaleId, definitions: MessageDefinitions) {
+    let localeDefs = this.bundle.get(locale);
     if (!localeDefs) {
-      localeDefs = new Map();
-      this.collection.set(locale, localeDefs);
+      localeDefs = { locale, messages: new Map() };
+      this.bundle.set(locale, localeDefs);
     }
     for (const [id, def] of definitions) {
       // TODO: error on duplicate definition?
-      localeDefs.set(id, def);
+      localeDefs.messages.set(id, def);
     }
   }
 
@@ -79,6 +80,7 @@ export class IntlCodegen {
       "template",
       parseMsgFmt({
         errors,
+        locale: "template",
         id,
         sourceText: messageFormat,
         params: parsedParams,
@@ -95,7 +97,7 @@ export class IntlCodegen {
    */
   defineMessagesUsingFluent(fluent: string): IntlCodegen {
     this.errors.setContext({ locale: "template" });
-    this.addParseResult("template", parseFluent(this.errors, fluent));
+    this.addParseResult("template", parseFluent(this.errors, "template", fluent));
     return this;
   }
 
@@ -106,7 +108,7 @@ export class IntlCodegen {
   addLocalizedMessageUsingMessageFormat(locale: string, id: string, messageFormat: string): IntlCodegen {
     const { errors } = this;
     errors.setContext({ locale, messageId: id });
-    this.addParseResult(validateLocale(locale), parseMsgFmt({ errors, id, sourceText: messageFormat }));
+    this.addParseResult(validateLocale(locale), parseMsgFmt({ errors, locale, id, sourceText: messageFormat }));
     return this;
   }
 
@@ -115,7 +117,7 @@ export class IntlCodegen {
    */
   addLocalizedMessagesUsingFluent(locale: string, fluent: string): IntlCodegen {
     this.errors.setContext({ locale });
-    this.addParseResult(validateLocale(locale), parseFluent(this.errors, fluent));
+    this.addParseResult(validateLocale(locale), parseFluent(this.errors, locale, fluent));
     return this;
   }
 
@@ -124,10 +126,10 @@ export class IntlCodegen {
    * It will return an Array of `files` and `errors`.
    */
   async generate(): Promise<GenerateResult> {
-    const { errors, collection } = this;
+    const { errors, bundle } = this;
 
-    validateCollection(errors, collection);
-    validateParams(errors, collection, this.typeDefs);
+    validateCollection(errors, bundle);
+    validateParams(errors, bundle, this.typeDefs);
 
     // console.log(collection);
 

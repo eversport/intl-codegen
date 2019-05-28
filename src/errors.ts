@@ -1,4 +1,4 @@
-import { Locale, MessageId, ParamId } from "./parsing";
+import { LocaleId, MessageId, ParamId } from "./types";
 
 // interface ErrorLocation {
 //   /** A note associated with this location. */
@@ -68,7 +68,7 @@ export type CodegenError =
     };
 
 interface ErrorContext {
-  locale: Locale;
+  locale: LocaleId;
   messageId: MessageId;
 }
 

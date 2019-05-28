@@ -1,5 +1,5 @@
 import { parse } from "fluent-syntax";
-import { MessageDefinitions, Params } from "./types";
+import { MessageDefinitions, Params, LocaleId } from "../types";
 import { ErrorCollector } from "../errors";
 
 // a "real" parser would be nice, but I will take my chances with
@@ -17,7 +17,7 @@ function parseParams(comment: string): Params {
   return params;
 }
 
-export function parseFluent(errors: ErrorCollector, sourceText: string): MessageDefinitions {
+export function parseFluent(errors: ErrorCollector, locale: LocaleId, sourceText: string): MessageDefinitions {
   const definitions: MessageDefinitions = new Map();
 
   const ast = parse(sourceText);
@@ -30,10 +30,12 @@ export function parseFluent(errors: ErrorCollector, sourceText: string): Message
       errors.setContext({ messageId: id });
 
       definitions.set(id, {
+        locale,
         id,
         params,
         sourceText,
         ast: node.value,
+        ir: undefined as any,
       });
     } else if (node.type === "Comment") {
     } else {
