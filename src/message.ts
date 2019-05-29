@@ -14,7 +14,7 @@ export class Message {
   public ast: AST = undefined as any;
   public ir: Pattern = undefined as any;
 
-  private constructor(public locale: LocaleId, public id: MessageId, public params: Params = new Map()) {}
+  constructor(public locale: LocaleId, public id: MessageId, public params: Params = new Map()) {}
 
   public withPropsFrom(other: Message) {
     this.params = other.params;

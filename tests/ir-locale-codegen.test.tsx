@@ -1,23 +1,23 @@
-import { BundleGenerator } from "../src/codegen/js";
-import { Bundle } from "../src/bundle";
-import { LocaleId, MessageId } from "../src/types";
+import React from "react";
+import { LocaleGenerator } from "../src/codegen/locale";
+import { LocaleId, MessageId, Params } from "../src/types";
 import { defineLoader } from "../runtime";
 import { text, ref, id, num, date, monetary, lit } from "../src/ir";
+import { Locale } from "../src/locale";
+import { Message } from "../src/message";
 
-async function makeFn(...elements: any) {
-  const bundle = new Bundle();
+async function makeFn(_params: Record<string, string>, ...elements: Array<any>) {
+  const loc = "template" as LocaleId;
+  const msgId = "test-id" as MessageId;
+  const params: Params = new Map(Object.entries(_params).map(([name, type]: [any, any]) => [name, { name, type }]));
+  const message = new Message(loc, msgId, params)
+    .withParseResult("source-text", undefined as any)
+    .withIR({ type: "Pattern", elements });
+  const locale = new Locale(loc);
+  locale.messages.set(msgId, message);
 
-  bundle.locales.get("template" as LocaleId)!.set(
-    "test" as MessageId,
-    {
-      id: "test-id",
-      sourceText: "test-source",
-      ir: { type: "Pattern", elements },
-    } as any,
-  );
-
-  const generator = new BundleGenerator(bundle);
-  const code = generator.generateLocale("template" as LocaleId);
+  const generator = new LocaleGenerator(locale);
+  const code = generator.generate();
 
   const loader = defineLoader(["test"], {
     async template() {
@@ -32,29 +32,30 @@ async function makeFn(...elements: any) {
   return intl.test;
 }
 
-describe("js codegen", () => {
+describe("locale codegen", () => {
   it("should generate a very simple message", async () => {
-    const fn = await makeFn(text("foobar"));
+    const fn = await makeFn({}, text("foobar"));
     expect(fn()).toMatchInlineSnapshot(`"foobar"`);
   });
 
   it("should generate a very simple param reference", async () => {
-    const fn = await makeFn(ref("foo-bar"));
+    const fn = await makeFn({}, ref("foo-bar"));
     expect(fn({ "foo-bar": "foobar" })).toMatchInlineSnapshot(`"foobar"`);
   });
 
   it("should generate a formatted number literal", async () => {
-    const fn = await makeFn(num(lit(123456.789)));
+    const fn = await makeFn({}, num(lit(123456.789)));
     expect(fn()).toMatchInlineSnapshot(`"123 456,789"`);
   });
 
   it("should generate a formatted number param", async () => {
-    const fn = await makeFn(num(id("foo-bar")));
+    const fn = await makeFn({}, num(id("foo-bar")));
     expect(fn({ "foo-bar": 123456.789 })).toMatchInlineSnapshot(`"123 456,789"`);
   });
 
   it("should combine flat text and formatters", async () => {
     const fn = await makeFn(
+      {},
       text("number: "),
       num(id("number")),
       text("\ndatetime: "),
@@ -83,6 +84,18 @@ describe("js codegen", () => {
       "number: 123 456,789
       datetime: 28. Mai 2019, 16:44 UTC
       monetary: € 123.456,79"
+    `);
+  });
+
+  it("should generate correct code that outputs elements", async () => {
+    const fn = await makeFn({ elem: "element" }, text("an element: "), ref("elem"));
+    expect(fn({ elem: <strong>the element \o/</strong> })).toMatchInlineSnapshot(`
+      Array [
+        "an element: ",
+        <strong>
+          the element \\o/
+        </strong>,
+      ]
     `);
   });
 });
