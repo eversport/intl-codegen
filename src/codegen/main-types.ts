@@ -1,5 +1,7 @@
 import { Bundle, templateId } from "../bundle";
 import { CodeGenerator } from "./generator";
+import { camelify } from "./helpers";
+import { generateParamsType } from "./params-types";
 
 export class MainTypesGenerator extends CodeGenerator {
   constructor(public bundle: Bundle) {
@@ -17,8 +19,11 @@ export class MainTypesGenerator extends CodeGenerator {
     messageIds.sort((a, b) => a.localeCompare(b));
 
     this.indent += 1;
-    for (const msg of messageIds) {
-      this.line(`${this.isId(msg) ? msg : `[${JSON.stringify(msg)}]`}(): string,`);
+    for (const id of messageIds) {
+      const msg = template.messages.get(id)!;
+      const params = generateParamsType(msg.params);
+      // TODO: element returns
+      this.line(`${camelify(msg.id)}(${params}): string,`);
     }
     this.indent -= 1;
 

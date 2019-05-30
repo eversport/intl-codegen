@@ -1,8 +1,9 @@
 import * as fluent from "fluent-syntax";
+import { Bundle } from "../bundle";
 import { Message } from "../message";
 import { Element, Pattern, ref, text } from "../types";
 
-export function convertFluent(msg: Message) {
+export function convertFluent(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
 
   const ast = msg.ast as fluent.Message;
@@ -30,7 +31,7 @@ export function convertFluent(msg: Message) {
       return ref(node.expression.id.name);
     }
 
-    // TODO: raise unsupported syntax error
+    bundle.raiseSyntaxError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`);
     return text(sourceText.slice(node.span.start, node.span.end));
   }
 }

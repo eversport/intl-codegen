@@ -67,7 +67,14 @@
     ],
     "testMatch": [
       "**/?(*.)+(spec|test).(ts|tsx)"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "pathRegex": "^((?!testoutput).)*$"
+        }
+      }
+    }
   },
   "prettier": {
     "printWidth": 120,

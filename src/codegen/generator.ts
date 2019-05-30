@@ -1,5 +1,3 @@
-const ID_RE = /^[A-Za-z_$][$\w]*$/;
-
 export abstract class CodeGenerator {
   protected indent = 0;
   protected code = "";
@@ -14,8 +12,5 @@ export abstract class CodeGenerator {
   }
   protected finish() {
     return this.code.trim() + "\n";
-  }
-  protected isId(name: string) {
-    return ID_RE.test(name);
   }
 }

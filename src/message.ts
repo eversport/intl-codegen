@@ -3,6 +3,7 @@ import { MessageFormatPattern } from "intl-messageformat-parser";
 import { convertFluent, convertMsgFmt } from "./lowering";
 import { LocaleId, MessageId, Params } from "./types";
 import { Pattern } from "./types/ir";
+import { Bundle } from "./bundle";
 
 type AST = FluentMessage | MessageFormatPattern;
 
@@ -31,8 +32,8 @@ export class Message {
     return this;
   }
 
-  public lower() {
-    this.ir = this.ast.type === "Message" ? convertFluent(this) : convertMsgFmt(this);
+  public lower(bundle: Bundle) {
+    this.ir = this.ast.type === "Message" ? convertFluent(bundle, this) : convertMsgFmt(bundle, this);
   }
 
   public withIR(ir: Pattern) {

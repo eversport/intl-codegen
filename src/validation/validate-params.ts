@@ -11,10 +11,10 @@ export function validateParams(bundle: Bundle): void {
 
     // errors.setContext({ locale: "template", messageId: id });
     for (const param of params.values()) {
-      const { /*name, */ type } = param;
+      const { name, type } = param;
       if (!BUILTIN_TYPES.has(type) && !typeDefs.has(type)) {
-        // TODO: report unknown type error
-        // errors.unknownParamType(name, type);
+        bundle.raiseTypeError("unknown-type", `The parameter \`${name}\` has unknown type \`${type}\`.`);
+
         // fall back to string if the type was not known
         param.type = "string" as ParamType;
       }

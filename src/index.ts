@@ -2,7 +2,7 @@ import fsExtra from "fs-extra";
 import path from "path";
 import { version } from "../package.json";
 import { Bundle, GenerateResult, templateId } from "./bundle";
-import { MessageId, ParamId, ParamType, validateLocaleId, validateMessageId, validateParamType } from "./types";
+import { MessageId, ParamId, ParamType, validateLocaleId, validateMessageId /*validateParamType*/ } from "./types";
 
 const BANNER =
   `
@@ -34,11 +34,11 @@ export class IntlCodegen {
   /**
    * Define a custom enum type with `name` and `variants` for use inside selectors.
    */
-  defineType(name: string, variants: Array<string>): IntlCodegen {
-    this.bundle.addType(validateParamType(name), variants);
+  // defineType(name: string, variants: Array<string>): IntlCodegen {
+  //   this.bundle.addType(validateParamType(name), variants);
 
-    return this;
-  }
+  //   return this;
+  // }
 
   /**
    * Define a single message with `id` and `params`, with the fallback template in

@@ -1,8 +1,9 @@
 import * as mf from "intl-messageformat-parser";
 import { Message } from "../message";
+import { Bundle } from "../bundle";
 import { Element, Pattern, ref, text } from "../types";
 
-export function convertMsgFmt(msg: Message) {
+export function convertMsgFmt(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
 
   return convertPattern(msg.ast as mf.MessageFormatPattern);
@@ -23,7 +24,7 @@ export function convertMsgFmt(msg: Message) {
       return ref(node.id);
     }
 
-    // TODO: report unsupported syntax
+    bundle.raiseSyntaxError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`);
     return text(sourceText.slice(node.location.start.offset, node.location.end.offset));
   }
 }

@@ -5,6 +5,7 @@ import { Locale } from "./locale";
 import { Message } from "./message";
 import { LocaleId, MessageId, ParamId, Params, ParamType, TypeDefs, validateMessageId } from "./types";
 import { validateCollection, validateParams } from "./validation";
+import { CodegenError, ErrorId } from "./errors";
 
 export const templateId = "template" as LocaleId;
 
@@ -39,6 +40,7 @@ export interface GenerateResult {
  */
 export class Bundle {
   public typeDefs: TypeDefs = new Map();
+  public errors: Array<CodegenError> = [];
   public locales = new Map<LocaleId, Locale>([[templateId, new Locale(templateId)]]);
 
   public addType(name: ParamType, variants: Array<string>) {
@@ -78,7 +80,7 @@ export class Bundle {
       const msg = new Message(locale, id, params).withParseResult(sourceText, ast);
       this.getLocale(locale).messages.set(id, msg);
     } catch (error) {
-      // TODO: report parse error
+      this.raiseSyntaxError("parse-error", error.message);
     }
 
     return this;
@@ -129,7 +131,34 @@ export class Bundle {
 
     return {
       files,
-      errors: [],
+      errors: this.errors,
     };
+  }
+
+  public raiseSyntaxError(id: ErrorId, msg: string) {
+    const error = new SyntaxError(`[${id}]: ${msg}`) as CodegenError;
+    error.id = id;
+    error.locations = [];
+
+    this.errors.push(error);
+    return this;
+  }
+
+  public raiseReferenceError(id: ErrorId, msg: string) {
+    const error = new ReferenceError(`[${id}]: ${msg}`) as CodegenError;
+    error.id = id;
+    error.locations = [];
+
+    this.errors.push(error);
+    return this;
+  }
+
+  public raiseTypeError(id: ErrorId, msg: string) {
+    const error = new TypeError(`[${id}]: ${msg}`) as CodegenError;
+    error.id = id;
+    error.locations = [];
+
+    this.errors.push(error);
+    return this;
   }
 }

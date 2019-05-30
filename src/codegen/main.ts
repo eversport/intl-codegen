@@ -1,5 +1,6 @@
 import { Bundle, templateId } from "../bundle";
 import { CodeGenerator } from "./generator";
+import { camelify, isId } from "./helpers";
 
 export class MainGenerator extends CodeGenerator {
   constructor(public bundle: Bundle) {
@@ -18,7 +19,7 @@ export class MainGenerator extends CodeGenerator {
 
     this.indent += 1;
     for (const msg of messageIds) {
-      this.line(`${JSON.stringify(msg)},`);
+      this.line(`${JSON.stringify(camelify(msg))},`);
     }
     this.indent -= 1;
 
@@ -26,7 +27,7 @@ export class MainGenerator extends CodeGenerator {
 
     this.indent += 1;
     for (const locale of this.bundle.locales.keys()) {
-      this.line(`${this.isId(locale) ? locale : JSON.stringify(locale)}: () => import("./locales/${locale}.js"),`);
+      this.line(`${isId(locale) ? locale : JSON.stringify(locale)}: () => import("./locales/${locale}.js"),`);
     }
     this.indent -= 1;
 

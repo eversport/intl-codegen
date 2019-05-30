@@ -2,7 +2,7 @@ import { Locale } from "../locale";
 import { Message } from "../message";
 import { DateTimeFormat, Identifier, MonetaryFormat, NumberFormat, Pattern } from "../types";
 import { CodeGenerator } from "./generator";
-import { stable } from "./helpers";
+import { stable, hasElementParameter, isId } from "./helpers";
 
 export class LocaleGenerator extends CodeGenerator {
   private formatters: Array<string> = [];
@@ -78,13 +78,7 @@ export class LocaleGenerator extends CodeGenerator {
   private messageHasElement: boolean = false;
   generateMessage(message: Message) {
     // record if the message has any element params
-    this.messageHasElement = false;
-    for (const param of message.params.values()) {
-      if (param.type === "element") {
-        this.messageHasElement = true;
-        break;
-      }
-    }
+    this.messageHasElement = hasElementParameter(message);
 
     this.indent += 1;
     this.line(`// \`${message.id}\`:`);
@@ -124,6 +118,6 @@ export class LocaleGenerator extends CodeGenerator {
   }
 
   generateId(id: Identifier): string {
-    return this.isId(id.name) ? `params.${id.name}` : `params[${JSON.stringify(id.name)}]`;
+    return isId(id.name) ? `params.${id.name}` : `params[${JSON.stringify(id.name)}]`;
   }
 }
