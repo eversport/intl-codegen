@@ -59,11 +59,12 @@
     ],
     "coveragePathIgnorePatterns": [
       ".testoutput",
-      "__tests__",
+      "tests",
       "node_modules"
     ],
     "testPathIgnorePatterns": [
-      "/fixtures/"
+      "/fixtures/",
+      "/.testoutput/"
     ],
     "testMatch": [
       "**/?(*.)+(spec|test).(ts|tsx)"

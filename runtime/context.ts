@@ -1,3 +1,6 @@
+export type NumberValue = number;
+export type DateTimeValue = Date;
+
 export interface MonetaryValue {
   readonly value: number;
   readonly currency: string;
@@ -14,12 +17,12 @@ export class Context<Locales> {
 
   createDateFormatter(options: Intl.DateTimeFormatOptions) {
     const formatter = new Intl.DateTimeFormat(this.locale.formatter, options);
-    return (date: Date) => formatter.format(date);
+    return (date: DateTimeValue) => formatter.format(date);
   }
 
   createNumberFormatter(options: Intl.NumberFormatOptions) {
     const formatter = new Intl.NumberFormat(this.locale.formatter, options);
-    return (num: number) => formatter.format(num);
+    return (num: NumberValue) => formatter.format(num);
   }
 
   createMonetaryFormatter(options: Intl.NumberFormatOptions) {

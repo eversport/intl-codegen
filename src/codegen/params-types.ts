@@ -3,9 +3,9 @@ import { isId } from "./helpers";
 
 const paramTypes = {
   string: "string",
-  number: "IntlNumber",
-  datetime: "IntlDateTime",
-  monetary: "IntlMonetaryValue",
+  number: "NumberValue",
+  datetime: "DateTimeValue",
+  monetary: "MonetaryValue",
   // TODO: element, custom types…
 };
 

@@ -11,7 +11,7 @@ export class MainTypesGenerator extends CodeGenerator {
   generate() {
     const template = this.bundle.getLocale(templateId);
 
-    this.line(`import { LoaderFn } from "intl-codegen/runtime";`);
+    this.line(`import { LoaderFn, NumberValue, DateTimeValue, MonetaryValue } from "intl-codegen/runtime";`);
     this.blank();
     this.line(`export declare const loadLanguage: LoaderFn<{`);
 
@@ -23,7 +23,7 @@ export class MainTypesGenerator extends CodeGenerator {
       const msg = template.messages.get(id)!;
       const params = generateParamsType(msg.params);
       // TODO: element returns
-      this.line(`${camelify(msg.id)}(${params}): string,`);
+      this.line(`${camelify(msg.id)}(${params ? `params: ${params}` : ""}): string,`);
     }
     this.indent -= 1;
 

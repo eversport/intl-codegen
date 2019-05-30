@@ -6,6 +6,8 @@ import ts from "typescript";
 
 const FIXTURES_DIR = path.join(__dirname, "fixtures");
 
+jest.setTimeout(10 * 1000);
+
 describe("Fixtures", () => {
   const fixtures = fsExtra.readdirSync(FIXTURES_DIR);
   for (const name of fixtures) {
@@ -75,7 +77,11 @@ const compilerOptions = fsExtra
 const LANGNEG = path.join(__dirname, "..", "runtime", "fluent-langneg.d.ts");
 
 async function getDiagnostics(fileName: string) {
-  const options: ts.CompilerOptions = { ...(await compilerOptions) };
+  const options: ts.CompilerOptions = {
+    ...(await compilerOptions),
+    // skipLibCheck: false,
+    // skipDefaultLibCheck: true,
+  };
   const dirName = path.dirname(fileName);
 
   const program = ts.createProgram([fileName, LANGNEG], options);

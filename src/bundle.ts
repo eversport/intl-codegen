@@ -103,7 +103,7 @@ export class Bundle {
     // lower all the messages to IR
     for (const locale of this.locales.values()) {
       for (const msg of locale.messages.values()) {
-        msg.lower();
+        msg.lower(this);
       }
     }
 

@@ -1,0 +1,2 @@
+test.tsx (14,27): Type 'number' is not assignable to type 'MonetaryValue'.
+test.tsx (15,27): Property 'currency' is missing in type '{ value: number; }' but required in type 'MonetaryValue'.
