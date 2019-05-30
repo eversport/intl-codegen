@@ -1,46 +1,36 @@
-// import * as fluent from "fluent-syntax";
-// import { Location, Element, Pattern } from "./ir";
+import * as fluent from "fluent-syntax";
+import { Message } from "../message";
+import { Element, Pattern, ref, text } from "../types";
 
-// function convertFluent(sourceText: string) {
-//   function loc({ span }: { span: fluent.Span }): Location {
-//     return {
-//       sourceText,
-//       range: [span.start, span.end],
-//     };
-//   }
+export function convertFluent(msg: Message) {
+  const { sourceText } = msg;
 
-//   function convertPattern(node: fluent.Pattern): Pattern {
-//     return {
-//       type: "Pattern",
-//       elements: node.elements.map(convertElement),
-//       location: loc(node),
-//     };
-//   }
+  const ast = msg.ast as fluent.Message;
 
-//   function convertElement(node: fluent.Element): Element {
-//     if (node.type === "TextElement") {
-//       return {
-//         type: "Text",
-//         value: node.value,
-//         location: loc(node),
-//       };
-//     } else if (node.type === "Placeable" && node.expression.type === "VariableReference") {
-//       return {
-//         type: "Placeable",
-//         id: {
-//           type: "Identifier",
-//           name: node.expression.id.name,
-//           location: loc(node.expression.id),
-//         },
-//         location: loc(node),
-//       };
-//     }
+  const ir = convertPattern(ast.value);
 
-//     errors.unsupportedSyntax(node);
-//     return {
-//       type: "Text",
-//       value: sourceText.slice(node.span.start, node.span.end),
-//       location: loc(node),
-//     };
-//   }
-// }
+  // after the whole AST has been converted, and we don’t need the complete
+  // source text anymore, make sure to cut it down to only this single message
+
+  msg.sourceText = msg.sourceText.slice(ast.span.start, ast.span.end);
+
+  return ir;
+
+  function convertPattern(node: fluent.Pattern): Pattern {
+    return {
+      type: "Pattern",
+      elements: node.elements.map(convertElement),
+    };
+  }
+
+  function convertElement(node: fluent.Element): Element {
+    if (node.type === "TextElement") {
+      return text(node.value);
+    } else if (node.type === "Placeable" && node.expression.type === "VariableReference") {
+      return ref(node.expression.id.name);
+    }
+
+    // TODO: raise unsupported syntax error
+    return text(sourceText.slice(node.span.start, node.span.end));
+  }
+}

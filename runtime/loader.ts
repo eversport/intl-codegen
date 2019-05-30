@@ -1,26 +1,23 @@
 import { negotiateLanguages } from "fluent-langneg";
+import { Context, LocaleInfo } from "./context";
 import { parseRequestedLanguages } from "./requested-language";
-import { Context } from "./context";
 
 interface MessageFile {
-  default: (ctx: Context) => Array<any>;
+  default: (ctx: Context<any>) => Array<any>;
 }
 
-interface LocaleInfo<T extends string = string> {
-  requested: string | Array<string>;
-  loaded: T;
-  formatter: string;
-}
+type IntlObject<Messages, Locales> = Messages & { context: Context<Locales> };
 
-type IntlObject<T extends {}> = T & { locale: LocaleInfo };
-
-type LoaderFn<T> = (locale: string | Array<string>) => Promise<IntlObject<T>>;
+export type LoaderFn<Messages, Locales> = (locale: string | Array<string>) => Promise<IntlObject<Messages, Locales>>;
 
 interface LoaderMap {
   [locale: string]: () => Promise<MessageFile>;
 }
 
-export function defineLoader<T extends {}>(messageIds: Array<keyof T>, loaders: LoaderMap): LoaderFn<T> {
+export function defineLoader<Messages extends {}, Locales extends string>(
+  messageIds: Array<string>,
+  loaders: LoaderMap,
+): LoaderFn<Messages, Locales> {
   const availableLocales = Object.keys(loaders);
 
   return async languages => {
@@ -31,17 +28,17 @@ export function defineLoader<T extends {}>(messageIds: Array<keyof T>, loaders: 
     });
 
     const formatterLocale = new Intl.NumberFormat(requestedLocales).resolvedOptions().locale;
-    const context = new Context(formatterLocale);
+
+    const locale: LocaleInfo<Locales> = {
+      requested: requestedLocales,
+      loaded: resolvedLocale as Locales,
+      formatter: formatterLocale,
+    };
+    const context = new Context(locale);
     const messageFile = await loaders[resolvedLocale]();
     const messages = messageFile.default(context);
 
-    const locale: LocaleInfo = {
-      requested: requestedLocales,
-      loaded: resolvedLocale,
-      formatter: formatterLocale,
-    };
-
-    const intl: any = { locale };
+    const intl: any = { context };
 
     for (const [idx, id] of messageIds.entries()) {
       intl[id] = messages[idx];

@@ -22,7 +22,12 @@
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "intl-codegen/runtime": ["runtime/index.ts"]
+    }
   },
-  "exclude": ["coverage", "dist"]
+  "exclude": ["coverage", "dist", "tests/fixtures", ".testoutput"]
 }

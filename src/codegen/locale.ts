@@ -1,24 +1,10 @@
-import { Message } from "../message";
-import { Pattern, Identifier } from "../types";
-import { stable } from "./helpers";
-import { DateTimeFormat, MonetaryFormat, NumberFormat } from "../types";
 import { Locale } from "../locale";
+import { Message } from "../message";
+import { DateTimeFormat, Identifier, MonetaryFormat, NumberFormat, Pattern } from "../types";
+import { CodeGenerator } from "./generator";
+import { stable } from "./helpers";
 
-const ID_RE = /^[A-Za-z_$][$\w]*$/;
-
-export class LocaleGenerator {
-  private indent = 0;
-  private code = "";
-  private line(line: string) {
-    this.code += "\n" + "  ".repeat(this.indent) + line;
-  }
-  private blank() {
-    this.code += "\n";
-  }
-  private append(s: string) {
-    this.code += s;
-  }
-
+export class LocaleGenerator extends CodeGenerator {
   private formatters: Array<string> = [];
   generateFormatterFunction(format: NumberFormat | DateTimeFormat | MonetaryFormat): string {
     const creatorFn = format.type === "NumberFormat" ? "n" : format.type === "DateTimeFormat" ? "d" : "m";
@@ -42,7 +28,9 @@ export class LocaleGenerator {
     }
   }
 
-  constructor(public locale: Locale) {}
+  constructor(public locale: Locale) {
+    super();
+  }
 
   generate(): string {
     const { messages } = this.locale;
@@ -68,9 +56,12 @@ export class LocaleGenerator {
       this.line("export default context => [");
     }
 
-    for (const id of messageIds) {
+    for (const [idx, id] of messageIds.entries()) {
       this.generateMessage(messages.get(id)!);
       this.append(",");
+      if (idx < messageIds.length - 1) {
+        this.blank();
+      }
     }
 
     if (formatters.length) {
@@ -81,7 +72,7 @@ export class LocaleGenerator {
       this.line("];");
     }
 
-    return this.code;
+    return this.finish();
   }
 
   private messageHasElement: boolean = false;
@@ -96,8 +87,8 @@ export class LocaleGenerator {
     }
 
     this.indent += 1;
+    this.line(`// \`${message.id}\`:`);
     for (const line of message.sourceText.split("\n")) {
-      this.line(`// \`${message.id}\`:`);
       this.line(`// ${line}`);
     }
 
@@ -133,7 +124,6 @@ export class LocaleGenerator {
   }
 
   generateId(id: Identifier): string {
-    const isId = ID_RE.test(id.name);
-    return isId ? `params.${id.name}` : `params[${JSON.stringify(id.name)}]`;
+    return this.isId(id.name) ? `params.${id.name}` : `params[${JSON.stringify(id.name)}]`;
   }
 }

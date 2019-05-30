@@ -1,9 +1,10 @@
-import { LocaleId, MessageId, Params } from "./types";
-import { Pattern as FluentPattern } from "fluent-syntax";
+import { Message as FluentMessage } from "fluent-syntax";
 import { MessageFormatPattern } from "intl-messageformat-parser";
+import { convertFluent, convertMsgFmt } from "./lowering";
+import { LocaleId, MessageId, Params } from "./types";
 import { Pattern } from "./types/ir";
 
-type AST = FluentPattern | MessageFormatPattern;
+type AST = FluentMessage | MessageFormatPattern;
 
 /**
  * A `Message` is the basic unit of a translation.
@@ -28,6 +29,10 @@ export class Message {
     this.sourceText = sourceText;
     this.ast = ast;
     return this;
+  }
+
+  public lower() {
+    this.ir = this.ast.type === "Message" ? convertFluent(this) : convertMsgFmt(this);
   }
 
   public withIR(ir: Pattern) {

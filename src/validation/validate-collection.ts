@@ -1,54 +1,48 @@
-import { ErrorCollector } from "../errors";
-import { Bundle, MessageId } from "../types";
-import { createFakePattern } from "../parsing";
+import { Bundle, templateId } from "../bundle";
+import { createFakePattern } from "../fake-pattern";
+import { Message } from "../message";
+import { MessageId } from "../types";
 
-export function validateCollection(errors: ErrorCollector, bundle: Bundle): void {
-  const template = bundle.get("template")!.messages;
+export function validateCollection(bundle: Bundle): void {
+  const template = bundle.getLocale(templateId);
 
   // get *all* the used message IDs
   const allIds = new Set<MessageId>();
-  for (const defs of bundle.values()) {
-    for (const id of defs.messages.keys()) {
+  for (const locales of bundle.locales.values()) {
+    for (const id of locales.messages.keys()) {
       allIds.add(id);
     }
   }
 
   // warn about undefined messages and add an empty definition
   for (const id of allIds) {
-    if (!template.has(id)) {
-      errors.messageNotDefined(id);
+    if (!template.messages.has(id)) {
+      // TODO: raise message not defined error
 
       // create a fake fluent AST that just has the message-id as content
-      template.set(id, {
-        locale: "template",
-        id,
-        params: new Map(),
-        sourceText: id,
-        ast: createFakePattern(id),
-        ir: undefined as any,
-      });
+      const msg = new Message(templateId, id).withParseResult(id, createFakePattern(id));
+      template.messages.set(id, msg);
     }
   }
 
   // warn about un-localized messages and replace those with the template
-  for (const [locale, defs] of bundle) {
-    if (locale === "template") {
+  for (const locale of bundle.locales.values()) {
+    if (locale === template) {
       continue;
     }
-    errors.setContext({ locale });
-    for (const id of allIds) {
-      if (!defs.messages.has(id)) {
-        errors.messageNotLocalized(id);
 
-        const templateMsg = template.get(id)!;
-        defs.messages.set(id, {
-          locale,
-          id,
-          params: templateMsg.params,
-          sourceText: templateMsg.sourceText,
-          ast: templateMsg.ast,
-          ir: undefined as any,
-        });
+    for (const id of allIds) {
+      let msg = locale.messages.get(id);
+      const templateMsg = template.messages.get(id)!;
+      if (!msg) {
+        // TODO: raise message not localized error
+
+        msg = new Message(locale.locale, id).withPropsFrom(templateMsg);
+        locale.messages.set(id, msg);
+      } else {
+        // copy over the params from the template, so that each message has
+        // the same set of param definitions that are used later for IR generation
+        msg.params = templateMsg.params;
       }
     }
   }

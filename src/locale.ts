@@ -1,5 +1,5 @@
-import { LocaleId, MessageId } from "./types";
 import { Message } from "./message";
+import { LocaleId, MessageId } from "./types";
 
 export class Locale {
   public readonly messages: Map<MessageId, Message> = new Map();

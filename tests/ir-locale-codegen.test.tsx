@@ -1,10 +1,9 @@
 import React from "react";
-import { LocaleGenerator } from "../src/codegen/locale";
-import { LocaleId, MessageId, Params } from "../src/types";
 import { defineLoader } from "../runtime";
-import { text, ref, id, num, date, monetary, lit } from "../src/ir";
+import { LocaleGenerator } from "../src/codegen/locale";
 import { Locale } from "../src/locale";
 import { Message } from "../src/message";
+import { date, id, lit, LocaleId, MessageId, monetary, num, Params, ref, text } from "../src/types";
 
 async function makeFn(_params: Record<string, string>, ...elements: Array<any>) {
   const loc = "template" as LocaleId;
@@ -29,7 +28,7 @@ async function makeFn(_params: Record<string, string>, ...elements: Array<any>) 
   });
 
   const intl = await loader(["garbage", "de-AT", "en"]);
-  return intl.test;
+  return (intl as any).test;
 }
 
 describe("locale codegen", () => {

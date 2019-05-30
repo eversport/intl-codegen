@@ -1,30 +1,22 @@
-import { ErrorCollector } from "../errors";
-import { Bundle } from "../types";
+import { Bundle, templateId } from "../bundle";
+import { BUILTIN_TYPES, ParamType } from "../types";
 
-const BUILTIN_TYPES = new Set(["string", "number", "datetime", "monetary", "element"]);
-
-export function validateType(name: string) {
-  if (BUILTIN_TYPES.has(name)) {
-    throw new ReferenceError(`The type "${name}" is a built-in type and cannot be re-defined`);
-  }
-}
-
-export type TypeDefs = Map<string, Array<string>>;
-
-export function validateParams(errors: ErrorCollector, bundle: Bundle, typeDefs: TypeDefs): void {
-  const template = bundle.get("template")!.messages;
+export function validateParams(bundle: Bundle): void {
+  const { typeDefs } = bundle;
+  const template = bundle.getLocale(templateId).messages;
 
   // warn about parameter declarations with unknown types
   for (const id of template.keys()) {
     const { params } = template.get(id)!;
 
-    errors.setContext({ locale: "template", messageId: id });
+    // errors.setContext({ locale: "template", messageId: id });
     for (const param of params.values()) {
-      const { name, type } = param;
+      const { /*name, */ type } = param;
       if (!BUILTIN_TYPES.has(type) && !typeDefs.has(type)) {
-        errors.unknownParamType(name, type);
+        // TODO: report unknown type error
+        // errors.unknownParamType(name, type);
         // fall back to string if the type was not known
-        param.type = "string";
+        param.type = "string" as ParamType;
       }
     }
   }

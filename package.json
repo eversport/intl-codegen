@@ -62,6 +62,9 @@
       "__tests__",
       "node_modules"
     ],
+    "testPathIgnorePatterns": [
+      "/fixtures/"
+    ],
     "testMatch": [
       "**/?(*.)+(spec|test).(ts|tsx)"
     ]

@@ -1,52 +1,29 @@
-// import * as mf from "intl-messageformat-parser";
-// import { Pattern, Location, Element } from "./ir";
+import * as mf from "intl-messageformat-parser";
+import { Message } from "../message";
+import { Element, Pattern, ref, text } from "../types";
 
-// function convertMsgFmt(sourceText: string) {
-//   function loc({ location }: { location: mf.Location }): Location {
-//     return {
-//       sourceText,
-//       range: [location.start.offset, location.end.offset],
-//     };
-//   }
+export function convertMsgFmt(msg: Message) {
+  const { sourceText } = msg;
 
-//   function convertPattern(node: mf.MessageFormatPattern): Pattern {
-//     return {
-//       type: "Pattern",
-//       elements: node.elements.map(convertElement),
-//       location: loc(node),
-//     };
-//   }
+  return convertPattern(msg.ast as mf.MessageFormatPattern);
 
-//   function convertElement(node: mf.Element): Element {
-//     if (node.type === "messageTextElement") {
-//       return {
-//         type: "Text",
-//         value: node.value,
-//         location: loc(node),
-//       };
-//     }
+  function convertPattern(node: mf.MessageFormatPattern): Pattern {
+    return {
+      type: "Pattern",
+      elements: node.elements.map(convertElement),
+    };
+  }
 
-//     let start = node.location.start.offset + 1;
-//     start += sourceText.indexOf(node.id, start);
-//     const end = start + node.id.length;
-//     const location = {
-//       sourceText,
-//       range: [start, end],
-//     } as const;
+  function convertElement(node: mf.Element): Element {
+    if (node.type === "messageTextElement") {
+      return text(node.value);
+    }
 
-//     if (!node.format) {
-//       return {
-//         type: "Placeable",
-//         id: { type: "Identifier", name: node.id, location },
-//         location: loc(node),
-//       };
-//     }
+    if (!node.format) {
+      return ref(node.id);
+    }
 
-//     errors.unsupportedSyntax(node);
-//     return {
-//       type: "Text",
-//       value: sourceText.slice(node.location.start.offset, node.location.end.offset),
-//       location: loc(node),
-//     };
-//   }
-// }
+    // TODO: report unsupported syntax
+    return text(sourceText.slice(node.location.start.offset, node.location.end.offset));
+  }
+}
