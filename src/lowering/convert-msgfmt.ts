@@ -1,7 +1,7 @@
 import * as mf from "intl-messageformat-parser";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
-import { Element, ParamId, ParamType, Pattern, text } from "../types";
+import { Element, id, ParamId, ParamType, Pattern, select, text, Variant, variant } from "../types";
 import { formatValue } from "./formatted-value";
 import { formats } from "./msgfmt-formats";
 
@@ -38,6 +38,40 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
         "datetime" as ParamType,
         (format.type === "dateFormat" ? formats.date : formats.time)[format.style],
       );
+    } else if (format.type === "selectFormat" || format.type === "pluralFormat") {
+      let other: Variant | undefined;
+
+      let type: "ordinal" | "plural" | undefined;
+      if (format.type === "pluralFormat") {
+        type = format.ordinal ? "ordinal" : "plural";
+      }
+
+      if (type && (!param || param.type !== "number")) {
+        bundle.raiseTypeError("wrong-type", `Messageformat plural selector is only valid for type "number".`);
+        type = undefined;
+      }
+
+      const variants: Array<Variant> = [];
+      for (const option of format.options) {
+        const selector = option.selector.startsWith("=") ? Number(option.selector.slice(1)) : option.selector;
+
+        // TODO: validate selector depending on pluralization
+
+        const vari = variant(selector, ...option.value.elements.map(convertElement));
+        if (selector === "other") {
+          other = vari;
+        } else {
+          variants.push(vari);
+        }
+      }
+
+      if (!other) {
+        bundle.raiseSyntaxError("missing-other", "MessageFormat requires a `other` case to be defined.");
+        variants.unshift(variants.pop()!);
+      } else {
+        variants.unshift(other);
+      }
+      return select(id(name), variants, type);
     }
 
     bundle.raiseSyntaxError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`);

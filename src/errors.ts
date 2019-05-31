@@ -28,7 +28,9 @@ export type ErrorId =
   | "unknown-type"
   | "wrong-type"
   | "undeclared-param"
-  | "unknown-function";
+  | "unknown-function"
+  | "wrong-selector"
+  | "missing-other";
 
 export interface CodegenError {
   name: "SyntaxError" | "TypeError" | "ReferenceError";

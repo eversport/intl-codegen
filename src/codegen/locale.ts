@@ -24,6 +24,10 @@ export class LocaleGenerator extends CodeGenerator {
     for (const elem of pattern.elements) {
       if (elem.type === "NumberFormat" || elem.type === "DateTimeFormat" || elem.type === "MonetaryFormat") {
         this.generateFormatterFunction(elem);
+      } else if (elem.type === "Select") {
+        for (const variant of elem.variants) {
+          this.findFormatterFunctions(variant.value);
+        }
       }
     }
   }

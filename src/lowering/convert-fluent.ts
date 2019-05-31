@@ -1,7 +1,7 @@
 import * as fluent from "fluent-syntax";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
-import { Element, ParamId, ParamType, Pattern, text } from "../types";
+import { Element, id, ParamId, ParamType, Pattern, select, text, Variant, variant } from "../types";
 import { formatValue } from "./formatted-value";
 
 export function convertFluent(bundle: Bundle, msg: Message) {
@@ -48,6 +48,34 @@ export function convertFluent(bundle: Bundle, msg: Message) {
 
         return formatValue(bundle, name, param, fnType, formatOptions);
       }
+    } else if (node.expression.type === "SelectExpression") {
+      // TODO: ordinal and literals…
+      let fltSelector = node.expression.selector as fluent.VariableReference;
+      let selector = fltSelector.id.name;
+
+      let type: "ordinal" | "plural" | undefined;
+      const param = msg.params.get(selector as ParamId);
+      if (param && param.type === "number") {
+        type = "plural";
+      }
+      // TODO: make ordinal work
+
+      const variants: Array<Variant> = [];
+      for (const option of node.expression.variants) {
+        const selector = option.key.type === "NumberLiteral" ? Number(option.key.value) : option.key.name;
+
+        // TODO: validate selector depending on pluralization
+
+        const vari = variant(selector, ...option.value.elements.map(convertElement));
+
+        if (option.default) {
+          variants.unshift(vari);
+        } else {
+          variants.push(vari);
+        }
+      }
+
+      return select(id(selector), variants, type);
     }
 
     bundle.raiseSyntaxError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`);
