@@ -3,61 +3,52 @@ import json from "rollup-plugin-json";
 // @ts-ignore
 import resolve from "rollup-plugin-node-resolve";
 import { ts, dts } from "rollup-plugin-dts";
-import pkg from "./package.json";
 
-const external = ["fs-extra", "path", "@babel/code-frame"];
-
-/**
- * @type {Array<import("rollup").RollupWatchOptions>}
- */
-const config = [
-  {
-    input: "./src/index.ts",
-    output: [
-      {
-        // exports: "named",
-        name: "IntlCodegen",
-        file: pkg.browser,
-        format: "umd",
-        globals: {
-          "fs-extra": "undefined",
-          path: "undefined",
-        },
-      },
-      {
-        // exports: "named",
-        file: pkg.main,
-        format: "cjs",
-      },
-      { file: pkg.module, format: "es" },
-    ],
-
-    external,
-    // @ts-ignore: this option is not in the @types
-    treeshake: {
-      pureExternalModules: true,
-    },
-
-    plugins: [
-      resolve({
-        jsnext: true,
-        extensions: [".ts"],
-      }),
-      json({
-        preferConst: true,
-        indent: "  ",
-      }),
-      ts(),
-    ],
-  },
-  {
-    input: "./src/index.ts",
-    output: [{ file: pkg.types, format: "es" }],
-
-    external,
-
-    plugins: [dts()],
-  },
+const external = [
+  "fluent-syntax",
+  "fluent-langneg",
+  "intl-messageformat-parser",
+  "fs-extra",
+  "path",
+  "@babel/code-frame",
 ];
+
+const globals = {
+  "fs-extra": "undefined",
+  path: "undefined",
+  "fluent-langneg": "FluentLangNeg",
+  "fluent-syntax": "FluentSyntax",
+  "intl-messageformat-parser": "IntlMessageFormatParser",
+};
+
+/** @type {(input: string, output: string) => Array<import("rollup").RollupWatchOptions>} */
+function makeConfig(input, output) {
+  return [
+    {
+      input,
+      output: [
+        { exports: "named", name: "IntlCodegen", file: `${output}.umd.js`, format: "umd", globals },
+        { exports: "named", file: `${output}.js`, format: "cjs" },
+        { file: `${output}.mjs`, format: "es" },
+      ],
+
+      external,
+      treeshake: { moduleSideEffects: false },
+
+      plugins: [resolve({ extensions: [".ts"] }), json({ preferConst: true, indent: "  " }), ts()],
+    },
+    {
+      input,
+      output: [{ file: `${output}.d.ts`, format: "es" }],
+
+      external,
+      treeshake: { moduleSideEffects: false },
+
+      plugins: [dts()],
+    },
+  ];
+}
+
+const config = [...makeConfig("./src/index.ts", "codegen"), ...makeConfig("./src/runtime/index.ts", "runtime")];
 
 export default config;
