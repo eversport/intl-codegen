@@ -23,7 +23,7 @@ export class MainTypesGenerator extends CodeGenerator {
       const msg = template.messages.get(id)!;
       const params = generateParamsType(msg.params);
       // TODO: element returns
-      this.line(`${camelify(msg.id)}(${params ? `params: ${params}` : ""}): string,`);
+      this.line(`${camelify(msg.messageId)}(${params ? `params: ${params}` : ""}): string,`);
     }
     this.indent -= 1;
 

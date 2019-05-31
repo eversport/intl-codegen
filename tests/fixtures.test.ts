@@ -22,7 +22,7 @@ describe("Fixtures", () => {
       for (const file of files) {
         if (file === "setup.ts") {
           hasSetup = true;
-        } else if (file === "diagnostics.txt") {
+        } else if (file === "diagnostics-errors.txt") {
           hasDiagnostics = true;
         } else if (file.endsWith(".ftl")) {
           const content = await fsExtra.readFile(path.join(dir, file), "utf-8");
@@ -46,19 +46,21 @@ describe("Fixtures", () => {
         setup(codegen);
       }
 
-      await withCompiledBundle(name, codegen, async (runDir, _result) => {
+      await withCompiledBundle(name, codegen, async (runDir, result) => {
         const testFile = path.join(runDir, "test.tsx");
         await fsExtra.copyFile(path.join(dir, "test.tsx"), testFile);
 
-        const diagnostics = (await getDiagnostics(testFile)).join("\n").trim();
+        let diagnostics = (await getDiagnostics(testFile)).join("\n").trim();
+        if (result.errors.length) {
+          diagnostics += diagnostics ? "\n\n---\n\n" : "";
+          diagnostics += result.errors.map(e => e.getFormattedMessage()).join("\n");
+        }
 
-        // console.log(_result);
-
-        const diagnosticsFiles = path.join(dir, "diagnostics.txt");
+        const diagnosticsFile = path.join(dir, "diagnostics-errors.txt");
         if (!hasDiagnostics) {
-          await fsExtra.outputFile(diagnosticsFiles, diagnostics);
+          await fsExtra.outputFile(diagnosticsFile, diagnostics);
         } else {
-          const expectedDiagnostics = (await fsExtra.readFile(diagnosticsFiles, "utf-8")).trim();
+          const expectedDiagnostics = (await fsExtra.readFile(diagnosticsFile, "utf-8")).trim();
           expect(diagnostics).toEqual(expectedDiagnostics);
         }
 

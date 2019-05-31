@@ -118,8 +118,17 @@ declare module "fluent-syntax" {
     comment: Comment | null;
   }
 
+  export interface Annotation extends Node {
+    type: "Annotation";
+    code: string;
+    arguments: Array<unknown>;
+    message: string;
+  }
+
   export interface Junk extends Node {
     type: "Junk";
+    annotations: Array<Annotation>;
+    content: string;
   }
 
   export interface Resource extends Node {
@@ -127,5 +136,5 @@ declare module "fluent-syntax" {
     body: Array<Message | Term | Comment | Junk>;
   }
 
-  export function parse(ftl: string): Resource;
+  export declare function parse(ftl: string): Resource;
 }

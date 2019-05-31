@@ -31,6 +31,10 @@ export function convertFluent(bundle: Bundle, msg: Message) {
 
   return ir;
 
+  function errCtx(node: any) {
+    return { ctx: msg, loc: { sourceText, node } };
+  }
+
   function convertPattern(node: fluent.Pattern): Pattern {
     return {
       type: "Pattern",
@@ -45,14 +49,14 @@ export function convertFluent(bundle: Bundle, msg: Message) {
       const { name } = node.expression.id;
       const param = msg.params.get(name as ParamId);
 
-      return formatValue(bundle, name, param);
+      return formatValue(bundle, errCtx(node.expression.id), name, param);
     } else if (node.expression.type === "FunctionReference") {
       const { arg0, fnType, formatOptions } = getFnMeta(node.expression);
       if (arg0.type === "VariableReference") {
         const { name } = arg0.id;
         const param = msg.params.get(name as ParamId);
 
-        return formatValue(bundle, name, param, fnType, formatOptions);
+        return formatValue(bundle, errCtx(node.expression), name, param, fnType, formatOptions);
       }
     } else if (node.expression.type === "SelectExpression") {
       let type: "ordinal" | "plural" | undefined;
@@ -84,7 +88,10 @@ export function convertFluent(bundle: Bundle, msg: Message) {
           // const { type, compatible } = getParamType(bundle, name, msg.params.get(name as ParamId), fnType)!;
         } else if (arg0.type === "FunctionReference") {
           // hm, what to do?
-          bundle.raiseSyntaxError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`);
+          bundle.raiseError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`, msg, {
+            sourceText,
+            node,
+          });
           return text(sourceText.slice(node.span.start, node.span.end));
         } else {
           selector = lit(arg0.type === "NumberLiteral" ? Number(arg0.value) : arg0.value);
@@ -109,7 +116,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
       return select(selector, variants, type);
     }
 
-    bundle.raiseSyntaxError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`);
+    bundle.raiseError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`, msg, { sourceText, node });
     return text(sourceText.slice(node.span.start, node.span.end));
   }
 
@@ -117,7 +124,10 @@ export function convertFluent(bundle: Bundle, msg: Message) {
     const fn = node.id.name;
     const fnType = (fn === "NUMBER" ? "number" : fn === "DATETIME" ? "datetime" : "unknown") as ParamType;
     if (fnType === "unknown") {
-      bundle.raiseReferenceError("unknown-function", `Fluent function ${fn} is not supported.`);
+      bundle.raiseError("unknown-function", `Fluent function ${fn} is not supported.`, msg, {
+        sourceText,
+        node: node.id,
+      });
     }
     const arg0 = node.arguments.positional[0];
     const formatOptions = argsToJson(node.arguments);

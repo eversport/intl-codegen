@@ -1,11 +1,13 @@
+import { codeFrameColumns } from "@babel/code-frame";
 import * as Fluent from "fluent-syntax";
 import MessageFormat from "intl-messageformat-parser";
 import { LocaleGenerator, MainGenerator, MainTypesGenerator } from "./codegen";
+import { CodegenError, ErrorContext, ErrorId, ErrorLocation, ERROR_CLASSES } from "./errors";
 import { Locale } from "./locale";
 import { Message } from "./message";
 import { LocaleId, MessageId, ParamId, Params, ParamType, TypeDefs, validateMessageId } from "./types";
 import { validateCollection, validateParams } from "./validation";
-import { CodegenError, ErrorId } from "./errors";
+import { createFakePattern } from "./fake-pattern";
 
 export const templateId = "template" as LocaleId;
 
@@ -32,7 +34,7 @@ interface File {
 
 export interface GenerateResult {
   files: Array<File>;
-  errors: Array<any>;
+  errors: Array<CodegenError>;
 }
 
 /**
@@ -42,6 +44,7 @@ export class Bundle {
   public typeDefs: TypeDefs = new Map();
   public errors: Array<CodegenError> = [];
   public locales = new Map<LocaleId, Locale>([[templateId, new Locale(templateId)]]);
+  private codeFrame?: typeof codeFrameColumns;
 
   public addType(name: ParamType, variants: Array<string>) {
     // TODO: error on duplicate definition?
@@ -66,8 +69,21 @@ export class Bundle {
           // TODO: report invalid id error?
         }
       } else if (node.type === "Comment") {
+      } else if (node.type === "Junk") {
+        const annotation = node.annotations[0];
+        this.raiseError(
+          "parse-error",
+          `${annotation.code}: ${annotation.message}`,
+          { localeId: locale },
+          { sourceText, node: annotation },
+        );
       } else {
-        // TODO: report parse error
+        this.raiseError(
+          "unsupported-syntax",
+          `Fluent \`${node.type}\` is not yet supported`,
+          { localeId: locale },
+          { sourceText, node },
+        );
       }
     }
 
@@ -75,13 +91,17 @@ export class Bundle {
   }
 
   public addMessageFormat(locale: LocaleId, id: MessageId, sourceText: string, params?: Params) {
+    let msg: Message;
     try {
       const ast = MessageFormat.parse(sourceText);
-      const msg = new Message(locale, id, params).withParseResult(sourceText, ast);
-      this.getLocale(locale).messages.set(id, msg);
+      msg = new Message(locale, id, params).withParseResult(sourceText, ast);
     } catch (error) {
-      this.raiseSyntaxError("parse-error", error.message);
+      this.raiseError("parse-error", error.message, { localeId: locale, messageId: id }, { sourceText, node: error });
+
+      // put in the message anyway, but only its id
+      msg = new Message(locale, id, params).withParseResult(id, createFakePattern(id));
     }
+    this.getLocale(locale).messages.set(id, msg);
 
     return this;
   }
@@ -96,6 +116,8 @@ export class Bundle {
   }
 
   public async generate(sep: string): Promise<GenerateResult> {
+    this.codeFrame = await import("@babel/code-frame").then(m => m.codeFrameColumns, () => undefined);
+
     // run some validation
     validateCollection(this);
     validateParams(this);
@@ -135,30 +157,56 @@ export class Bundle {
     };
   }
 
-  public raiseSyntaxError(id: ErrorId, msg: string) {
-    const error = new SyntaxError(`[${id}]: ${msg}`) as CodegenError;
+  public raiseError(id: ErrorId, msg: string, context: ErrorContext, loc?: ErrorLocation) {
+    const Klass = ERROR_CLASSES[id];
+    let ctx = [context.localeId, context.messageId].filter(Boolean).join("/");
+    ctx = ctx ? ctx + ": " : "";
+    const error = new Klass(`[${ctx}${id}]: ${msg}`) as CodegenError;
     error.id = id;
-    error.locations = [];
+    error.context = context;
+    let location: Range;
+    if (loc && loc.node) {
+      if ("location" in loc.node) {
+        location = loc.node.location;
+      } else {
+        location = {
+          start: getLineCol(loc.sourceText, loc.node.span.start),
+          end: getLineCol(loc.sourceText, loc.node.span.end),
+        };
+      }
+    }
+    error.getFormattedMessage = () => {
+      let msg = error.message;
+      if (this.codeFrame && loc) {
+        msg += "\n";
+        msg += this.codeFrame(loc.sourceText, location);
+      }
+      return msg;
+    };
 
     this.errors.push(error);
-    return this;
   }
+}
 
-  public raiseReferenceError(id: ErrorId, msg: string) {
-    const error = new ReferenceError(`[${id}]: ${msg}`) as CodegenError;
-    error.id = id;
-    error.locations = [];
+interface Location {
+  line: number;
+  column: number;
+}
+interface Range {
+  start: Location;
+  end: Location;
+}
 
-    this.errors.push(error);
-    return this;
+function getLineCol(sourceText: string, offset: number) {
+  const lines = sourceText.split("\n");
+  let idx = 0,
+    line: string;
+  for ([idx, line] of lines.entries()) {
+    if (line.length + 1 < offset) {
+      offset -= line.length + 1;
+    } else {
+      break;
+    }
   }
-
-  public raiseTypeError(id: ErrorId, msg: string) {
-    const error = new TypeError(`[${id}]: ${msg}`) as CodegenError;
-    error.id = id;
-    error.locations = [];
-
-    this.errors.push(error);
-    return this;
-  }
+  return { line: idx + 1, column: offset };
 }

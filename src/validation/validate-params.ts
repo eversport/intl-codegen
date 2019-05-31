@@ -7,13 +7,12 @@ export function validateParams(bundle: Bundle): void {
 
   // warn about parameter declarations with unknown types
   for (const id of template.keys()) {
-    const { params } = template.get(id)!;
+    const msg = template.get(id)!;
 
-    // errors.setContext({ locale: "template", messageId: id });
-    for (const param of params.values()) {
+    for (const param of msg.params.values()) {
       const { name, type } = param;
       if (!BUILTIN_TYPES.has(type) && !typeDefs.has(type)) {
-        bundle.raiseTypeError("unknown-type", `The parameter \`${name}\` has unknown type \`${type}\`.`);
+        bundle.raiseError("unknown-type", `The parameter \`${name}\` has unknown type \`${type}\`.`, msg);
 
         // fall back to string if the type was not known
         param.type = "string" as ParamType;

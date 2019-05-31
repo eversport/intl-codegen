@@ -10,6 +10,10 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
 
   return convertPattern(msg.ast as mf.MessageFormatPattern);
 
+  function errCtx(node: any) {
+    return { ctx: msg, loc: { sourceText, node } };
+  }
+
   function convertPattern(node: mf.MessageFormatPattern): Pattern {
     return {
       type: "Pattern",
@@ -27,12 +31,13 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
     const param = msg.params.get(name as ParamId);
 
     if (!format) {
-      return formatValue(bundle, name, param);
+      return formatValue(bundle, errCtx(node), name, param);
     } else if (format.type === "numberFormat") {
-      return formatValue(bundle, name, param, "number" as ParamType, formats.number[format.style]);
+      return formatValue(bundle, errCtx(node), name, param, "number" as ParamType, formats.number[format.style]);
     } else if (format.type === "dateFormat" || format.type === "timeFormat") {
       return formatValue(
         bundle,
+        errCtx(node),
         name,
         param,
         "datetime" as ParamType,
@@ -47,7 +52,10 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       }
 
       if (type && (!param || param.type !== "number")) {
-        bundle.raiseTypeError("wrong-type", `Messageformat plural selector is only valid for type "number".`);
+        bundle.raiseError("wrong-type", `Messageformat plural selector is only valid for type "number".`, msg, {
+          sourceText,
+          node,
+        });
         type = undefined;
       }
 
@@ -66,7 +74,10 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       }
 
       if (!other) {
-        bundle.raiseSyntaxError("missing-other", "MessageFormat requires a `other` case to be defined.");
+        bundle.raiseError("missing-other", "MessageFormat requires a `other` case to be defined.", msg, {
+          sourceText,
+          node: format,
+        });
         variants.unshift(variants.pop()!);
       } else {
         variants.unshift(other);
@@ -74,7 +85,10 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       return select(id(name), variants, type);
     }
 
-    bundle.raiseSyntaxError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`);
+    bundle.raiseError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`, msg, {
+      sourceText,
+      node,
+    });
     return text(sourceText.slice(node.location.start.offset, node.location.end.offset));
   }
 }

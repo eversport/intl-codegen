@@ -1,0 +1,4 @@
+[template/fluent-missing-definition: undefined-message]: Message has no definition
+[template/msgfmt-missing-definition: undefined-message]: Message has no definition
+[en/fluent-missing-localization: unlocalized-message]: Message has no localization
+[en/msgfmt-missing-localization: unlocalized-message]: Message has no localization

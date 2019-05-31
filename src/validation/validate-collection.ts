@@ -17,7 +17,10 @@ export function validateCollection(bundle: Bundle): void {
   // warn about undefined messages and add an empty definition
   for (const id of allIds) {
     if (!template.messages.has(id)) {
-      bundle.raiseReferenceError("undefined-message", `Message \`${id}\` has no definition`);
+      bundle.raiseError("undefined-message", `Message has no definition`, {
+        localeId: "template",
+        messageId: id,
+      });
 
       // create a fake fluent AST that just has the message-id as content
       const msg = new Message(templateId, id).withParseResult(id, createFakePattern(id));
@@ -35,10 +38,10 @@ export function validateCollection(bundle: Bundle): void {
       let msg = locale.messages.get(id);
       const templateMsg = template.messages.get(id)!;
       if (!msg) {
-        bundle.raiseReferenceError(
-          "unlocalized-message",
-          `Message \`${id}\` is missing from locale \`${locale.locale}\``,
-        );
+        bundle.raiseError("unlocalized-message", `Message has no localization`, {
+          localeId: locale.locale,
+          messageId: id,
+        });
 
         msg = new Message(locale.locale, id).withPropsFrom(templateMsg);
         locale.messages.set(id, msg);

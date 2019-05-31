@@ -85,7 +85,7 @@ export class LocaleGenerator extends CodeGenerator {
     this.messageHasElement = hasElementParameter(message);
 
     this.indent += 1;
-    this.line(`// \`${message.id}\`:`);
+    this.line(`// \`${message.messageId}\`:`);
     for (const line of message.sourceText.split("\n")) {
       this.line(`// ${line}`);
     }

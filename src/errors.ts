@@ -1,23 +1,23 @@
+import * as Fluent from "fluent-syntax";
+import * as MsgFmt from "intl-messageformat-parser";
+
 export interface ErrorLocation {
-  /** A note associated with this location. */
-  note: string;
+  sourceText: string;
+  node: Fluent.Node | { location: MsgFmt.Location };
+}
+
+export interface ErrorContext {
   /**
    * The locale of the message which caused this error, or `"template"`,
    * when the error occurred for template definitions.
    */
-  locale: string;
+  localeId?: string;
   /**
    * The `id` of the message that caused the error.
    * When using `fluent`, it might not be possible to associate
    * `SyntaxError`s to a specific message.
    */
-  id?: string;
-  /** The complete source string */
-  source: string;
-  /** The source code offsets for the part that caused problems. */
-  range: [number, number];
-  /** A formatted code-frame, when `@babel/code-frame` is available. */
-  codeframe?: string;
+  messageId?: string;
 }
 
 export type ErrorId =
@@ -32,9 +32,27 @@ export type ErrorId =
   | "wrong-selector"
   | "missing-other";
 
+export const ERROR_CLASSES: { [key in ErrorId]: SyntaxErrorConstructor } = {
+  "parse-error": SyntaxError,
+  "unsupported-syntax": SyntaxError,
+  "undefined-message": ReferenceError,
+  "unlocalized-message": ReferenceError,
+  "unknown-type": TypeError,
+  "wrong-type": TypeError,
+  "undeclared-param": TypeError,
+  "unknown-function": TypeError,
+  "wrong-selector": TypeError,
+  "missing-other": SyntaxError,
+};
+
 export interface CodegenError {
   name: "SyntaxError" | "TypeError" | "ReferenceError";
+  /** A unique error ID */
   id: ErrorId;
   message: string;
-  locations: Array<ErrorLocation>;
+  context: ErrorContext;
+  /**
+   * Returns a formatted Error Message, including a code-frame.
+   */
+  getFormattedMessage(): string;
 }

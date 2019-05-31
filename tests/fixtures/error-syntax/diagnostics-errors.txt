@@ -1,0 +1,19 @@
+test.tsx (11,10): Property 'fluentJunk' does not exist on type 'IntlObject<{ msgfmtJunk(): string; }, "template">'.
+
+---
+
+[template: parse-error]: E0003: Expected token: "}"
+  1 | fluent-junk = {
+> 2 | 
+    | ^
+  3 | fluent-junk2 = { NUMBER($param }
+  4 | 
+[template: parse-error]: E0003: Expected token: ")"
+  1 | fluent-junk = {
+  2 | 
+> 3 | fluent-junk2 = { NUMBER($param }
+    |                               ^
+  4 | 
+[template/msgfmt-junk: parse-error]: Expected "0", [1-9], or [^ \t\n\r,.+={}#] but end of input found.
+> 1 | {
+    |  ^
