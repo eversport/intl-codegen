@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rimraf dist && rollup -c",
     "prepublishOnly": "npm run test && npm run build",
-    "test": "cross-env NODE_ICU_DATA=node_modules/full-icu jest --runInBand"
+    "test": "cross-env TZ=Europe/Vienna NODE_ICU_DATA=node_modules/full-icu jest --runInBand"
   },
   "dependencies": {
     "fluent-langneg": "^0.1.1",
