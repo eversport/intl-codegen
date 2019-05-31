@@ -74,7 +74,9 @@ const compilerOptions = fsExtra
   .then(config => new Function(`return ${config}`)().compilerOptions)
   .then(config => ts.convertCompilerOptionsFromJson(config, path.dirname(tsConfig)).options);
 
-const LANGNEG = path.join(__dirname, "..", "runtime", "fluent-langneg.d.ts");
+// hm, when calling this manually, typescript does not find the type definitions
+// for this…
+const LANGNEG = path.join(__dirname, "..", "src", "runtime", "fluent-langneg.d.ts");
 
 async function getDiagnostics(fileName: string) {
   const options: ts.CompilerOptions = {

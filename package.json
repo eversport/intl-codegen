@@ -69,6 +69,9 @@
     "testMatch": [
       "**/?(*.)+(spec|test).(ts|tsx)"
     ],
+    "moduleNameMapper": {
+      "intl-codegen/runtime": "<rootDir>/src/runtime/index.ts"
+    },
     "globals": {
       "ts-jest": {
         "diagnostics": {

@@ -1,5 +1,5 @@
 import React from "react";
-import { defineLoader } from "../runtime";
+import { defineLoader } from "../src/runtime";
 import { LocaleGenerator } from "../src/codegen/locale";
 import { Locale } from "../src/locale";
 import { Message } from "../src/message";

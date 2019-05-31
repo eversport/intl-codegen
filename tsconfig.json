@@ -26,7 +26,7 @@
 
     "baseUrl": ".",
     "paths": {
-      "intl-codegen/runtime": ["runtime/index.ts"]
+      "intl-codegen/runtime": ["src/runtime/index.ts"]
     }
   },
   "exclude": ["coverage", "dist", "tests/fixtures", ".testoutput"]

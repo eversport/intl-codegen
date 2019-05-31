@@ -17,6 +17,6 @@ export async function withCompiledBundle(
 
     await fn(outputDir, result);
   } finally {
-    // await fsExtra.remove(outputDir);
+    await fsExtra.remove(outputDir);
   }
 }
