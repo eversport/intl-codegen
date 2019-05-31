@@ -1,7 +1,8 @@
 import * as fluent from "fluent-syntax";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
-import { date, Element, id, monetary, num, Pattern, ref, text } from "../types";
+import { Element, ParamId, ParamType, Pattern, text } from "../types";
+import { formatValue } from "./formatted-value";
 
 export function convertFluent(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
@@ -27,21 +28,40 @@ export function convertFluent(bundle: Bundle, msg: Message) {
   function convertElement(node: fluent.Element): Element {
     if (node.type === "TextElement") {
       return text(node.value);
-    } else if (node.type === "Placeable" && node.expression.type === "VariableReference") {
+    } else if (node.expression.type === "VariableReference") {
       const { name } = node.expression.id;
-      const { type } = msg.params.get(name as any)!;
+      const param = msg.params.get(name as ParamId);
 
-      if (type === "number") {
-        return num(id(name));
-      } else if (type === "datetime") {
-        return date(name);
-      } else if (type === "monetary") {
-        return monetary(name);
+      return formatValue(bundle, name, param);
+    } else if (node.expression.type === "FunctionReference") {
+      const fn = node.expression.id.name;
+      const fnType = (fn === "NUMBER" ? "number" : fn === "DATETIME" ? "datetime" : "unknown") as ParamType;
+      if (fnType === "unknown") {
+        bundle.raiseReferenceError("unknown-function", `Fluent function ${fn} is not supported.`);
       }
-      return ref(name);
+      const arg0 = node.expression.arguments.positional[0];
+      const formatOptions = argsToJson(node.expression.arguments);
+
+      if (arg0.type === "VariableReference") {
+        const { name } = arg0.id;
+        const param = msg.params.get(name as ParamId);
+
+        return formatValue(bundle, name, param, fnType, formatOptions);
+      }
     }
 
     bundle.raiseSyntaxError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`);
     return text(sourceText.slice(node.span.start, node.span.end));
   }
+}
+
+function argsToJson(node: fluent.CallArguments) {
+  const json: { [key: string]: string | number } = {};
+
+  for (const { name, value } of node.named) {
+    const val = value.type === "NumberLiteral" ? Number(value.value) : value.value;
+    json[name.name] = val;
+  }
+
+  return json;
 }

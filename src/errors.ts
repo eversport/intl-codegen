@@ -25,7 +25,10 @@ export type ErrorId =
   | "unsupported-syntax"
   | "undefined-message"
   | "unlocalized-message"
-  | "unknown-type";
+  | "unknown-type"
+  | "wrong-type"
+  | "undeclared-param"
+  | "unknown-function";
 
 export interface CodegenError {
   name: "SyntaxError" | "TypeError" | "ReferenceError";

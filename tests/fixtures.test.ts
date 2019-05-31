@@ -46,11 +46,13 @@ describe("Fixtures", () => {
         setup(codegen);
       }
 
-      await withCompiledBundle(name, codegen, async runDir => {
+      await withCompiledBundle(name, codegen, async (runDir, _result) => {
         const testFile = path.join(runDir, "test.tsx");
         await fsExtra.copyFile(path.join(dir, "test.tsx"), testFile);
 
         const diagnostics = (await getDiagnostics(testFile)).join("\n").trim();
+
+        // console.log(_result);
 
         const diagnosticsFiles = path.join(dir, "diagnostics.txt");
         if (!hasDiagnostics) {

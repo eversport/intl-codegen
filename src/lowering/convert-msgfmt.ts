@@ -1,7 +1,9 @@
 import * as mf from "intl-messageformat-parser";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
-import { date, Element, id, monetary, num, Pattern, ref, text } from "../types";
+import { Element, ParamId, ParamType, Pattern, text } from "../types";
+import { formatValue } from "./formatted-value";
+import { formats } from "./msgfmt-formats";
 
 export function convertMsgFmt(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
@@ -20,18 +22,22 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       return text(node.value);
     }
 
-    if (!node.format) {
-      const name = node.id;
-      const { type } = msg.params.get(name as any)!;
+    const { format } = node;
+    const name = node.id;
+    const param = msg.params.get(name as ParamId);
 
-      if (type === "number") {
-        return num(id(name));
-      } else if (type === "datetime") {
-        return date(name);
-      } else if (type === "monetary") {
-        return monetary(name);
-      }
-      return ref(name);
+    if (!format) {
+      return formatValue(bundle, name, param);
+    } else if (format.type === "numberFormat") {
+      return formatValue(bundle, name, param, "number" as ParamType, formats.number[format.style]);
+    } else if (format.type === "dateFormat" || format.type === "timeFormat") {
+      return formatValue(
+        bundle,
+        name,
+        param,
+        "datetime" as ParamType,
+        (format.type === "dateFormat" ? formats.date : formats.time)[format.style],
+      );
     }
 
     bundle.raiseSyntaxError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`);
