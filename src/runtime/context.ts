@@ -13,7 +13,23 @@ export interface LocaleInfo<Locales> {
 }
 
 export class Context<Locales> {
-  constructor(public readonly locale: LocaleInfo<Locales>) {}
+  private plural?: Intl.PluralRules;
+  private ordinal?: Intl.PluralRules;
+
+  constructor(public readonly locale: LocaleInfo<Locales>) {
+    if (Intl.PluralRules) {
+      this.plural = new Intl.PluralRules(locale.formatter);
+      this.ordinal = new Intl.PluralRules(locale.formatter, { type: "ordinal" });
+    }
+  }
+
+  selectPlural(num: NumberValue) {
+    return this.plural ? this.plural.select(num) : "other";
+  }
+
+  selectOrdinal(num: NumberValue) {
+    return this.ordinal ? this.ordinal.select(num) : "other";
+  }
 
   createDateFormatter(options: Intl.DateTimeFormatOptions) {
     const formatter = new Intl.DateTimeFormat(this.locale.formatter, options);
@@ -45,6 +61,8 @@ const proto = Context.prototype;
 
 // define some minifier-friendly aliases that are used inside the generated
 // translations
+(proto as any).p = proto.selectPlural;
+(proto as any).o = proto.selectOrdinal;
 (proto as any).d = proto.createDateFormatter;
 (proto as any).n = proto.createNumberFormatter;
 (proto as any).m = proto.createMonetaryFormatter;

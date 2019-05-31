@@ -1,9 +1,9 @@
 import React from "react";
-import { defineLoader } from "../src/runtime";
 import { LocaleGenerator } from "../src/codegen/locale";
 import { Locale } from "../src/locale";
 import { Message } from "../src/message";
-import { date, id, lit, LocaleId, MessageId, monetary, num, Params, ref, text } from "../src/types";
+import { defineLoader } from "../src/runtime";
+import { date, id, lit, LocaleId, MessageId, monetary, num, Params, ref, select, text, variant } from "../src/types";
 
 async function makeFn(_params: Record<string, string>, ...elements: Array<any>) {
   const loc = "template" as LocaleId;
@@ -18,6 +18,8 @@ async function makeFn(_params: Record<string, string>, ...elements: Array<any>) 
   const generator = new LocaleGenerator(locale);
   const code = generator.generate();
 
+  // console.log(code);
+
   const loader = defineLoader(["test"], {
     async template() {
       const fn = Function(code.replace("export default", "return"))();
@@ -27,7 +29,7 @@ async function makeFn(_params: Record<string, string>, ...elements: Array<any>) 
     },
   });
 
-  const intl = await loader(["garbage", "de-AT", "en"]);
+  const intl = await loader([_params.locale || "garbage", "de-AT", "en"]);
   return (intl as any).test;
 }
 
@@ -96,5 +98,94 @@ describe("locale codegen", () => {
         </strong>,
       ]
     `);
+  });
+
+  it("should generate correct code for single variant selects", async () => {
+    let fn = await makeFn({ arg: "string" }, select(id("arg"), [variant(0, ref("arg"))]));
+
+    expect(fn({ arg: "an arg" })).toEqual("an arg");
+
+    fn = await makeFn({ arg: "element" }, select(id("arg"), [variant(0, ref("arg"))]));
+
+    expect(fn({ arg: <em>an element</em> })).toMatchInlineSnapshot(`
+      Array [
+        <em>
+          an element
+        </em>,
+      ]
+    `);
+  });
+
+  it("should generate correct code for simple selects", async () => {
+    let fn = await makeFn(
+      { arg: "string" },
+      select(id("arg"), [
+        variant(0, text("nothing to see here")),
+        variant("a", text("its a")),
+        variant("b", text("its b")),
+      ]),
+    );
+
+    expect(fn({ arg: "a" })).toEqual("its a");
+    expect(fn({ arg: "b" })).toEqual("its b");
+    expect(fn({ arg: "something else" })).toEqual("nothing to see here");
+
+    fn = await makeFn(
+      { arg: "string", elem: "element" },
+      select(id("arg"), [
+        variant(0, text("the element:"), ref("elem")),
+        variant("a", text("its a")),
+        variant("b", text("its b")),
+      ]),
+    );
+
+    expect(fn({ arg: "something else", elem: <em>the element</em> })).toMatchInlineSnapshot(`
+      Array [
+        "the element:",
+        <em>
+          the element
+        </em>,
+      ]
+    `);
+  });
+
+  it("should support plural selectors", async () => {
+    let fn = await makeFn(
+      { arg: "number" },
+      select(id("arg"), [variant("other", text("something else")), variant(1, text("one"))], "plural"),
+    );
+
+    expect(fn({ arg: 1 })).toEqual("one");
+    expect(fn({ arg: 0 })).toEqual("something else");
+
+    fn = await makeFn(
+      { arg: "number" },
+      select(id("arg"), [variant("other", text("something else")), variant("one", text("one"))], "plural"),
+    );
+
+    expect(fn({ arg: 1 })).toEqual("one");
+    expect(fn({ arg: 0 })).toEqual("something else");
+  });
+
+  it("should support ordinal selectors", async () => {
+    let fn = await makeFn(
+      { arg: "number", locale: "en" },
+      ref("arg"),
+      select(
+        id("arg"),
+        [
+          variant("other", text("th")),
+          variant("one", text("st")),
+          variant("two", text("nd")),
+          variant("few", text("rd")),
+        ],
+        "ordinal",
+      ),
+    );
+
+    expect(fn({ arg: 11 })).toEqual("11th");
+    expect(fn({ arg: 22 })).toEqual("22nd");
+    expect(fn({ arg: 23 })).toEqual("23rd");
+    expect(fn({ arg: 31 })).toEqual("31st");
   });
 });

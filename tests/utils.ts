@@ -1,4 +1,5 @@
 import fsExtra from "fs-extra";
+import "intl-pluralrules";
 import path from "path";
 import IntlCodegen from "../src";
 import { GenerateResult } from "../src/bundle";

@@ -36,9 +36,24 @@ export interface VariableReference {
   id: Identifier;
 }
 
+export interface Variant {
+  key: Literal;
+  value: Pattern;
+}
+
+type SelectType = "plural" | "ordinal";
+
+export interface Select {
+  type: "Select";
+  argument: Literal | Identifier;
+  selectType?: SelectType;
+  // The **first** (!) variant is always the default case!
+  variants: Array<Variant>;
+}
+
 export type Placeable = NumberFormat | DateTimeFormat | MonetaryFormat | VariableReference;
 
-export type Element = Text | Placeable;
+export type Element = Text | Placeable | Select;
 
 export interface Pattern {
   type: "Pattern";
@@ -71,4 +86,18 @@ export function date(name: string, options: Intl.DateTimeFormatOptions = {}): Da
 
 export function monetary(name: string, options: Intl.NumberFormatOptions = {}): MonetaryFormat {
   return { type: "MonetaryFormat", argument: id(name), options };
+}
+
+export function select(argument: Identifier | Literal, variants: Array<Variant>, type?: SelectType): Select {
+  return { type: "Select", argument, selectType: type, variants };
+}
+
+export function variant(key: number | string, ...elements: Array<Element>): Variant {
+  return {
+    key: lit(key),
+    value: {
+      type: "Pattern",
+      elements,
+    },
+  };
 }

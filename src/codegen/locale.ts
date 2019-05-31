@@ -2,7 +2,7 @@ import { Locale } from "../locale";
 import { Message } from "../message";
 import { DateTimeFormat, Identifier, MonetaryFormat, NumberFormat, Pattern } from "../types";
 import { CodeGenerator } from "./generator";
-import { stable, hasElementParameter, isId } from "./helpers";
+import { hasElementParameter, isId, stable } from "./helpers";
 
 export class LocaleGenerator extends CodeGenerator {
   private formatters: Array<string> = [];
@@ -86,16 +86,15 @@ export class LocaleGenerator extends CodeGenerator {
       this.line(`// ${line}`);
     }
 
-    this.line(this.messageHasElement ? `params => [` : `params => ""`);
+    this.line(this.messageHasElement ? `params => ` : `params => `);
     this.generatePattern(message.ir);
-    if (this.messageHasElement) {
-      this.line("]");
-    }
     this.indent -= 1;
   }
 
   generatePattern(pattern: Pattern) {
+    this.append(this.messageHasElement ? "[" : `""`);
     this.indent += 1;
+
     for (const elem of pattern.elements) {
       if (!this.messageHasElement) {
         this.append(" +");
@@ -109,12 +108,42 @@ export class LocaleGenerator extends CodeGenerator {
         const arg =
           elem.argument.type === "Identifier" ? this.generateId(elem.argument) : JSON.stringify(elem.argument.value);
         this.line(`${formatter}(${arg})`);
+      } else if (elem.type === "Select") {
+        const arg =
+          elem.argument.type === "Identifier" ? this.generateId(elem.argument) : JSON.stringify(elem.argument.value);
+        const pluralArg =
+          elem.selectType === "plural"
+            ? `context.p(${arg})`
+            : elem.selectType === "ordinal"
+            ? `context.o(${arg})`
+            : arg;
+        const [other, ...rest] = elem.variants;
+
+        this.line(this.messageHasElement ? `...(` : `(`);
+
+        this.indent += 1;
+        for (const variant of rest) {
+          const key = JSON.stringify(variant.key.value);
+          this.line(`${typeof variant.key.value === "number" ? arg : pluralArg} == ${key} ? `);
+          this.generatePattern(variant.value);
+          this.append(" :");
+        }
+
+        this.line("");
+        this.generatePattern(other.value);
+        this.indent -= 1;
+
+        this.line(")");
       }
       if (this.messageHasElement) {
         this.append(",");
       }
     }
+
     this.indent -= 1;
+    if (this.messageHasElement) {
+      this.line("]");
+    }
   }
 
   generateId(id: Identifier): string {
