@@ -47,7 +47,7 @@ declare module "fluent-syntax" {
     id: Identifier;
   }
 
-  export type Selector = VariableReference | Literal;
+  export type Selector = VariableReference | Literal | FunctionReference;
 
   export interface FunctionReference extends Node {
     type: "FunctionReference";
