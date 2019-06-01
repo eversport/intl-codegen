@@ -1,2 +1,2 @@
 export { NumberValue, DateTimeValue, MonetaryValue } from "./context";
-export { defineLoader, LoaderFn } from "./loader";
+export { defineLoader, LoaderFn, IntlObject } from "./loader";

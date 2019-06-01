@@ -1,1 +1,1 @@
-test.tsx (7,15): Property 'invalid' does not exist on type 'IntlObject<{ simpleText(): string; }, "template">'.
+test.tsx (7,15): Property 'invalid' does not exist on type 'IntlObject<Messages, "template">'.

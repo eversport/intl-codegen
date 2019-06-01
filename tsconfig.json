@@ -26,6 +26,7 @@
 
     "baseUrl": ".",
     "paths": {
+      "intl-codegen/runtime-react": ["src/runtime-react/index.ts"],
       "intl-codegen/runtime": ["src/runtime/index.ts"]
     }
   },

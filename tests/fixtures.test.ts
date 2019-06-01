@@ -9,6 +9,14 @@ const FIXTURES_DIR = path.join(__dirname, "fixtures");
 jest.setTimeout(10 * 1000);
 
 describe("Fixtures", () => {
+  beforeEach(() => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   const fixtures = fsExtra.readdirSync(FIXTURES_DIR);
   for (const name of fixtures) {
     const dir = path.join(FIXTURES_DIR, name);
@@ -82,6 +90,8 @@ const compilerOptions = fsExtra
 // for this…
 const LANGNEG = path.join(__dirname, "..", "src", "runtime", "fluent-langneg.d.ts");
 
+let PROGRAM: ts.Program;
+
 async function getDiagnostics(fileName: string) {
   const options: ts.CompilerOptions = {
     ...(await compilerOptions),
@@ -90,9 +100,9 @@ async function getDiagnostics(fileName: string) {
   };
   const dirName = path.dirname(fileName);
 
-  const program = ts.createProgram([fileName, LANGNEG], options);
+  PROGRAM = ts.createProgram([LANGNEG, fileName], options, undefined, PROGRAM);
 
-  const allDiagnostics = ts.getPreEmitDiagnostics(program).map(diagnostic => {
+  const allDiagnostics = ts.getPreEmitDiagnostics(PROGRAM).map(diagnostic => {
     if (diagnostic.file) {
       const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
       const fileName = diagnostic.file.fileName.replace(`${dirName}/`, "");

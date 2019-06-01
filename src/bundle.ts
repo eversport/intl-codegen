@@ -1,13 +1,20 @@
 import { codeFrameColumns } from "@babel/code-frame";
 import * as Fluent from "fluent-syntax";
 import MessageFormat from "intl-messageformat-parser";
-import { LocaleGenerator, MainGenerator, MainTypesGenerator } from "./codegen";
+import {
+  CodegenTypes,
+  LocaleGenerator,
+  MainGenerator,
+  MainTypesGenerator,
+  ReactGenerator,
+  ReactTypesGenerator,
+} from "./codegen";
 import { CodegenError, ErrorContext, ErrorId, ErrorLocation, ERROR_CLASSES } from "./errors";
+import { createFakePattern } from "./fake-pattern";
 import { Locale } from "./locale";
 import { Message } from "./message";
 import { LocaleId, MessageId, ParamId, Params, ParamType, TypeDefs, validateMessageId } from "./types";
 import { validateCollection, validateParams } from "./validation";
-import { createFakePattern } from "./fake-pattern";
 
 export const templateId = "template" as LocaleId;
 
@@ -115,7 +122,7 @@ export class Bundle {
     return localeDef;
   }
 
-  public async generate(sep: string): Promise<GenerateResult> {
+  public async generate(output: Set<CodegenTypes>, sep: string): Promise<GenerateResult> {
     this.codeFrame = await import("@babel/code-frame").then(m => m.codeFrameColumns, () => undefined);
 
     // run some validation
@@ -131,25 +138,39 @@ export class Bundle {
 
     const files: Array<File> = [];
 
-    // generate all the locale definitions
-    for (const locale of this.locales.values()) {
-      const content = new LocaleGenerator(locale).generate();
+    if (output.has(CodegenTypes.Js)) {
+      // generate all the locale definitions
+      for (const locale of this.locales.values()) {
+        const content = new LocaleGenerator(locale).generate();
 
+        files.push({
+          path: `locales${sep}${locale.locale}.js`,
+          content,
+        });
+      }
+
+      // generate the main entry file
       files.push({
-        path: `locales${sep}${locale.locale}.js`,
-        content,
+        path: `index.js`,
+        content: new MainGenerator(this).generate(),
+      });
+      files.push({
+        path: `index.d.ts`,
+        content: new MainTypesGenerator(this).generate(),
       });
     }
 
-    // generate the main entry file
-    files.push({
-      path: `index.js`,
-      content: new MainGenerator(this).generate(),
-    });
-    files.push({
-      path: `index.d.ts`,
-      content: new MainTypesGenerator(this).generate(),
-    });
+    // generate react types
+    if (output.has(CodegenTypes.React)) {
+      files.push({
+        path: `react.js`,
+        content: new ReactGenerator(this).generate(),
+      });
+      files.push({
+        path: `react.d.ts`,
+        content: new ReactTypesGenerator(this).generate(),
+      });
+    }
 
     return {
       files,

@@ -1,4 +1,4 @@
-test.tsx (11,10): Property 'fluentJunk' does not exist on type 'IntlObject<{ msgfmtJunk(): string; }, "template">'.
+test.tsx (11,10): Property 'fluentJunk' does not exist on type 'IntlObject<Messages, "template">'.
 
 ---
 

@@ -1,12 +1,14 @@
 import { Params } from "../types";
 import { isId } from "./helpers";
+import { Message } from "../message";
 
 const paramTypes = {
   string: "string",
   number: "NumberValue",
   datetime: "DateTimeValue",
   monetary: "MonetaryValue",
-  // TODO: element, custom types…
+  element: "React.ReactNode",
+  // TODO: elements other than react, custom types…
 };
 
 export function generateParamsType(params: Params) {
@@ -27,4 +29,13 @@ export function generateParamsType(params: Params) {
 
   code += " }";
   return code;
+}
+
+export function hasElementParameter(message: Message) {
+  for (const param of message.params.values()) {
+    if (param.type === "element") {
+      return true;
+    }
+  }
+  return false;
 }

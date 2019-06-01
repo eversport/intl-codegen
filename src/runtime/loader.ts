@@ -6,7 +6,7 @@ interface MessageFile {
   default: (ctx: Context<any>) => Array<any>;
 }
 
-type IntlObject<Messages, Locales> = Messages & { context: Context<Locales> };
+export type IntlObject<Messages, Locales> = Messages & { context: Context<Locales> };
 
 export type LoaderFn<Messages, Locales> = (locale: string | Array<string>) => Promise<IntlObject<Messages, Locales>>;
 

@@ -1,0 +1,2 @@
+test.tsx (9,3): Object is possibly 'undefined'.
+test.tsx (27,11): Object is possibly 'undefined'.

@@ -2,7 +2,8 @@ import { Locale } from "../locale";
 import { Message } from "../message";
 import { DateTimeFormat, Identifier, MonetaryFormat, NumberFormat, Pattern } from "../types";
 import { CodeGenerator } from "./generator";
-import { hasElementParameter, isId, stable } from "./helpers";
+import { isId, stable } from "./helpers";
+import { hasElementParameter } from "./params-types";
 
 export class LocaleGenerator extends CodeGenerator {
   private formatters: Array<string> = [];

@@ -1,5 +1,3 @@
-import { Message } from "../message";
-
 export function stable(json: unknown): string {
   if (typeof json === "object" && json) {
     const keys = Object.keys(json);
@@ -21,13 +19,4 @@ export function camelify(str: string) {
 const ID_RE = /^[A-Za-z_$][$\w]*$/;
 export function isId(name: string) {
   return ID_RE.test(name);
-}
-
-export function hasElementParameter(message: Message) {
-  for (const param of message.params.values()) {
-    if (param.type === "element") {
-      return true;
-    }
-  }
-  return false;
 }

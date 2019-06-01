@@ -73,7 +73,8 @@
       "**/?(*.)+(spec|test).(ts|tsx)"
     ],
     "moduleNameMapper": {
-      "intl-codegen/runtime": "<rootDir>/src/runtime/index.ts"
+      "intl-codegen/runtime-react": "<rootDir>/src/runtime-react",
+      "intl-codegen/runtime": "<rootDir>/src/runtime"
     },
     "globals": {
       "ts-jest": {

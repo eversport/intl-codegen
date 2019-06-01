@@ -3,6 +3,7 @@ import path from "path";
 import { version } from "../package.json";
 import { Bundle, GenerateResult, templateId } from "./bundle";
 import { MessageId, ParamId, ParamType, validateLocaleId, validateMessageId /*validateParamType*/ } from "./types";
+import { CodegenTypes } from "./codegen";
 
 const BANNER =
   `
@@ -27,6 +28,8 @@ interface InputParameter {
    */
   type?: string;
 }
+
+export { CodegenTypes };
 
 export class IntlCodegen {
   private bundle = new Bundle();
@@ -93,9 +96,14 @@ export class IntlCodegen {
    * This will run the actual parsing, type checking and code generation.
    * It will return an Array of `files` and `errors`.
    */
-  async generate(): Promise<GenerateResult> {
-    // TODO: add option to specify what to generate
-    const result = await this.bundle.generate(path.sep || "/");
+  async generate(output: Array<CodegenTypes> = [CodegenTypes.Js, CodegenTypes.React]): Promise<GenerateResult> {
+    const outputs = new Set(output);
+    // react implies js
+    if (outputs.has(CodegenTypes.React)) {
+      outputs.add(CodegenTypes.Js);
+    }
+
+    const result = await this.bundle.generate(outputs, path.sep || "/");
 
     for (const file of result.files) {
       file.content = BANNER + file.content;
@@ -108,14 +116,14 @@ export class IntlCodegen {
    * This will generate all the code, and additionally write out all the files
    * to `dir`.
    */
-  async write(dir: string): Promise<GenerateResult> {
-    const output = await this.generate();
+  async write(dir: string, output?: Array<CodegenTypes>): Promise<GenerateResult> {
+    const result = await this.generate(output);
 
-    for (const file of output.files) {
+    for (const file of result.files) {
       await fsExtra.outputFile(path.join(dir, file.path), file.content);
     }
 
-    return output;
+    return result;
   }
 }
 
