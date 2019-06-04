@@ -15,9 +15,11 @@
   ],
   "scripts": {
     "clean": "rimraf codegen* runtime* .testoutput",
-    "build": "npm run clean && rollup -c",
-    "prepublishOnly": "npm run test && npm run build",
-    "test": "cross-env TZ=Europe/Vienna NODE_ICU_DATA=node_modules/full-icu jest --runInBand"
+    "prebuild": "npm run clean",
+    "build": "tsc --project tsconfig.build.json && rollup -c",
+    "pretest": "npm run build",
+    "test": "cross-env TZ=Europe/Vienna NODE_ICU_DATA=node_modules/full-icu jest --runInBand",
+    "prepublishOnly": "npm run test"
   },
   "dependencies": {
     "fluent-langneg": "^0.1.1",
@@ -41,7 +43,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "rollup": "^1.13.1",
-    "rollup-plugin-dts": "^0.15.1",
+    "rollup-plugin-dts": "^1.0.0-alpha.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.0.1",
     "ts-jest": "^24.0.2",

@@ -45,6 +45,10 @@ export function createReactAPI<IntlType, LocalizedType extends { id: string; par
     }
     const fn: any = intl[camelify(id) as keyof IntlType];
     if (fn) {
+      const result = fn(params)
+      if (typeof result === 'string') {
+        return result
+      }
       return React.createElement(React.Fragment, undefined, ...fn(params));
     }
     warnOnce(`The translation key "${id}" is not defined.`);

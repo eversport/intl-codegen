@@ -11,11 +11,11 @@ export type IntlObject<Messages, Locales> = Messages & { context: Context<Locale
 export type LoaderFn<Messages, Locales> = (locale: string | Array<string>) => Promise<IntlObject<Messages, Locales>>;
 
 interface LoaderMap {
-  [locale: string]: () => Promise<MessageFile>;
+  readonly [locale: string]: () => Promise<MessageFile>;
 }
 
 export function defineLoader<Messages extends {}, Locales extends string>(
-  messageIds: Array<string>,
+  messageIds: ReadonlyArray<string>,
   loaders: LoaderMap,
 ): LoaderFn<Messages, Locales> {
   const availableLocales = Object.keys(loaders);

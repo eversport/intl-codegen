@@ -2,7 +2,7 @@
 import json from "rollup-plugin-json";
 // @ts-ignore
 import resolve from "rollup-plugin-node-resolve";
-import { ts, dts } from "rollup-plugin-dts";
+import dts from "rollup-plugin-dts";
 
 const external = [
   "@babel/code-frame",
@@ -27,7 +27,7 @@ const globals = {
 function makeConfig(input, output, name) {
   return [
     {
-      input,
+      input: `./.build/src/${input}`,
       output: [
         { exports: "named", name, file: `${output}.umd.js`, format: "umd", globals },
         { exports: "named", file: `${output}.js`, format: "cjs" },
@@ -35,26 +35,21 @@ function makeConfig(input, output, name) {
       ],
 
       external,
-      treeshake: { moduleSideEffects: false },
 
-      plugins: [resolve({ extensions: [".ts"] }), json({ preferConst: true, indent: "  " }), ts()],
+      plugins: [resolve(), json({ preferConst: true, indent: "  " })],
     },
     {
-      input,
+      input: `./.build/src/${input}`.replace(".js", ".d.ts"),
       output: [{ file: `${output}.d.ts`, format: "es" }],
-
-      external,
-      treeshake: { moduleSideEffects: false },
-
       plugins: [dts()],
     },
   ];
 }
 
 const config = [
-  ...makeConfig("./src/index.ts", "codegen", "IntlCodegen"),
-  ...makeConfig("./src/runtime/index.ts", "runtime", "IntlCodegenRuntime"),
-  ...makeConfig("./src/runtime-react/index.ts", "runtime-react", "IntlCodegenRuntimeReact"),
+  ...makeConfig("index.js", "codegen", "IntlCodegen"),
+  ...makeConfig("runtime/index.js", "runtime", "IntlCodegenRuntime"),
+  ...makeConfig("runtime-react/index.js", "runtime-react", "IntlCodegenRuntimeReact"),
 ];
 
 export default config;

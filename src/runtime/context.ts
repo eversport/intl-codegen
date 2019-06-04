@@ -31,19 +31,19 @@ export class Context<Locales> {
     return this.ordinal ? this.ordinal.select(num) : "other";
   }
 
-  createDateFormatter(options: Intl.DateTimeFormatOptions) {
+  createDateFormatter(options?: Intl.DateTimeFormatOptions): (date: DateTimeValue) => string {
     const formatter = new Intl.DateTimeFormat(this.locale.formatter, options);
-    return (date: DateTimeValue) => formatter.format(date);
+    return date => formatter.format(date);
   }
 
-  createNumberFormatter(options: Intl.NumberFormatOptions) {
+  createNumberFormatter(options?: Intl.NumberFormatOptions): (num: NumberValue) => string {
     const formatter = new Intl.NumberFormat(this.locale.formatter, options);
-    return (num: NumberValue) => formatter.format(num);
+    return num => formatter.format(num);
   }
 
-  createMonetaryFormatter(options: Intl.NumberFormatOptions) {
+  createMonetaryFormatter(options?: Intl.NumberFormatOptions): (monetary: MonetaryValue) => string {
     const formatterCache: { [currency: string]: Intl.NumberFormat } = {};
-    return ({ currency, value }: MonetaryValue) => {
+    return ({ currency, value }) => {
       let formatter = formatterCache[currency];
       if (!formatter) {
         formatter = formatterCache[currency] = new Intl.NumberFormat(this.locale.formatter, {
