@@ -1,0 +1,8 @@
+test.tsx (10,16): Cannot invoke an expression whose type lacks a call signature. Type 'Context<"template">' has no compatible call signatures.
+
+---
+
+[reserved-id: template]: Message `context` is reserved for internal use
+[reserved-id: template/context]: Message `context` is reserved for internal use
+[reserved-id: template/msgfmt-valid]: Locale `template` is reserved for internal use
+[reserved-id: template]: Locale `template` is reserved for internal use

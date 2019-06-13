@@ -1,0 +1,9 @@
+[unknown-format: template/msgfmt]: The format `invalid` is not valid.
+> 1 | num: {num,number,invalid}, date: {dt,date,invalid}, time: {dt,time,invalid}
+    |           ^^^^^^^^^^^^^^
+[unknown-format: template/msgfmt]: The format `invalid` is not valid.
+> 1 | num: {num,number,invalid}, date: {dt,date,invalid}, time: {dt,time,invalid}
+    |                                      ^^^^^^^^^^^^
+[unknown-format: template/msgfmt]: The format `invalid` is not valid.
+> 1 | num: {num,number,invalid}, date: {dt,date,invalid}, time: {dt,time,invalid}
+    |                                                               ^^^^^^^^^^^^

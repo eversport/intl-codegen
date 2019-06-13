@@ -9,9 +9,9 @@ export async function test() {
   expect(intl.fluentMonetary({ value })).toEqual("a monetary value: 123.456,79 €");
   expect(intl.msgfmtMonetary({ value })).toEqual("a monetary value: 123.456,79 €");
 
-  try {
+  expect(() => {
     // calling with wrong parameter
     intl.fluentMonetary({ value: 123 });
     intl.fluentMonetary({ value: { value: 123 } });
-  } catch {}
+  }).toThrow();
 }

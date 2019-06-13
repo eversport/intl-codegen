@@ -2,8 +2,9 @@ import fsExtra from "fs-extra";
 import path from "path";
 import { version } from "../package.json";
 import { Bundle, GenerateResult, templateId } from "./bundle";
-import { MessageId, ParamId, ParamType, validateLocaleId, validateMessageId /*validateParamType*/ } from "./types";
 import { CodegenTypes } from "./codegen";
+import { CodegenError } from "./errors";
+import { ParamId, ParamType, validateLocaleId, validateMessageId /*validateParamType*/ } from "./types";
 
 const BANNER =
   `
@@ -29,7 +30,7 @@ interface InputParameter {
   type?: string;
 }
 
-export { CodegenTypes };
+export { CodegenError, CodegenTypes };
 
 export class IntlCodegen {
   private bundle = new Bundle();
@@ -55,8 +56,15 @@ export class IntlCodegen {
         return [name, { name, type }];
       }),
     );
-
-    this.bundle.addMessageFormat(templateId, id as MessageId, messageFormat, parsedParams);
+    const msgId = validateMessageId(id);
+    if (msgId) {
+      this.bundle.addMessageFormat(templateId, msgId, messageFormat, parsedParams);
+    } else {
+      this.bundle.raiseError("reserved-id", `Message \`${id}\` is reserved for internal use`, {
+        localeId: "template",
+        messageId: id,
+      });
+    }
 
     return this;
   }
@@ -78,7 +86,18 @@ export class IntlCodegen {
    * for the previously defined Message with the matching `id`.
    */
   addLocalizedMessageUsingMessageFormat(locale: string, id: string, messageFormat: string): IntlCodegen {
-    this.bundle.addMessageFormat(validateLocaleId(locale), validateMessageId(id), messageFormat);
+    const localeId = validateLocaleId(locale);
+    const ctx = { localeId: locale, messageId: id };
+    if (localeId) {
+      const msgId = validateMessageId(id);
+      if (msgId) {
+        this.bundle.addMessageFormat(localeId, msgId, messageFormat);
+      } else {
+        this.bundle.raiseError("reserved-id", `Message \`${id}\` is reserved for internal use`, ctx);
+      }
+    } else {
+      this.bundle.raiseError("reserved-id", `Locale \`${locale}\` is reserved for internal use`, ctx);
+    }
 
     return this;
   }
@@ -87,7 +106,12 @@ export class IntlCodegen {
    * This adds multiple localized messages at once using `fluent` syntax in the specified `locale`.
    */
   addLocalizedMessagesUsingFluent(locale: string, fluent: string): IntlCodegen {
-    this.bundle.addFluentMessages(validateLocaleId(locale), fluent);
+    const localeId = validateLocaleId(locale);
+    if (localeId) {
+      this.bundle.addFluentMessages(localeId, fluent);
+    } else {
+      this.bundle.raiseError("reserved-id", `Locale \`${locale}\` is reserved for internal use`, { localeId: locale });
+    }
 
     return this;
   }

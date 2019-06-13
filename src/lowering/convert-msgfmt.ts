@@ -33,16 +33,24 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
     if (!format) {
       return formatValue(bundle, errCtx(node), name, param);
     } else if (format.type === "numberFormat") {
-      return formatValue(bundle, errCtx(node), name, param, "number" as ParamType, formats.number[format.style]);
+      const style = formats.number[format.style];
+      if (format.style && !style) {
+        bundle.raiseError("unknown-format", `The format \`${format.style}\` is not valid.`, msg, {
+          sourceText,
+          node: format,
+        });
+      }
+      return formatValue(bundle, errCtx(node), name, param, "number" as ParamType, style);
     } else if (format.type === "dateFormat" || format.type === "timeFormat") {
-      return formatValue(
-        bundle,
-        errCtx(node),
-        name,
-        param,
-        "datetime" as ParamType,
-        (format.type === "dateFormat" ? formats.date : formats.time)[format.style],
-      );
+      const style = (format.type === "dateFormat" ? formats.date : formats.time)[format.style];
+      if (format.style && !style) {
+        bundle.raiseError("unknown-format", `The format \`${format.style}\` is not valid.`, msg, {
+          sourceText,
+          node: format,
+        });
+      }
+
+      return formatValue(bundle, errCtx(node), name, param, "datetime" as ParamType, style);
     } else if (format.type === "selectFormat" || format.type === "pluralFormat") {
       let other: Variant | undefined;
 
@@ -52,10 +60,16 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       }
 
       if (type && (!param || param.type !== "number")) {
-        bundle.raiseError("wrong-type", `Messageformat plural selector is only valid for type "number".`, msg, {
-          sourceText,
-          node,
-        });
+        let info = param ? `, but parameter \`${param.name}\` has type \`${param.type}\`` : "";
+        bundle.raiseError(
+          "wrong-type",
+          `Messageformat \`${type}\` selector is only valid for type "number"${info}.`,
+          msg,
+          {
+            sourceText,
+            node,
+          },
+        );
         type = undefined;
       }
 
@@ -74,7 +88,7 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       }
 
       if (!other) {
-        bundle.raiseError("missing-other", "MessageFormat requires a `other` case to be defined.", msg, {
+        bundle.raiseError("missing-other", "MessageFormat requires an `other` case to be defined.", msg, {
           sourceText,
           node: format,
         });

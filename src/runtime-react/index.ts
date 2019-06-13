@@ -1,8 +1,5 @@
+import { convertIdentifier } from "intl-codegen/runtime";
 import React from "react";
-
-function camelify(str: string) {
-  return str.replace(/[_-](\w|$)/g, (_, ch) => ch.toUpperCase());
-}
 
 const warned: { [key: string]: boolean } = {};
 function warnOnce(msg: string) {
@@ -43,13 +40,13 @@ export function createReactAPI<IntlType, LocalizedType extends { id: string; par
       );
       return id;
     }
-    const fn: any = intl[camelify(id) as keyof IntlType];
+    const fn: any = intl[convertIdentifier(id) as keyof IntlType];
     if (fn) {
-      const result = fn(params)
-      if (typeof result === 'string') {
-        return result
+      const result = fn(params);
+      if (typeof result === "string") {
+        return result;
       }
-      return React.createElement(React.Fragment, undefined, ...fn(params));
+      return React.createElement(React.Fragment, undefined, ...result);
     }
     warnOnce(`The translation key "${id}" is not defined.`);
     return id;

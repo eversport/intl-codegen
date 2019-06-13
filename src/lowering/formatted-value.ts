@@ -9,7 +9,7 @@ interface ErrorInfo {
 
 export function getParamType(bundle: Bundle, err: ErrorInfo, name: string, param?: Param, requestedType?: ParamType) {
   if (!param) {
-    bundle.raiseError("undeclared-param", `Parameter ${name} has not been declared.`, err.ctx, err.loc);
+    bundle.raiseError("undeclared-param", `Parameter \`${name}\` has not been declared.`, err.ctx, err.loc);
     return undefined;
   }
 

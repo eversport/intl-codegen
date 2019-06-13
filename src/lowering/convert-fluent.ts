@@ -15,7 +15,7 @@ import {
   Variant,
   variant,
 } from "../types";
-import { formatValue } from "./formatted-value";
+import { formatValue, getParamType } from "./formatted-value";
 
 export function convertFluent(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
@@ -45,23 +45,25 @@ export function convertFluent(bundle: Bundle, msg: Message) {
   function convertElement(node: fluent.Element): Element {
     if (node.type === "TextElement") {
       return text(node.value);
-    } else if (node.expression.type === "VariableReference") {
-      const { name } = node.expression.id;
+    }
+    const expr = node.expression;
+    if (expr.type === "VariableReference") {
+      const { name } = expr.id;
       const param = msg.params.get(name as ParamId);
 
-      return formatValue(bundle, errCtx(node.expression.id), name, param);
-    } else if (node.expression.type === "FunctionReference") {
-      const { arg0, fnType, formatOptions } = getFnMeta(node.expression);
+      return formatValue(bundle, errCtx(expr.id), name, param);
+    } else if (expr.type === "FunctionReference") {
+      const { arg0, fnType, formatOptions } = getFnMeta(expr);
       if (arg0.type === "VariableReference") {
         const { name } = arg0.id;
         const param = msg.params.get(name as ParamId);
 
-        return formatValue(bundle, errCtx(node.expression), name, param, fnType, formatOptions);
+        return formatValue(bundle, errCtx(expr), name, param, fnType, formatOptions);
       }
-    } else if (node.expression.type === "SelectExpression") {
+    } else if (expr.type === "SelectExpression") {
       let type: "ordinal" | "plural" | undefined;
       let selector: Identifier | Literal;
-      let fltSelector = node.expression.selector;
+      let fltSelector = expr.selector;
 
       if (fltSelector.type === "NumberLiteral") {
         type = "plural";
@@ -83,14 +85,23 @@ export function convertFluent(bundle: Bundle, msg: Message) {
           const { name } = arg0.id;
           selector = id(name);
 
-          // TODO: validate types!
-
-          // const { type, compatible } = getParamType(bundle, name, msg.params.get(name as ParamId), fnType)!;
+          if (
+            !getParamType(
+              bundle,
+              { ctx: msg, loc: { sourceText, node: fltSelector } },
+              name,
+              msg.params.get(name as ParamId),
+              fnType,
+            )!.compatible
+          ) {
+            // downgrade this to a straight string selector
+            type = undefined;
+          }
         } else if (arg0.type === "FunctionReference") {
           // hm, what to do?
-          bundle.raiseError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`, msg, {
+          bundle.raiseError("unsupported-syntax", `Fluent \`${fltSelector.type}\` is not yet supported.`, msg, {
             sourceText,
-            node,
+            node: fltSelector,
           });
           return text(sourceText.slice(node.span.start, node.span.end));
         } else {
@@ -99,7 +110,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
       }
 
       const variants: Array<Variant> = [];
-      for (const option of node.expression.variants) {
+      for (const option of expr.variants) {
         const selector = option.key.type === "NumberLiteral" ? Number(option.key.value) : option.key.name;
 
         // TODO: validate selector depending on pluralization
@@ -116,7 +127,10 @@ export function convertFluent(bundle: Bundle, msg: Message) {
       return select(selector, variants, type);
     }
 
-    bundle.raiseError("unsupported-syntax", `Fluent \`${node.type}\` is not yet supported.`, msg, { sourceText, node });
+    bundle.raiseError("unsupported-syntax", `Fluent \`${expr.type}\` is not yet supported.`, msg, {
+      sourceText,
+      node: expr,
+    });
     return text(sourceText.slice(node.span.start, node.span.end));
   }
 
@@ -124,7 +138,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
     const fn = node.id.name;
     const fnType = (fn === "NUMBER" ? "number" : fn === "DATETIME" ? "datetime" : "unknown") as ParamType;
     if (fnType === "unknown") {
-      bundle.raiseError("unknown-function", `Fluent function ${fn} is not supported.`, msg, {
+      bundle.raiseError("unknown-function", `Fluent function \`${fn}\` is not supported.`, msg, {
         sourceText,
         node: node.id,
       });

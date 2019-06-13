@@ -99,6 +99,12 @@ declare module "fluent-syntax" {
 
   export type Element = TextElement | Placeable;
 
+  export interface Attribute extends Node {
+    type: "Attribute";
+    id: Identifier;
+    value: Pattern;
+  }
+
   export interface Pattern extends Node {
     type: "Pattern";
     elements: Array<Element>;
@@ -109,6 +115,7 @@ declare module "fluent-syntax" {
     id: Identifier;
     value: Pattern;
     comment: Comment | null;
+    attributes: Array<Attribute>;
   }
 
   export interface Term extends Node {
@@ -116,6 +123,7 @@ declare module "fluent-syntax" {
     id: Identifier;
     value: Pattern;
     comment: Comment | null;
+    attributes: Array<Attribute>;
   }
 
   export interface Annotation extends Node {

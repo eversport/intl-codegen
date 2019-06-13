@@ -2,7 +2,8 @@ import { loadLanguage } from "./";
 
 export async function test() {
   const intl = await loadLanguage("de");
-  try {
+
+  expect(() => {
     // calling without params
     intl.simpleParam();
     intl.simpleParam({});
@@ -12,5 +13,5 @@ export async function test() {
 
     // calling with wrong type
     intl.simpleParam({ a: 123 });
-  } catch {}
+  }).toThrow();
 }

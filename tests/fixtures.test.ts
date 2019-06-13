@@ -69,7 +69,7 @@ describe("Fixtures", () => {
           await fsExtra.outputFile(diagnosticsFile, diagnostics);
         } else {
           const expectedDiagnostics = (await fsExtra.readFile(diagnosticsFile, "utf-8")).trim();
-          expect(diagnostics).toEqual(expectedDiagnostics);
+          expect(diagnostics.trim()).toEqual(expectedDiagnostics.trim());
         }
 
         const { test } = require(testFile);

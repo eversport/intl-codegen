@@ -1,4 +1,4 @@
-[template/fluent-missing-definition: undefined-message]: Message has no definition
-[template/msgfmt-missing-definition: undefined-message]: Message has no definition
-[en/fluent-missing-localization: unlocalized-message]: Message has no localization
-[en/msgfmt-missing-localization: unlocalized-message]: Message has no localization
+[undefined-message: template/fluent-missing-definition]: Message `fluent-missing-definition` has no definition.
+[undefined-message: template/msgfmt-missing-definition]: Message `msgfmt-missing-definition` has no definition.
+[unlocalized-message: en/fluent-missing-localization]: Message `fluent-missing-localization` has no localization for locale `en`.
+[unlocalized-message: en/msgfmt-missing-localization]: Message `msgfmt-missing-localization` has no localization for locale `en`.

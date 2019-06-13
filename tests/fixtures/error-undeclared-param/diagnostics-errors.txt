@@ -1,0 +1,16 @@
+test.tsx (8,22): Expected 0 arguments, but got 1.
+test.tsx (9,22): Expected 0 arguments, but got 1.
+test.tsx (12,22): Expected 0 arguments, but got 1.
+test.tsx (13,22): Expected 0 arguments, but got 1.
+test.tsx (16,22): Expected 0 arguments, but got 1.
+test.tsx (17,22): Expected 0 arguments, but got 1.
+
+---
+
+[undeclared-param: template/fluent]: Parameter `param` has not been declared.
+> 1 | fluent = an undeclared { $param }.
+    |                           ^^^^^
+  2 | 
+[undeclared-param: template/msgfmt]: Parameter `param` has not been declared.
+> 1 | an undeclared {param}.
+    |               ^^^^^^^

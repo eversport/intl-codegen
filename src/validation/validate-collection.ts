@@ -17,7 +17,7 @@ export function validateCollection(bundle: Bundle): void {
   // warn about undefined messages and add an empty definition
   for (const id of allIds) {
     if (!template.messages.has(id)) {
-      bundle.raiseError("undefined-message", `Message has no definition`, {
+      bundle.raiseError("undefined-message", `Message \`${id}\` has no definition.`, {
         localeId: "template",
         messageId: id,
       });
@@ -38,10 +38,14 @@ export function validateCollection(bundle: Bundle): void {
       let msg = locale.messages.get(id);
       const templateMsg = template.messages.get(id)!;
       if (!msg) {
-        bundle.raiseError("unlocalized-message", `Message has no localization`, {
-          localeId: locale.locale,
-          messageId: id,
-        });
+        bundle.raiseError(
+          "unlocalized-message",
+          `Message \`${id}\` has no localization for locale \`${locale.locale}\`.`,
+          {
+            localeId: locale.locale,
+            messageId: id,
+          },
+        );
 
         msg = new Message(locale.locale, id).withPropsFrom(templateMsg);
         locale.messages.set(id, msg);

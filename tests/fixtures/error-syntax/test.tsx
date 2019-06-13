@@ -7,7 +7,11 @@ export async function test() {
   expect(intl.msgfmtJunk()).toEqual("msgfmt-junk");
 
   // fluent will not define the message at all
-  try {
-    intl.fluentJunk();
-  } catch {}
+  expect(() => intl.fluentJunk()).toThrow();
+
+  // attributes are just ignored
+  expect(intl.fluentUnsupportedAttributes()).toEqual("with attributes");
+
+  // message and term references are stringified
+  expect(intl.fluentUnsupportedReferences()).toEqual("{message-reference} {-term-reference}");
 }

@@ -22,4 +22,7 @@ export async function test() {
     </Provider>,
   );
   expect(rendered).toEqual("ein <strong>react</strong> element gebindestricht :-D");
+
+  expect(intl.withElement(params)).toEqual(expect.any(Array));
+  expect(intl.aDashedId()).toEqual(expect.any(String));
 }

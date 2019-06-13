@@ -9,6 +9,7 @@ export const formats: Formats = {
     percent: {
       style: "percent",
     },
+    currency: {},
     currency0: {
       minimumFractionDigits: 0,
     },

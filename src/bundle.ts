@@ -20,7 +20,7 @@ export const templateId = "template" as LocaleId;
 
 // a "real" parser would be nice, but I will take my chances with
 // regexp for now…
-const PARAM_RE = /^\s*\$(\w+)(\s+\((\w+)\))?/g;
+const PARAM_RE = /^\s*\$(\w+)(\s+\((\w+)\))?/gm;
 function parseFluentParams(comment: string): Params {
   const params: Params = new Map();
 
@@ -66,14 +66,25 @@ export class Bundle {
 
     for (const node of ast.body) {
       if (node.type === "Message") {
-        try {
-          const id = validateMessageId(node.id.name);
+        const id = validateMessageId(node.id.name);
+        if (id) {
           const params = parseFluentParams(node.comment ? node.comment.content : "");
 
           const msg = new Message(locale, id, params).withParseResult(sourceText, node);
           messages.set(id, msg);
-        } catch (error) {
-          // TODO: report invalid id error?
+        } else {
+          this.raiseError("reserved-id", `Message \`${node.id.name}\` is reserved for internal use`, {
+            localeId: locale,
+            messageId: id,
+          });
+        }
+        for (const attr of node.attributes) {
+          this.raiseError(
+            "unsupported-syntax",
+            `Fluent \`${attr.type}\` is not yet supported.`,
+            { localeId: locale, messageId: node.id.name },
+            { sourceText, node: attr },
+          );
         }
       } else if (node.type === "Comment") {
       } else if (node.type === "Junk") {
@@ -87,7 +98,7 @@ export class Bundle {
       } else {
         this.raiseError(
           "unsupported-syntax",
-          `Fluent \`${node.type}\` is not yet supported`,
+          `Fluent \`${node.type}\` is not yet supported.`,
           { localeId: locale },
           { sourceText, node },
         );
@@ -181,8 +192,8 @@ export class Bundle {
   public raiseError(id: ErrorId, msg: string, context: ErrorContext, loc?: ErrorLocation) {
     const Klass = ERROR_CLASSES[id];
     let ctx = [context.localeId, context.messageId].filter(Boolean).join("/");
-    ctx = ctx ? ctx + ": " : "";
-    const error = new Klass(`[${ctx}${id}]: ${msg}`) as CodegenError;
+    ctx = ctx ? ": " + ctx : "";
+    const error = new Klass(`[${id}${ctx}]: ${msg}`) as CodegenError;
     error.id = id;
     error.context = context;
     let location: Range;
@@ -223,11 +234,11 @@ function getLineCol(sourceText: string, offset: number) {
   let idx = 0,
     line: string;
   for ([idx, line] of lines.entries()) {
-    if (line.length + 1 < offset) {
+    if (line.length + 1 <= offset) {
       offset -= line.length + 1;
     } else {
       break;
     }
   }
-  return { line: idx + 1, column: offset };
+  return { line: idx + 1, column: offset + 1 };
 }

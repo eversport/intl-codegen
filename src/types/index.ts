@@ -23,16 +23,16 @@ export function validateParamType(name: string): ParamType {
   return name as ParamType;
 }
 
-export function validateLocaleId(locale: string): LocaleId {
+export function validateLocaleId(locale: string): LocaleId | undefined {
   if (locale === "template") {
-    throw new ReferenceError(`Locale "${locale}" is reserved for internal use`);
+    return;
   }
   return locale as LocaleId;
 }
 
-export function validateMessageId(id: string): MessageId {
+export function validateMessageId(id: string): MessageId | undefined {
   if (id === "context") {
-    throw new ReferenceError(`Message "${id}" is reserved for internal use`);
+    return;
   }
   return id as MessageId;
 }

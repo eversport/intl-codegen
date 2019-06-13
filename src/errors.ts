@@ -25,9 +25,11 @@ export type ErrorId =
   | "unsupported-syntax"
   | "undefined-message"
   | "unlocalized-message"
+  | "reserved-id"
   | "unknown-type"
   | "wrong-type"
   | "undeclared-param"
+  | "unknown-format"
   | "unknown-function"
   | "wrong-selector"
   | "missing-other";
@@ -37,9 +39,11 @@ export const ERROR_CLASSES: { [key in ErrorId]: SyntaxErrorConstructor } = {
   "unsupported-syntax": SyntaxError,
   "undefined-message": ReferenceError,
   "unlocalized-message": ReferenceError,
+  "reserved-id": ReferenceError,
   "unknown-type": TypeError,
   "wrong-type": TypeError,
   "undeclared-param": TypeError,
+  "unknown-format": TypeError,
   "unknown-function": TypeError,
   "wrong-selector": TypeError,
   "missing-other": SyntaxError,

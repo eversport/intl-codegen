@@ -4,5 +4,5 @@ export async function test() {
   const intl = await loadLanguage("de");
 
   // should error on unknown message
-  typeof intl.invalid === "function";
+  expect(typeof intl.invalid).toEqual("undefined");
 }
