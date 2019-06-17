@@ -47,6 +47,13 @@ export const formats: Formats = {
       day: "numeric",
       year: "numeric",
     },
+
+    withweekday: {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+    },
   },
 
   time: {
