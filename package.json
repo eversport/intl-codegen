@@ -25,14 +25,14 @@
     "fluent-langneg": "^0.1.1",
     "fluent-syntax": "^0.13.0",
     "fs-extra": "^8.0.1",
-    "intl-messageformat-parser": "^1.6.5"
+    "intl-messageformat-parser": "^1.6.6"
   },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.1",
     "@types/fs-extra": "^7.0.0",
-    "@types/jest": "^24.0.13",
-    "@types/node": "^12.0.7",
-    "@types/react": "^16.8.19",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.0.8",
+    "@types/react": "^16.8.20",
     "@types/react-dom": "^16.8.4",
     "cross-env": "^5.2.0",
     "deindent": "^0.1.0",
@@ -42,12 +42,12 @@
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "rollup": "^1.14.5",
-    "rollup-plugin-dts": "^1.1.0",
+    "rollup": "^1.15.6",
+    "rollup-plugin-dts": "^1.1.1",
     "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^5.0.1",
+    "rollup-plugin-node-resolve": "^5.0.3",
     "ts-jest": "^24.0.2",
-    "typescript": "3.5.1"
+    "typescript": "3.5.2"
   },
   "optionalDependencies": {
     "@babel/code-frame": "^7.0.0"
