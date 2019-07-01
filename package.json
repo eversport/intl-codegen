@@ -24,8 +24,8 @@
   "dependencies": {
     "fluent-langneg": "^0.1.1",
     "fluent-syntax": "^0.13.0",
-    "fs-extra": "^8.0.1",
-    "intl-messageformat-parser": "^1.6.8"
+    "fs-extra": "^8.1.0",
+    "intl-messageformat-parser": "^1.7.0"
   },
   "devDependencies": {
     "@types/babel__code-frame": "^7.0.1",
@@ -37,15 +37,15 @@
     "cross-env": "^5.2.0",
     "deindent": "^0.1.0",
     "full-icu": "^1.3.0",
-    "intl-pluralrules": "^1.0.2",
+    "intl-pluralrules": "^1.0.3",
     "jest": "^24.8.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "rollup": "^1.16.2",
+    "rollup": "^1.16.3",
     "rollup-plugin-dts": "^1.1.4",
     "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^5.0.4",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "ts-jest": "^24.0.2",
     "typescript": "3.5.2"
   },
