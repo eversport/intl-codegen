@@ -1,3 +1,8 @@
+### 2.0.0 2019-07-10
+
+- See the [introductory blog post](https://swatinem.de/blog/intl-codegen-2/) for
+  an overview of features and the docs for an overview of the API.
+
 ### 1.7.1 2019-05-06
 
 - Update deprecated `React.SFC` usage
