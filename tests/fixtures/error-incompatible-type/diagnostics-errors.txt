@@ -29,7 +29,7 @@
     | ^^^^^^^^^^^^^
 [wrong-type: template/msgfmt-string-as-ordinal]: Messageformat `ordinal` selector is only valid for type "number", but parameter `param` has type `string`.
 > 1 | {param}{param,selectordinal,
-    |        ^^^^^^^^^^^^^^^^^^^^
+    |        ^^^^^^^^^^^^^^^^^^^^^
 > 2 |   one {st}
     | ^^^^^^^^^^
 > 3 |   two {nd}
@@ -42,7 +42,7 @@
     | ^^
 [wrong-type: template/msgfmt-string-as-plural]: Messageformat `plural` selector is only valid for type "number", but parameter `param` has type `string`.
 > 1 | {param} {param,plural,
-    |         ^^^^^^^^^^^^^
+    |         ^^^^^^^^^^^^^^
 > 2 |   one {parameter}
     | ^^^^^^^^^^^^^^^^^
 > 3 |   other {parameters}
