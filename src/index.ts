@@ -1,7 +1,7 @@
 import fsExtra from "fs-extra";
 import path from "path";
 import { version } from "../package.json";
-import { Bundle, GenerateResult, templateId } from "./bundle";
+import { Bundle, GenerateResult, templateId, CodegenOptions } from "./bundle";
 import { CodegenTypes } from "./codegen";
 import { CodegenError } from "./errors";
 import { ParamId, ParamType, validateLocaleId, validateMessageId /*validateParamType*/ } from "./types";
@@ -33,7 +33,11 @@ interface InputParameter {
 export { CodegenError, CodegenTypes };
 
 export class IntlCodegen {
-  private bundle = new Bundle();
+  private bundle: Bundle;
+
+  constructor(options: CodegenOptions = {}) {
+    this.bundle = new Bundle(options);
+  }
 
   /**
    * Define a custom enum type with `name` and `variants` for use inside selectors.

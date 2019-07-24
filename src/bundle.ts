@@ -44,6 +44,10 @@ export interface GenerateResult {
   errors: Array<CodegenError>;
 }
 
+export interface CodegenOptions {
+  fallbackLocale?: string;
+}
+
 /**
  * A `Bundle` is a collection of multiple locales and their messages.
  */
@@ -52,6 +56,13 @@ export class Bundle {
   public errors: Array<CodegenError> = [];
   public locales = new Map<LocaleId, Locale>([[templateId, new Locale(templateId)]]);
   private codeFrame?: typeof codeFrameColumns;
+
+  constructor(public options: CodegenOptions) {}
+
+  public skipTemplate(locale: LocaleId) {
+    const { fallbackLocale } = this.options;
+    return locale === templateId && fallbackLocale && fallbackLocale !== templateId;
+  }
 
   public addType(name: ParamType, variants: Array<string>) {
     // TODO: error on duplicate definition?
@@ -142,6 +153,10 @@ export class Bundle {
 
     // lower all the messages to IR
     for (const locale of this.locales.values()) {
+      if (this.skipTemplate(locale.locale)) {
+        continue;
+      }
+
       for (const msg of locale.messages.values()) {
         msg.lower(this);
       }
@@ -152,6 +167,9 @@ export class Bundle {
     if (output.has(CodegenTypes.Js)) {
       // generate all the locale definitions
       for (const locale of this.locales.values()) {
+        if (this.skipTemplate(locale.locale)) {
+          continue;
+        }
         const content = new LocaleGenerator(locale).generate();
 
         files.push({

@@ -19,11 +19,12 @@ export interface LocaleInfo<Locales> {
   readonly requested: string | Array<string>;
   /**
    * This is the id of locale pack that was actually loaded, or `"template"`, if
-   * none of the available locales matched the one `requested`.
+   * none of the available locales matched the one `requested` and no fallback
+   * locale was defined.
    * For example, when `de-DE` was requested, but only translations for `de` were
    * provided, this will return `de`.
    * When `hu-HU` was requested but only translations for `de` are available, it
-   * will return `template`.
+   * will return `template` (or the defined fallback).
    */
   readonly loaded: Locales;
   /**

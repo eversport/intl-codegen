@@ -1,26 +1,3 @@
-[wrong-type: template/fluent-date-as-number]: Parameter `param` has type `datetime` but was used as `number`.
-  1 | # $param (datetime)
-> 2 | fluent-date-as-number = { NUMBER($param) }
-    |                           ^^^^^^^^^^^^^^
-  3 | 
-  4 | # $param (number)
-  5 | fluent-number-as-date = { DATETIME($param) }
-[wrong-type: template/fluent-number-as-date]: Parameter `param` has type `number` but was used as `datetime`.
-  3 | 
-  4 | # $param (number)
-> 5 | fluent-number-as-date = { DATETIME($param) }
-    |                           ^^^^^^^^^^^^^^^^
-  6 | 
-  7 | # $param (string)
-  8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
-[wrong-type: template/fluent-string-as-ordinal]: Parameter `param` has type `string` but was used as `number`.
-   6 | 
-   7 | # $param (string)
->  8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
-     |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   9 |   [one] st
-  10 |   [two] nd
-  11 |   [few] rd
 [wrong-type: template/msgfmt-date-as-number]: Parameter `param` has type `datetime` but was used as `number`.
 > 1 | {param, number}
     | ^^^^^^^^^^^^^^^
@@ -49,3 +26,26 @@
     | ^^^^^^^^^^^^^^^^^
 > 4 | }
     | ^^
+[wrong-type: template/fluent-date-as-number]: Parameter `param` has type `datetime` but was used as `number`.
+  1 | # $param (datetime)
+> 2 | fluent-date-as-number = { NUMBER($param) }
+    |                           ^^^^^^^^^^^^^^
+  3 | 
+  4 | # $param (number)
+  5 | fluent-number-as-date = { DATETIME($param) }
+[wrong-type: template/fluent-number-as-date]: Parameter `param` has type `number` but was used as `datetime`.
+  3 | 
+  4 | # $param (number)
+> 5 | fluent-number-as-date = { DATETIME($param) }
+    |                           ^^^^^^^^^^^^^^^^
+  6 | 
+  7 | # $param (string)
+  8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
+[wrong-type: template/fluent-string-as-ordinal]: Parameter `param` has type `string` but was used as `number`.
+   6 | 
+   7 | # $param (string)
+>  8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
+     |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   9 |   [one] st
+  10 |   [two] nd
+  11 |   [few] rd

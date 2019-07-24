@@ -17,13 +17,14 @@ interface LoaderMap {
 export function defineLoader<Messages extends {}, Locales extends string>(
   messageIds: ReadonlyArray<string>,
   loaders: LoaderMap,
+  fallbackLocale: string = "template",
 ): LoaderFn<Messages, Locales> {
   const availableLocales = Object.keys(loaders);
 
   return async languages => {
     const requestedLocales = parseRequestedLanguages(languages);
     const [resolvedLocale] = negotiateLanguages(requestedLocales, availableLocales, {
-      defaultLocale: "template",
+      defaultLocale: fallbackLocale,
       strategy: "lookup",
     });
 

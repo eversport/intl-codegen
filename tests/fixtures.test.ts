@@ -22,15 +22,20 @@ describe("Fixtures", () => {
     const dir = path.join(FIXTURES_DIR, name);
 
     it(`should handle "${name}"`, async () => {
-      const codegen = new IntlCodegen();
-      let hasSetup = false;
+      let codegen = new IntlCodegen();
+
+      try {
+        const { setup } = require(path.join(dir, "setup.ts"));
+        const result = setup(codegen);
+        if (result) {
+          codegen = result;
+        }
+      } catch {}
 
       const files = await fsExtra.readdir(dir);
       let hasDiagnostics = false;
       for (const file of files) {
-        if (file === "setup.ts") {
-          hasSetup = true;
-        } else if (file === "diagnostics-errors.txt") {
+        if (file === "diagnostics-errors.txt") {
           hasDiagnostics = true;
         } else if (file.endsWith(".ftl")) {
           const content = await fsExtra.readFile(path.join(dir, file), "utf-8");
@@ -47,11 +52,6 @@ describe("Fixtures", () => {
             codegen.addLocalizedMessageUsingMessageFormat(locale, id, msg as any);
           }
         }
-      }
-
-      if (hasSetup) {
-        const { setup } = require(path.join(dir, "setup.ts"));
-        setup(codegen);
       }
 
       await withCompiledBundle(name, codegen, async (runDir, result) => {

@@ -1,10 +1,13 @@
 import { Bundle, templateId } from "../bundle";
 import { createFakePattern } from "../fake-pattern";
 import { Message } from "../message";
-import { MessageId } from "../types";
+import { MessageId, LocaleId } from "../types";
 
 export function validateCollection(bundle: Bundle): void {
   const template = bundle.getLocale(templateId);
+  const fallback = bundle.options.fallbackLocale
+    ? bundle.getLocale(bundle.options.fallbackLocale as LocaleId)
+    : template;
 
   // get *all* the used message IDs
   const allIds = new Set<MessageId>();
@@ -37,6 +40,7 @@ export function validateCollection(bundle: Bundle): void {
     for (const id of allIds) {
       let msg = locale.messages.get(id);
       const templateMsg = template.messages.get(id)!;
+      const fallbackMsg = fallback.messages.get(id);
       if (!msg) {
         bundle.raiseError(
           "unlocalized-message",
@@ -47,7 +51,7 @@ export function validateCollection(bundle: Bundle): void {
           },
         );
 
-        msg = new Message(locale.locale, id).withPropsFrom(templateMsg);
+        msg = new Message(locale.locale, id).withPropsFrom(fallbackMsg || templateMsg);
         locale.messages.set(id, msg);
       } else {
         // copy over the params from the template, so that each message has

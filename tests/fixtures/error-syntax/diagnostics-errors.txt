@@ -2,6 +2,12 @@ test.tsx (10,21): Property 'fluentJunk' does not exist on type 'IntlObject<Messa
 
 ---
 
+[parse-error: template/msgfmt-junk]: Expected "'", ",", "0", "}", [1-9], or any character but end of input found.
+> 1 | {
+    |  ^
+[parse-error: template/msgfmt-invalid-format]: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "b" found.
+> 1 | {foo,bar,baz}
+    |      ^
 [parse-error: template]: E0003: Expected token: "}"
   1 | fluent-junk = {
   2 | 
@@ -42,12 +48,6 @@ test.tsx (10,21): Property 'fluentJunk' does not exist on type 'IntlObject<Messa
   10 | 
   11 | fluent-unsupported-references = {message-reference} {-term-reference}
   12 | 
-[parse-error: template/msgfmt-junk]: Expected "'", ",", "0", "}", [1-9], or any character but end of input found.
-> 1 | {
-    |  ^
-[parse-error: template/msgfmt-invalid-format]: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "b" found.
-> 1 | {foo,bar,baz}
-    |      ^
 [unsupported-syntax: template/fluent-unsupported-references]: Fluent `MessageReference` is not yet supported.
    9 | -fluent-unsupported-term = a term
   10 | 

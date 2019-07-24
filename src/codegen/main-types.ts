@@ -48,6 +48,9 @@ export class MainTypesGenerator extends CodeGenerator {
     this.line(`export type Locales =`);
     this.indent += 1;
     for (const locale of this.bundle.locales.keys()) {
+      if (this.bundle.skipTemplate(locale)) {
+        continue;
+      }
       this.line(`| ${JSON.stringify(locale)}`);
     }
     this.indent -= 1;

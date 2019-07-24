@@ -5,5 +5,5 @@ test.tsx (13,24): Type 'Element' is not assignable to type 'string'.
 
 ---
 
-[unknown-type: template/fluent]: The parameter `param` has unknown type `foo`.
 [unknown-type: template/msgfmt]: The parameter `param` has unknown type `foo`.
+[unknown-type: template/fluent]: The parameter `param` has unknown type `foo`.

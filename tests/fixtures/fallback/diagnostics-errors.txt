@@ -1,0 +1,6 @@
+test.tsx (9,9): Type '"template"' is not assignable to type 'Locales'.
+
+---
+
+[unlocalized-message: de/msgfmt-missing]: Message `msgfmt-missing` has no localization for locale `de`.
+[unlocalized-message: de/fluent-missing]: Message `fluent-missing` has no localization for locale `de`.

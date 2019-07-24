@@ -27,11 +27,14 @@ export class MainGenerator extends CodeGenerator {
 
     this.indent += 1;
     for (const locale of this.bundle.locales.keys()) {
+      if (this.bundle.skipTemplate(locale)) {
+        continue;
+      }
       this.line(`${isId(locale) ? locale : JSON.stringify(locale)}: () => import("./locales/${locale}.js"),`);
     }
     this.indent -= 1;
 
-    this.line("});");
+    this.line(`}, ${JSON.stringify(this.bundle.options.fallbackLocale || "template")});`);
 
     return this.finish();
   }
