@@ -1,3 +1,7 @@
+### 2.1.0 2019-07-24
+
+- Support a `fallbackLocale` option that avoids generating the `template` locale.
+
 ### 2.0.0 2019-07-10
 
 - See the [introductory blog post](https://swatinem.de/blog/intl-codegen-2/) for
