@@ -18,7 +18,7 @@
     "prebuild": "npm run clean",
     "build": "tsc --project tsconfig.build.json && rollup -c",
     "pretest": "npm run build",
-    "test": "cross-env TZ=Europe/Vienna NODE_ICU_DATA=node_modules/full-icu jest --runInBand",
+    "test": "cross-env LANG=en TZ=Europe/Vienna NODE_ICU_DATA=node_modules/full-icu jest --runInBand",
     "prepublishOnly": "npm run test"
   },
   "dependencies": {

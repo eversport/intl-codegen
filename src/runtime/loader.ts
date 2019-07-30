@@ -28,7 +28,12 @@ export function defineLoader<Messages extends {}, Locales extends string>(
       strategy: "lookup",
     });
 
-    const formatterLocale = new Intl.NumberFormat(requestedLocales).resolvedOptions().locale;
+    let formatterLocale: string;
+    try {
+      formatterLocale = new Intl.NumberFormat(requestedLocales).resolvedOptions().locale;
+    } catch {
+      formatterLocale = new Intl.NumberFormat(fallbackLocale).resolvedOptions().locale;
+    }
 
     const locale: LocaleInfo<Locales> = {
       requested: requestedLocales,
