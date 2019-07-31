@@ -7,7 +7,7 @@
 
 Install the package from `npm`:
 
-    $ npm install --save-dev intl-codegen
+    $ npm install --save intl-codegen
 
 ### [Codegen API](./docs/codegen-api.md)
 
