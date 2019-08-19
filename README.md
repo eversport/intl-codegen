@@ -1,6 +1,6 @@
 # intl-codegen – generate code and type definitions from translations
 
-[![Build Status](https://img.shields.io/travis/eversport/intl-codegen.svg)](https://travis-ci.org/eversport/intl-codegen)
+[![Build Status](https://github.com/eversport/intl-codegen/workflows/CI/badge.svg)](https://github.com/eversport/intl-codegen/actions?workflow=CI)
 [![Coverage Status](https://img.shields.io/codecov/c/github/eversport/intl-codegen.svg)](https://codecov.io/gh/eversport/intl-codegen)
 
 ## Usage
