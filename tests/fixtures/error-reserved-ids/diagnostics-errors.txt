@@ -1,4 +1,5 @@
-test.tsx (10,16): Cannot invoke an expression whose type lacks a call signature. Type 'Context<"template">' has no compatible call signatures.
+test.tsx (10,21): This expression is not callable.
+  Type 'Context<"template">' has no call signatures.
 
 ---
 

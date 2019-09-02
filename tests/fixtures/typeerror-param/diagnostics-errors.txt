@@ -1,4 +1,4 @@
-test.tsx (8,5): Expected 1 arguments, but got 0.
+test.tsx (8,10): Expected 1 arguments, but got 0.
 test.tsx (9,22): Argument of type '{}' is not assignable to parameter of type '{ a: string; }'.
   Property 'a' is missing in type '{}' but required in type '{ a: string; }'.
 test.tsx (12,24): Argument of type '{ b: string; }' is not assignable to parameter of type '{ a: string; }'.
