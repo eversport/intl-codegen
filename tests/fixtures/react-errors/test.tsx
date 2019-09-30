@@ -1,6 +1,12 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { loadLanguage, Localized, Provider } from "./react";
+import { loadLanguage, Localized, Provider, useIntl } from "./react";
+
+// @ts-ignore: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+const MyComponent: React.FC = () => {
+  const intl = useIntl();
+  return intl.aDashedId();
+};
 
 export async function test() {
   let intl, rendered;
@@ -19,6 +25,13 @@ export async function test() {
   );
 
   jest.resetAllMocks();
+
+  // using hook without initializing a `Provider`
+  expect(() => {
+    rendered = renderToStaticMarkup(<MyComponent />);
+  }).toThrowError(
+    "Localization not initialized correctly.\nMake sure to include `<Provider value={intl}>` in your component tree.",
+  );
 
   // using with unknown ids
   rendered = renderToStaticMarkup(

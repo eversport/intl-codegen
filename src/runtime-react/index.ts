@@ -15,7 +15,7 @@ export interface ReactAPI<IntlType, LocalizedType> {
   Provider: React.Provider<IntlType | undefined>;
   Consumer: React.Consumer<IntlType | undefined>;
   Localized: React.FC<LocalizedType>;
-  useIntl: () => IntlType | undefined;
+  useIntl: () => IntlType;
 }
 
 export function createReactAPI<IntlType, LocalizedType extends { id: string; params?: any }>(): ReactAPI<
@@ -29,15 +29,21 @@ export function createReactAPI<IntlType, LocalizedType extends { id: string; par
   return { Context, Provider, Consumer, Localized, useIntl };
 
   function useIntl() {
-    return React.useContext(Context);
+    const intl = React.useContext(Context);
+    if (!intl) {
+      throw new Error(
+        "Localization not initialized correctly.\nMake sure to include `<Provider value={intl}>` in your component tree.",
+      );
+    }
+    return intl;
   }
 
   function Localized({ id = "", params = {} }: LocalizedType): React.ReactNode {
-    const intl = useIntl();
-    if (!intl) {
-      warnOnce(
-        "Localization not initialized correctly.\nMake sure to include `<Provider value={intl}>` in your component tree.",
-      );
+    let intl: IntlType;
+    try {
+      intl = useIntl();
+    } catch (error) {
+      warnOnce((error as Error).message);
       return id;
     }
     const fn: any = intl[convertIdentifier(id) as keyof IntlType];

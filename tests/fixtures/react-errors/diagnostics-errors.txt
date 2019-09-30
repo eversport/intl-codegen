@@ -1,5 +1,5 @@
-test.tsx (27,20): Type '"invalid"' is not assignable to type '"a-dashed-id" | "with-element"'.
-test.tsx (27,47): Type '"invalid"' is not assignable to type '"a-dashed-id" | "with-element"'.
-test.tsx (27,74): Type '"invalid2"' is not assignable to type '"a-dashed-id" | "with-element"'.
-test.tsx (40,10): Type '{}' is not assignable to type '(IntrinsicAttributes & { id: "a-dashed-id"; } & { children?: ReactNode; }) | (IntrinsicAttributes & { id: "with-element"; params: { react: ReactNode; }; } & { children?: ReactNode; })'.
+test.tsx (40,20): Type '"invalid"' is not assignable to type '"a-dashed-id" | "with-element"'.
+test.tsx (40,47): Type '"invalid"' is not assignable to type '"a-dashed-id" | "with-element"'.
+test.tsx (40,74): Type '"invalid2"' is not assignable to type '"a-dashed-id" | "with-element"'.
+test.tsx (53,10): Type '{}' is not assignable to type '(IntrinsicAttributes & { id: "a-dashed-id"; } & { children?: ReactNode; }) | (IntrinsicAttributes & { id: "with-element"; params: { react: ReactNode; }; } & { children?: ReactNode; })'.
   Type '{}' is missing the following properties from type '{ id: "with-element"; params: { react: ReactNode; }; }': id, params

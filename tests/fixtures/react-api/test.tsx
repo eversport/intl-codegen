@@ -5,12 +5,6 @@ import { Consumer, loadLanguage, Provider, useIntl } from "./react";
 // @ts-ignore: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 const MyComponent: React.FC = () => {
   const intl = useIntl();
-  // should error because its nullable
-  intl.aDashedId();
-
-  if (!intl) {
-    throw new Error();
-  }
   return intl.aDashedId();
 };
 
