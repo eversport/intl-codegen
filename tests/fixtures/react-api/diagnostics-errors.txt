@@ -1,1 +1,1 @@
-test.tsx (21,11): Object is possibly 'undefined'.
+test.tsx (28,11): Object is possibly 'undefined'.

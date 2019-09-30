@@ -2,10 +2,17 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Consumer, loadLanguage, Provider, useIntl } from "./react";
 
-// @ts-ignore: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 const MyComponent: React.FC = () => {
   const intl = useIntl();
-  return intl.aDashedId();
+  return (
+    <>
+      {intl({ id: "with-element", params: { react: <em>em</em> } })}
+      {"\n"}
+      {intl("a-dashed-id")}
+      {"\n"}
+      {intl.aDashedId()}
+    </>
+  );
 };
 
 export async function test() {
@@ -17,19 +24,25 @@ export async function test() {
     <Provider value={intl}>
       <Consumer>
         {intl => {
-          // should error because its nullable
+          // should raise a type-error because its nullable
           intl.withElement({ react: "text" });
 
           if (!intl) {
             throw new Error();
           }
+          const elem = intl({ id: "with-element", params: { react: <em>em</em> } });
           const text = intl.withElement({ react: "text" }).join("");
-          return `${typeof text}: ${text}`;
+          return (
+            <>
+              {elem}
+              {`\n${typeof text}: ${text}`}
+            </>
+          );
         }}
       </Consumer>
     </Provider>,
   );
-  expect(rendered).toEqual("string: a text element");
+  expect(rendered).toEqual("a <em>em</em> element\nstring: a text element");
 
   // useIntl api
   intl = await loadLanguage("de");
@@ -38,5 +51,5 @@ export async function test() {
       <MyComponent />
     </Provider>,
   );
-  expect(rendered).toEqual("dashed!");
+  expect(rendered).toEqual("a <em>em</em> element\ndashed!\ndashed!");
 }

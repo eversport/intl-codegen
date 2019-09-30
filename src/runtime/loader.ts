@@ -1,6 +1,7 @@
 import { negotiateLanguages } from "fluent-langneg";
 import { Context, LocaleInfo } from "./context";
 import { parseRequestedLanguages } from "./requested-language";
+import { convertIdentifier } from ".";
 
 interface MessageFile {
   default: (ctx: Context<any>) => Array<any>;
@@ -14,7 +15,7 @@ interface LoaderMap {
   readonly [locale: string]: () => Promise<MessageFile>;
 }
 
-export function defineLoader<Messages extends {}, Locales extends string>(
+export function defineLoader<Messages, Locales extends string>(
   messageIds: ReadonlyArray<string>,
   loaders: LoaderMap,
   fallbackLocale: string = "template",
@@ -44,7 +45,16 @@ export function defineLoader<Messages extends {}, Locales extends string>(
     const messageFile = await loaders[resolvedLocale]();
     const messages = messageFile.default(context);
 
-    const intl: any = { context };
+    const intl: any = (key: string | { id: string; params: any }) => {
+      if (typeof key === "string") {
+        const fn = intl[convertIdentifier(key) as keyof Messages];
+        return fn();
+      }
+      const fn = intl[convertIdentifier(key.id) as keyof Messages];
+      return fn(key.params);
+    };
+
+    intl.context = context;
 
     for (const [idx, id] of messageIds.entries()) {
       intl[id] = messages[idx];

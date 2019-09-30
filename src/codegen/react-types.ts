@@ -11,14 +11,15 @@ export class ReactTypesGenerator extends CodeGenerator {
 
   generate() {
     const template = this.bundle.getLocale(templateId);
+    const messageIds = [...template.messages.keys()];
+    messageIds.sort((a, b) => a.localeCompare(b));
 
+    // imports
     this.line(`import { ReactAPI } from "intl-codegen/runtime-react";`);
     this.line(`import { loadLanguage, Intl, Locales } from "./index";`);
     this.blank();
 
-    const messageIds = [...template.messages.keys()];
-    messageIds.sort((a, b) => a.localeCompare(b));
-
+    // localized type
     this.line(`type LocalizedType =`);
     this.indent += 1;
     for (const id of messageIds) {
@@ -35,15 +36,16 @@ export class ReactTypesGenerator extends CodeGenerator {
     }
     this.indent -= 1;
     this.append(`;`);
-
     this.blank();
 
+    // react api
     this.line(`type API = ReactAPI<Intl, LocalizedType>`);
     for (const prop of API_EXPORTS) {
       this.line(`declare const ${prop}: API["${prop}"];`);
     }
-
     this.blank();
+
+    // exports
     this.line(`export { loadLanguage, Intl, Locales };`);
     this.line(`export { ${API_EXPORTS.join(", ")} };`);
 
