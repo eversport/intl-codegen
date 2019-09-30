@@ -1,8 +1,21 @@
 export type NumberValue = number;
 export type DateTimeValue = Date;
 
+/**
+ * This is a monetary Value which will be formatted as type `currency` depending
+ * on your locale.
+ * For example the value `{ value: 1.99, currency: "EUR" }` will be formatted as
+ * `1,99 €` when using the locale `de-DE`.
+ */
 export interface MonetaryValue {
+  /**
+   * The value represented as decimal number.
+   */
   readonly value: number;
+  /**
+   * This is an [ISO 4217 Currency Code](https://www.xe.com/iso4217.php),
+   * for example `EUR` or `CHF`.
+   */
   readonly currency: string;
 }
 
