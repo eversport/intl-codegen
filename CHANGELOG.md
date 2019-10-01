@@ -1,3 +1,9 @@
+### 2.2.0 2019-10-01
+
+- Throw Error in `useIntl` when context is not initialized
+- Add a Data-Oriented API, and expose a `TranslationKey` type that can be used
+  in user code.
+
 ### 2.1.1 2019-07-30
 
 - Don’t throw on invalid language tags

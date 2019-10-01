@@ -3,7 +3,7 @@
 The generated code currently is split up into straight js code, or into react
 specific code.
 
-## JS Example
+## Functional Example
 
 ```ts
 import { loadLanguage } from "./output-directory";
@@ -19,6 +19,22 @@ intl.messageId({ param1: { value: 1234.56, currency: "EUR" } });
 console.log(intl.context.locale.loaded);
 const mf = intl.context.createMonetaryFormatter();
 console.log(mf({ value: 1234.56, currency: "EUR" }));
+```
+
+## Data-Oriented Example
+
+```ts
+import { loadLanguage, TranslationKey } from "./output-directory";
+
+// The `TranslationKey` type can be used in custom user code, and metadata about
+// the desired translation can be passed around freely.
+let key: TranslationKey = "message-id";
+key = { id: "message-id-with-params", params: { a: "a string" } };
+
+// Then at a later point in the application lifecycle, the translation is
+// actually applied…
+const intl = await loadLanguage(navigator.languages);
+console.log(intl(key));
 ```
 
 ## React Example
