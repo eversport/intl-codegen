@@ -1,3 +1,7 @@
+### 2.2.1 2019-10-07
+
+- Fix syntax error in react types when generating an empty project
+
 ### 2.2.0 2019-10-01
 
 - Throw Error in `useIntl` when context is not initialized
