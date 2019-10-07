@@ -35,8 +35,12 @@ describe("Fixtures", () => {
 
       const files = await fsExtra.readdir(dir);
       let hasDiagnostics = false;
+      let tsConfig: Partial<ts.CompilerOptions> = {};
+
       for (const file of files) {
-        if (file === "diagnostics-errors.txt") {
+        if (file === "tsconfig.json") {
+          tsConfig = await loadCompilerOptions(path.join(dir, file));
+        } else if (file === "diagnostics-errors.txt") {
           hasDiagnostics = true;
         } else if (file.endsWith(".ftl")) {
           const content = await fsExtra.readFile(path.join(dir, file), "utf-8");
@@ -59,7 +63,7 @@ describe("Fixtures", () => {
         const testFile = path.join(runDir, "test.tsx");
         await fsExtra.copyFile(path.join(dir, "test.tsx"), testFile);
 
-        let diagnostics = (await getDiagnostics(testFile)).join("\n").trim();
+        let diagnostics = (await getDiagnostics(testFile, tsConfig)).join("\n").trim();
         if (result.errors.length) {
           diagnostics += diagnostics ? "\n\n---\n\n" : "";
           diagnostics += result.errors.map(e => e.getFormattedMessage()).join("\n");
@@ -82,10 +86,7 @@ describe("Fixtures", () => {
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#a-minimal-compiler
 const tsConfig = path.join(__dirname, "..", "tsconfig.json");
-const compilerOptions = fsExtra
-  .readFile(tsConfig, "utf-8")
-  .then(config => new Function(`return ${config}`)().compilerOptions)
-  .then(config => ts.convertCompilerOptionsFromJson(config, path.dirname(tsConfig)).options);
+const compilerOptions = loadCompilerOptions(tsConfig);
 
 // hm, when calling this manually, typescript does not find the type definitions
 // for this…
@@ -93,9 +94,20 @@ const LANGNEG = path.join(__dirname, "..", "src", "runtime", "fluent-langneg.d.t
 
 let PROGRAM: ts.Program;
 
-async function getDiagnostics(fileName: string) {
+async function loadCompilerOptions(fileName: string): Promise<ts.CompilerOptions> {
+  const content = await fsExtra.readFile(fileName);
+  // tsconfig files are not quite valid json, because they can contain comments
+  // and trailing commas…
+  const config = new Function(`return ${content}`)().compilerOptions;
+  return ts.convertCompilerOptionsFromJson(config, path.dirname(fileName)).options;
+}
+
+async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.CompilerOptions>) {
   const options: ts.CompilerOptions = {
     ...(await compilerOptions),
+    ...optionsOverrides,
+    // NOTE: enabling this is **prohibitively** slow! Unless I find a solution to
+    // use the language service in a more lazy fashion, this will not happen :-(
     // skipLibCheck: false,
     // skipDefaultLibCheck: true,
   };
