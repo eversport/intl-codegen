@@ -20,7 +20,7 @@ export class ReactTypesGenerator extends CodeGenerator {
     this.blank();
 
     // localized type
-    this.line(`type LocalizedType =`);
+    this.line(`type LocalizedType = never`);
     this.indent += 1;
     for (const id of messageIds) {
       const msg = template.messages.get(id)!;
