@@ -7,7 +7,11 @@ jobs:
     strategy:
       matrix:
         node: [10, 12]
-        os: [ubuntu-latest, windows-latest]
+        os:
+          - ubuntu-latest
+          # windows is currently disabled, because I have no idea how to override the default
+          # language and timezone, the the `npm test` script tries to do…
+          #- windows-latest
 
     name: Node ${{ matrix.node }} on ${{ matrix.os }}
 

@@ -111,14 +111,18 @@ async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.Co
     // skipLibCheck: false,
     // skipDefaultLibCheck: true,
   };
-  const dirName = path.dirname(fileName);
+
+  // well… typescript actually uses `/` only, instead of platform specific separators.
+  // So make sure we convert other paths accordingly.
+  // Also, lolwut but why can’t I just use `"\\"` as a string instead of a rlobal regex?¿?
+  const dirPrefix = path.dirname(fileName).replace(/\\/g, "/") + "/";
 
   PROGRAM = ts.createProgram([LANGNEG, fileName], options, undefined, PROGRAM);
 
   const allDiagnostics = ts.getPreEmitDiagnostics(PROGRAM).map(diagnostic => {
     if (diagnostic.file) {
       const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
-      const fileName = diagnostic.file.fileName.replace(`${dirName}${path.sep}`, "");
+      const fileName = diagnostic.file.fileName.replace(dirPrefix, "");
       const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
       return `${fileName} (${line + 1},${character + 1}): ${message}`;
     } else {
