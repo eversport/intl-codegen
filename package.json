@@ -4,6 +4,14 @@
   "description": "generate code and type definitions from translations",
   "author": "Arpad Borsos <arpad.borsos@googlemail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eversport/intl-codegen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eversport/intl-codegen/issues"
+  },
+  "homepage": "https://github.com/eversport/intl-codegen#readme",
   "main": "codegen.js",
   "module": "codegen.mjs",
   "browser": "codegen.umd.js",
