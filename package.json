@@ -32,7 +32,7 @@
   "dependencies": {
     "fluent-langneg": "^0.3.0",
     "fluent-syntax": "^0.14.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^10.0.0",
     "intl-messageformat-parser": "^1.8.1"
   },
   "devDependencies": {
