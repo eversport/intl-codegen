@@ -40,7 +40,7 @@
     "@types/fs-extra": "^8.0.1",
     "@types/jest": "^24.0.22",
     "@types/node": "^12.12.7",
-    "@types/react": "^16.9.11",
+    "@types/react": "^17.0.8",
     "@types/react-dom": "^16.9.4",
     "cross-env": "^6.0.3",
     "deindent": "^0.1.0",
