@@ -1,7 +1,5 @@
-// @ts-ignore
-import json from "rollup-plugin-json";
-// @ts-ignore
-import resolve from "rollup-plugin-node-resolve";
+import json from "@rollup/plugin-json";
+import resolve from "@rollup/plugin-node-resolve";
 import dts from "rollup-plugin-dts";
 
 const external = [

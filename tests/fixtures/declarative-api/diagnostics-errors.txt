@@ -1,6 +1,4 @@
 test.tsx (11,21): Argument of type '"simple-param"' is not assignable to parameter of type 'TranslationKey'.
-test.tsx (13,15): Argument of type '{ id: "no-param"; }' is not assignable to parameter of type 'TranslationKey'.
-  Property 'params' is missing in type '{ id: "no-param"; }' but required in type '{ id: "simple-param"; params: { a: string; }; }'.
-test.tsx (19,3): Type '{ id: "no-param"; }' is not assignable to type 'TranslationKey'.
-  Property 'params' is missing in type '{ id: "no-param"; }' but required in type '{ id: "simple-param"; params: { a: string; }; }'.
+test.tsx (13,17): Type '"no-param"' is not assignable to type '"simple-param"'.
+test.tsx (19,11): Type '"no-param"' is not assignable to type '"simple-param"'.
 test.tsx (25,3): Type '"invalid"' is not assignable to type 'TranslationKey'.
