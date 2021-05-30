@@ -1,4 +1,4 @@
-import * as mf from "intl-messageformat-parser";
+import * as mf from "@formatjs/icu-messageformat-parser";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
 import { Element, id, ParamId, ParamType, Pattern, select, text, Variant, variant } from "../types";
@@ -8,56 +8,69 @@ import { formats } from "./msgfmt-formats";
 export function convertMsgFmt(bundle: Bundle, msg: Message) {
   const { sourceText } = msg;
 
-  return convertPattern(msg.ast as mf.MessageFormatPattern);
+  return convertPattern(msg.ast as Array<mf.MessageFormatElement>);
 
   function errCtx(node: any) {
     return { ctx: msg, loc: { sourceText, node } };
   }
 
-  function convertPattern(node: mf.MessageFormatPattern): Pattern {
+  function convertPattern(node: Array<mf.MessageFormatElement>): Pattern {
     return {
       type: "Pattern",
-      elements: node.elements.map(convertElement),
+      elements: node.map(convertElement),
     };
   }
 
-  function convertElement(node: mf.Element): Element {
-    if (node.type === "messageTextElement") {
+  function convertElement(node: mf.MessageFormatElement): Element {
+    if (mf.isLiteralElement(node)) {
       return text(node.value);
     }
 
-    const { format } = node;
-    const name = node.id;
-    const param = msg.params.get(name as ParamId);
+    // const { format } = node;
+    // const name = node.id;
+    // const param = msg.params.get(name as ParamId);
 
-    if (!format) {
-      return formatValue(bundle, errCtx(node), name, param);
-    } else if (format.type === "numberFormat") {
-      const style = formats.number[format.style];
-      if (format.style && !style) {
-        bundle.raiseError("unknown-format", `The format \`${format.style}\` is not valid.`, msg, {
+    if (mf.isArgumentElement(node)) {
+      const param = msg.params.get(node.value as ParamId);
+      return formatValue(bundle, errCtx(node), node.value, param);
+    } else if (mf.isNumberElement(node)) {
+      const style = mf.isNumberSkeleton(node.style)
+        ? node.style.parsedOptions
+        : typeof node.style === "string"
+        ? formats.number[node.style]
+        : undefined;
+      if (node.style && !style) {
+        bundle.raiseError("unknown-format", `The format \`${node.style}\` is not valid.`, msg, {
           sourceText,
-          node: format,
-        });
-      }
-      return formatValue(bundle, errCtx(node), name, param, "number" as ParamType, style);
-    } else if (format.type === "dateFormat" || format.type === "timeFormat") {
-      const style = (format.type === "dateFormat" ? formats.date : formats.time)[format.style];
-      if (format.style && !style) {
-        bundle.raiseError("unknown-format", `The format \`${format.style}\` is not valid.`, msg, {
-          sourceText,
-          node: format,
+          node,
         });
       }
 
-      return formatValue(bundle, errCtx(node), name, param, "datetime" as ParamType, style);
-    } else if (format.type === "selectFormat" || format.type === "pluralFormat") {
+      const param = msg.params.get(node.value as ParamId);
+      return formatValue(bundle, errCtx(node), node.value, param, "number" as ParamType, style);
+    } else if (mf.isDateElement(node) || mf.isTimeElement(node)) {
+      const style = mf.isDateTimeSkeleton(node.style)
+        ? node.style.parsedOptions
+        : typeof node.style === "string"
+        ? (mf.isDateElement(node) ? formats.date : formats.time)[node.style]
+        : undefined;
+      if (node.style && !style) {
+        bundle.raiseError("unknown-format", `The format \`${node.style}\` is not valid.`, msg, {
+          sourceText,
+          node,
+        });
+      }
+
+      const param = msg.params.get(node.value as ParamId);
+      return formatValue(bundle, errCtx(node), node.value, param, "datetime" as ParamType, style);
+    } else if (mf.isSelectElement(node) || mf.isPluralElement(node)) {
       let other: Variant | undefined;
 
       let type: "ordinal" | "plural" | undefined;
-      if (format.type === "pluralFormat") {
-        type = format.ordinal ? "ordinal" : "plural";
+      if (mf.isPluralElement(node)) {
+        type = node.pluralType === "ordinal" ? "ordinal" : "plural";
       }
+      const param = msg.params.get(node.value as ParamId);
 
       if (type && (!param || param.type !== "number")) {
         let info = param ? `, but parameter \`${param.name}\` has type \`${param.type}\`` : "";
@@ -74,12 +87,12 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       }
 
       const variants: Array<Variant> = [];
-      for (const option of format.options) {
-        const selector = option.selector.startsWith("=") ? Number(option.selector.slice(1)) : option.selector;
+      for (const option of Object.keys(node.options)) {
+        const selector = option.startsWith("=") ? Number(option.slice(1)) : option;
 
         // TODO: validate selector depending on pluralization
 
-        const vari = variant(selector, ...option.value.elements.map(convertElement));
+        const vari = variant(selector, ...node.options[option].value.map(convertElement));
         if (selector === "other") {
           other = vari;
         } else {
@@ -90,19 +103,19 @@ export function convertMsgFmt(bundle: Bundle, msg: Message) {
       if (!other) {
         bundle.raiseError("missing-other", "MessageFormat requires an `other` case to be defined.", msg, {
           sourceText,
-          node: format,
+          node,
         });
         variants.unshift(variants.pop()!);
       } else {
         variants.unshift(other);
       }
-      return select(id(name), variants, type);
+      return select(id(node.value), variants, type);
     }
 
-    bundle.raiseError("unsupported-syntax", `MessageFormat \`${node.format}\` is not yet supported.`, msg, {
+    bundle.raiseError("unsupported-syntax", `MessageFormat \`${node.type}\` is not yet supported.`, msg, {
       sourceText,
       node,
     });
-    return text(sourceText.slice(node.location.start.offset, node.location.end.offset));
+    return text(sourceText.slice(node.location!.start.offset, node.location!.end.offset));
   }
 }

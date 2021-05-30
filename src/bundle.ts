@@ -1,6 +1,6 @@
 import { codeFrameColumns } from "@babel/code-frame";
 import * as Fluent from "@fluent/syntax";
-import MessageFormat from "intl-messageformat-parser";
+import * as MessageFormat from "@formatjs/icu-messageformat-parser";
 import {
   CodegenTypes,
   LocaleGenerator,
@@ -122,7 +122,7 @@ export class Bundle {
   public addMessageFormat(locale: LocaleId, id: MessageId, sourceText: string, params?: Params) {
     let msg: Message;
     try {
-      const ast = MessageFormat.parse(sourceText);
+      const ast = MessageFormat.parse(sourceText, { captureLocation: true });
       msg = new Message(locale, id, params).withParseResult(sourceText, ast);
     } catch (error) {
       this.raiseError("parse-error", error.message, { localeId: locale, messageId: id }, { sourceText, node: error });
@@ -222,9 +222,10 @@ export class Bundle {
       if ("location" in loc.node) {
         location = loc.node.location as Range;
       } else {
+        const span = (loc.node as any).span as Fluent.Span;
         location = {
-          start: getLineCol(loc.sourceText, loc.node.span!.start),
-          end: getLineCol(loc.sourceText, loc.node.span!.end),
+          start: getLineCol(loc.sourceText, span.start),
+          end: getLineCol(loc.sourceText, span.end),
         };
       }
     }
