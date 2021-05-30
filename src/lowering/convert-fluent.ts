@@ -1,4 +1,4 @@
-import * as fluent from "fluent-syntax";
+import * as fluent from "@fluent/syntax";
 import { Bundle } from "../bundle";
 import { Message } from "../message";
 import {
@@ -22,12 +22,12 @@ export function convertFluent(bundle: Bundle, msg: Message) {
 
   const ast = msg.ast as fluent.Message;
 
-  const ir = convertPattern(ast.value);
+  const ir = convertPattern(ast.value!);
 
   // after the whole AST has been converted, and we don’t need the complete
   // source text anymore, make sure to cut it down to only this single message
 
-  msg.sourceText = msg.sourceText.slice(ast.span.start, ast.span.end);
+  msg.sourceText = msg.sourceText.slice(ast.span!.start, ast.span!.end);
 
   return ir;
 
@@ -42,7 +42,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
     };
   }
 
-  function convertElement(node: fluent.Element): Element {
+  function convertElement(node: fluent.PatternElement): Element {
     if (node.type === "TextElement") {
       return text(node.value);
     }
@@ -76,7 +76,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
         if (param && param.type === "number") {
           type = "plural";
         }
-      } else {
+      } else if (fltSelector.type === "FunctionReference") {
         const { arg0, fnType, formatOptions } = getFnMeta(fltSelector);
         if (fnType === "number" && formatOptions.type === "ordinal") {
           type = "ordinal";
@@ -103,10 +103,16 @@ export function convertFluent(bundle: Bundle, msg: Message) {
             sourceText,
             node: fltSelector,
           });
-          return text(sourceText.slice(node.span.start, node.span.end));
+          return text(sourceText.slice(node.span!.start, node.span!.end));
         } else {
-          selector = lit(arg0.type === "NumberLiteral" ? Number(arg0.value) : arg0.value);
+          selector = lit(arg0.type === "NumberLiteral" ? Number(arg0.value) : String(arg0.value));
         }
+      } else {
+        bundle.raiseError("unsupported-syntax", `Fluent \`${fltSelector.type}\` is not yet supported.`, msg, {
+          sourceText,
+          node: expr,
+        });
+        return text(sourceText.slice(node.span!.start, node.span!.end));
       }
 
       const variants: Array<Variant> = [];
@@ -131,7 +137,7 @@ export function convertFluent(bundle: Bundle, msg: Message) {
       sourceText,
       node: expr,
     });
-    return text(sourceText.slice(node.span.start, node.span.end));
+    return text(sourceText.slice(node.span!.start, node.span!.end));
   }
 
   function getFnMeta(node: fluent.FunctionReference) {

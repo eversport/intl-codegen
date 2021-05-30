@@ -1,9 +1,9 @@
-import * as Fluent from "fluent-syntax";
+import * as Fluent from "@fluent/syntax";
 import * as MsgFmt from "intl-messageformat-parser";
 
 export interface ErrorLocation {
   sourceText: string;
-  node: Fluent.Node | { location: MsgFmt.Location };
+  node: Fluent.SyntaxNode | { location: MsgFmt.Location };
 }
 
 export interface ErrorContext {

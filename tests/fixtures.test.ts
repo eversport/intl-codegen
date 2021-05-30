@@ -88,10 +88,6 @@ describe("Fixtures", () => {
 const tsConfig = path.join(__dirname, "..", "tsconfig.json");
 const compilerOptions = loadCompilerOptions(tsConfig);
 
-// hm, when calling this manually, typescript does not find the type definitions
-// for this…
-const LANGNEG = path.join(__dirname, "..", "src", "runtime", "fluent-langneg.d.ts");
-
 let PROGRAM: ts.Program;
 
 async function loadCompilerOptions(fileName: string): Promise<ts.CompilerOptions> {
@@ -114,10 +110,10 @@ async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.Co
 
   // well… typescript actually uses `/` only, instead of platform specific separators.
   // So make sure we convert other paths accordingly.
-  // Also, lolwut but why can’t I just use `"\\"` as a string instead of a rlobal regex?¿?
+  // Also, lolwut but why can’t I just use `"\\"` as a string instead of a global regex?¿?
   const dirPrefix = path.dirname(fileName).replace(/\\/g, "/") + "/";
 
-  PROGRAM = ts.createProgram([LANGNEG, fileName], options, undefined, PROGRAM);
+  PROGRAM = ts.createProgram([fileName], options, undefined, PROGRAM);
 
   const allDiagnostics = ts.getPreEmitDiagnostics(PROGRAM).map(diagnostic => {
     if (diagnostic.file) {
