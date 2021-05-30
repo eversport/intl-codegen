@@ -1,5 +1,5 @@
 import { codeFrameColumns } from "@babel/code-frame";
-import * as Fluent from "fluent-syntax";
+import * as Fluent from "@fluent/syntax";
 import MessageFormat from "intl-messageformat-parser";
 import {
   CodegenTypes,
@@ -73,7 +73,7 @@ export class Bundle {
   public addFluentMessages(locale: LocaleId, sourceText: string) {
     const { messages } = this.getLocale(locale);
 
-    const ast = Fluent.parse(sourceText);
+    const ast = Fluent.parse(sourceText, { withSpans: true });
 
     for (const node of ast.body) {
       if (node.type === "Message") {
@@ -145,7 +145,10 @@ export class Bundle {
   }
 
   public async generate(output: Set<CodegenTypes>, sep: string): Promise<GenerateResult> {
-    this.codeFrame = await import("@babel/code-frame").then(m => m.codeFrameColumns, () => undefined);
+    this.codeFrame = await import("@babel/code-frame").then(
+      m => m.codeFrameColumns,
+      () => undefined,
+    );
 
     // run some validation
     validateCollection(this);
@@ -217,11 +220,11 @@ export class Bundle {
     let location: Range;
     if (loc && loc.node) {
       if ("location" in loc.node) {
-        location = loc.node.location;
+        location = loc.node.location as Range;
       } else {
         location = {
-          start: getLineCol(loc.sourceText, loc.node.span.start),
-          end: getLineCol(loc.sourceText, loc.node.span.end),
+          start: getLineCol(loc.sourceText, loc.node.span!.start),
+          end: getLineCol(loc.sourceText, loc.node.span!.end),
         };
       }
     }

@@ -1,4 +1,4 @@
-import { Message as FluentMessage } from "fluent-syntax";
+import { Message as FluentMessage } from "@fluent/syntax";
 import { MessageFormatPattern } from "intl-messageformat-parser";
 import { convertFluent, convertMsgFmt } from "./lowering";
 import { LocaleId, MessageId, Params } from "./types";

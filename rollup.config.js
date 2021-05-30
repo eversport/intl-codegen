@@ -4,8 +4,8 @@ import dts from "rollup-plugin-dts";
 
 const external = [
   "@babel/code-frame",
-  "fluent-langneg",
-  "fluent-syntax",
+  "@fluent/langneg",
+  "@fluent/syntax",
   "fs-extra",
   "intl-codegen/runtime",
   "intl-messageformat-parser",
@@ -14,8 +14,8 @@ const external = [
 ];
 
 const globals = {
-  "fluent-langneg": "FluentLangNeg",
-  "fluent-syntax": "FluentSyntax",
+  "@fluent/langneg": "FluentLangNeg ",
+  "@fluent/syntax": "FluentSyntax",
   "fs-extra": "undefined",
   "intl-codegen/runtime": "IntlCodegenRuntime",
   "intl-messageformat-parser": "IntlMessageFormatParser",

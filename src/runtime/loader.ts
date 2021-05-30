@@ -1,4 +1,4 @@
-import { negotiateLanguages } from "fluent-langneg";
+import { negotiateLanguages } from "@fluent/langneg";
 import { Context, LocaleInfo } from "./context";
 import { parseRequestedLanguages } from "./requested-language";
 import { convertIdentifier } from ".";
