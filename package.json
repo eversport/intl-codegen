@@ -33,8 +33,8 @@
     "@babel/code-frame": "^7.12.13",
     "@fluent/langneg": "^0.5.2",
     "@fluent/syntax": "^0.17.0",
-    "fs-extra": "^10.0.0",
-    "intl-messageformat-parser": "^1.8.1"
+    "@formatjs/icu-messageformat-parser": "^2.0.4",
+    "fs-extra": "^10.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",

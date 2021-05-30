@@ -2,12 +2,12 @@ test.tsx (10,21): Property 'fluentJunk' does not exist on type 'IntlObject<Messa
 
 ---
 
-[parse-error: template/msgfmt-junk]: Expected "'", ",", "0", "}", [1-9], or any character but end of input found.
+[parse-error: template/msgfmt-junk]: EXPECT_ARGUMENT_CLOSING_BRACE
 > 1 | {
-    |  ^
-[parse-error: template/msgfmt-invalid-format]: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "b" found.
+    | ^
+[parse-error: template/msgfmt-invalid-format]: INVALID_ARGUMENT_TYPE
 > 1 | {foo,bar,baz}
-    |      ^
+    |      ^^^
 [parse-error: template]: E0003: Expected token: "}"
   1 | fluent-junk = {
   2 |

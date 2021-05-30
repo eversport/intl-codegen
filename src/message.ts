@@ -1,11 +1,11 @@
 import { Message as FluentMessage } from "@fluent/syntax";
-import { MessageFormatPattern } from "intl-messageformat-parser";
+import { MessageFormatElement } from "@formatjs/icu-messageformat-parser";
 import { convertFluent, convertMsgFmt } from "./lowering";
 import { LocaleId, MessageId, Params } from "./types";
 import { Pattern } from "./types/ir";
 import { Bundle } from "./bundle";
 
-type AST = FluentMessage | MessageFormatPattern;
+type AST = FluentMessage | Array<MessageFormatElement>;
 
 /**
  * A `Message` is the basic unit of a translation.
@@ -33,7 +33,7 @@ export class Message {
   }
 
   public lower(bundle: Bundle) {
-    this.ir = this.ast.type === "Message" ? convertFluent(bundle, this) : convertMsgFmt(bundle, this);
+    this.ir = Array.isArray(this.ast) ? convertMsgFmt(bundle, this) : convertFluent(bundle, this);
   }
 
   public withIR(ir: Pattern) {

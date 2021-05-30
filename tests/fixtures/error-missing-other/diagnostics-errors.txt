@@ -1,3 +1,3 @@
-[missing-other: template/msgfmt]: MessageFormat requires an `other` case to be defined.
+[parse-error: template/msgfmt]: MISSING_OTHER_CLAUSE
 > 1 | selector: {param, select, foo {its foo} bar {its bar}}.
-    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |                                                      ^
