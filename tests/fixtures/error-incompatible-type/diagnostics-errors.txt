@@ -30,19 +30,19 @@
   1 | # $param (datetime)
 > 2 | fluent-date-as-number = { NUMBER($param) }
     |                           ^^^^^^^^^^^^^^
-  3 | 
+  3 |
   4 | # $param (number)
   5 | fluent-number-as-date = { DATETIME($param) }
 [wrong-type: template/fluent-number-as-date]: Parameter `param` has type `number` but was used as `datetime`.
-  3 | 
+  3 |
   4 | # $param (number)
 > 5 | fluent-number-as-date = { DATETIME($param) }
     |                           ^^^^^^^^^^^^^^^^
-  6 | 
+  6 |
   7 | # $param (string)
   8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
 [wrong-type: template/fluent-string-as-ordinal]: Parameter `param` has type `string` but was used as `number`.
-   6 | 
+   6 |
    7 | # $param (string)
 >  8 | fluent-string-as-ordinal = { $param }{ NUMBER($param, type: "ordinal") ->
      |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

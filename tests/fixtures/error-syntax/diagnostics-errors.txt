@@ -10,53 +10,53 @@ test.tsx (10,21): Property 'fluentJunk' does not exist on type 'IntlObject<Messa
     |      ^
 [parse-error: template]: E0003: Expected token: "}"
   1 | fluent-junk = {
-  2 | 
+  2 |
 > 3 | fluent-junk2 = { NUMBER($param }
     | ^
-  4 | 
+  4 |
   5 | fluent-unsupported-attributes = with attributes
   6 |   .attr1 = some attribute
 [parse-error: template]: E0003: Expected token: ")"
   1 | fluent-junk = {
-  2 | 
+  2 |
 > 3 | fluent-junk2 = { NUMBER($param }
     |                                ^
-  4 | 
+  4 |
   5 | fluent-unsupported-attributes = with attributes
   6 |   .attr1 = some attribute
 [unsupported-syntax: template/fluent-unsupported-attributes]: Fluent `Attribute` is not yet supported.
-  4 | 
+  4 |
   5 | fluent-unsupported-attributes = with attributes
 > 6 |   .attr1 = some attribute
     |   ^^^^^^^^^^^^^^^^^^^^^^^
   7 |   .attr2 = another attribute
-  8 | 
+  8 |
   9 | -fluent-unsupported-term = a term
 [unsupported-syntax: template/fluent-unsupported-attributes]: Fluent `Attribute` is not yet supported.
    5 | fluent-unsupported-attributes = with attributes
    6 |   .attr1 = some attribute
 >  7 |   .attr2 = another attribute
      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^
-   8 | 
+   8 |
    9 | -fluent-unsupported-term = a term
-  10 | 
+  10 |
 [unsupported-syntax: template]: Fluent `Term` is not yet supported.
    7 |   .attr2 = another attribute
-   8 | 
+   8 |
 >  9 | -fluent-unsupported-term = a term
      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  10 | 
+  10 |
   11 | fluent-unsupported-references = {message-reference} {-term-reference}
-  12 | 
+  12 |
 [unsupported-syntax: template/fluent-unsupported-references]: Fluent `MessageReference` is not yet supported.
    9 | -fluent-unsupported-term = a term
-  10 | 
+  10 |
 > 11 | fluent-unsupported-references = {message-reference} {-term-reference}
      |                                  ^^^^^^^^^^^^^^^^^
-  12 | 
+  12 |
 [unsupported-syntax: template/fluent-unsupported-references]: Fluent `TermReference` is not yet supported.
    9 | -fluent-unsupported-term = a term
-  10 | 
+  10 |
 > 11 | fluent-unsupported-references = {message-reference} {-term-reference}
      |                                                      ^^^^^^^^^^^^^^^
-  12 | 
+  12 |

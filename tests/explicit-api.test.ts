@@ -1,4 +1,3 @@
-import de from "deindent";
 import IntlCodegen from "../src";
 import { withCompiledBundle } from "./utils";
 
@@ -6,10 +5,7 @@ describe("Explicit API", () => {
   it("should allow defining messages using fluent syntax", async () => {
     const codegen = new IntlCodegen();
 
-    codegen.defineMessagesUsingFluent(de`
-a = a
-b = b
-  `);
+    codegen.defineMessagesUsingFluent("a = a\nb = b");
 
     await withCompiledBundle("explicit-fluent", codegen, async mod => {
       const { loadLanguage } = require(mod);
@@ -33,9 +29,7 @@ b = b
   it("should allow defining messages using both", async () => {
     const codegen = new IntlCodegen();
 
-    codegen.defineMessagesUsingFluent(de`
-a = a
-  `);
+    codegen.defineMessagesUsingFluent("a = a");
     codegen.defineMessageUsingMessageFormat("b", "b");
 
     await withCompiledBundle("explicit-both", codegen, async mod => {

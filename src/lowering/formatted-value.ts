@@ -50,7 +50,7 @@ export function formatValue(
   if (type === "number") {
     return num(id(name), matchingFormat);
   } else if (type === "datetime") {
-    return date(name, matchingFormat);
+    return date(name, matchingFormat as Intl.DateTimeFormatOptions);
   } else if (type === "monetary") {
     return monetary(name, matchingFormat);
   }
