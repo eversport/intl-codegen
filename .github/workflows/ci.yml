@@ -6,11 +6,11 @@ jobs:
   build:
     strategy:
       matrix:
-        node: [10, 12]
+        node: [10, 16]
         os:
           - ubuntu-latest
           # windows is currently disabled, because I have no idea how to override the default
-          # language and timezone, the the `npm test` script tries to do…
+          # language and timezone, that the `npm test` script tries to do…
           #- windows-latest
 
     name: Node ${{ matrix.node }} on ${{ matrix.os }}
@@ -30,6 +30,6 @@ jobs:
       # frequently hangs for whatever reason,
       # and we have no platform-specific code anyway…
       - name: upload coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.node == 12
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 16
         timeout-minutes: 1
         run: bash <(curl -s https://codecov.io/bash) -t ${{secrets.CODECOV_TOKEN}} -B ${{ github.ref }} -f coverage/coverage-final.json
