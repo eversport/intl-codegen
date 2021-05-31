@@ -30,7 +30,6 @@
     "prepublishOnly": "npm run test"
   },
   "dependencies": {
-    "@babel/code-frame": "^7.12.13",
     "@fluent/langneg": "^0.5.2",
     "@fluent/syntax": "^0.17.0",
     "@formatjs/icu-messageformat-parser": "^2.0.4",
