@@ -86,7 +86,9 @@
     "globals": {
       "ts-jest": {
         "diagnostics": {
-          "pathRegex": "^((?!testoutput).)*$"
+          "exclude": [
+            ".testoutput/**/*"
+          ]
         }
       }
     }
