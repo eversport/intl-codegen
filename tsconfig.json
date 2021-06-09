@@ -14,7 +14,7 @@
     "jsx": "react",
 
     "allowJs": true,
-    "checkJs": true,
+    // "checkJs": true,
     "noEmit": true,
     // "inlineSourceMap": true,
 

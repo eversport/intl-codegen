@@ -66,7 +66,7 @@ describe("Fixtures", () => {
         let diagnostics = (await getDiagnostics(testFile, tsConfig)).join("\n").trim();
         if (result.errors.length) {
           diagnostics += diagnostics ? "\n\n---\n\n" : "";
-          diagnostics += result.errors.map(e => e.getFormattedMessage()).join("\n");
+          diagnostics += result.errors.map((e) => e.getFormattedMessage()).join("\n");
         }
 
         const diagnosticsFile = path.join(dir, "diagnostics-errors.txt");
@@ -76,8 +76,8 @@ describe("Fixtures", () => {
           const expectedDiagnostics = (await fsExtra.readFile(diagnosticsFile, "utf-8")).trim();
           expect(diagnostics.trim()).toEqual(expectedDiagnostics.trim());
         }
-
-        const { test } = require(testFile);
+        await fsExtra.remove(testFile);
+        const { test } = require(path.join(runDir, "test.js"));
         await test();
       });
     });
@@ -102,6 +102,7 @@ async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.Co
   const options: ts.CompilerOptions = {
     ...(await compilerOptions),
     ...optionsOverrides,
+    noEmit: false,
     // NOTE: enabling this is **prohibitively** slow! Unless I find a solution to
     // use the language service in a more lazy fashion, this will not happen :-(
     // skipLibCheck: false,
@@ -115,7 +116,7 @@ async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.Co
 
   PROGRAM = ts.createProgram([fileName], options, undefined, PROGRAM);
 
-  const allDiagnostics = ts.getPreEmitDiagnostics(PROGRAM).map(diagnostic => {
+  const allDiagnostics = ts.getPreEmitDiagnostics(PROGRAM).map((diagnostic) => {
     if (diagnostic.file) {
       const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
       const fileName = diagnostic.file.fileName.replace(dirPrefix, "");
@@ -125,5 +126,10 @@ async function getDiagnostics(fileName: string, optionsOverrides?: Partial<ts.Co
       return `${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
     }
   });
+  const sourceFile = PROGRAM.getSourceFile(fileName);
+  PROGRAM.emit(sourceFile, (fileName, data) => {
+    fsExtra.writeFileSync(fileName, data);
+  });
+
   return allDiagnostics;
 }
