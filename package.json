@@ -40,7 +40,7 @@
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/babel__code-frame": "^7.0.3",
     "@types/fs-extra": "^9.0.12",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.1",
     "@types/node": "^15.12.2",
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
