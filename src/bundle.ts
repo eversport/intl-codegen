@@ -125,7 +125,12 @@ export class Bundle {
       const ast = MessageFormat.parse(sourceText, { captureLocation: true });
       msg = new Message(locale, id, params).withParseResult(sourceText, ast);
     } catch (error) {
-      this.raiseError("parse-error", error.message, { localeId: locale, messageId: id }, { sourceText, node: error });
+      this.raiseError(
+        "parse-error",
+        (error as any).message,
+        { localeId: locale, messageId: id },
+        { sourceText, node: error as any },
+      );
 
       // put in the message anyway, but only its id
       msg = new Message(locale, id, params).withParseResult(id, createFakePattern(id));
@@ -146,7 +151,7 @@ export class Bundle {
 
   public async generate(output: Set<CodegenTypes>, sep: string): Promise<GenerateResult> {
     this.codeFrame = await import("@babel/code-frame").then(
-      m => m.codeFrameColumns,
+      (m) => m.codeFrameColumns,
       () => undefined,
     );
 
