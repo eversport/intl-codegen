@@ -57,7 +57,7 @@
     "typescript": "4.5.4"
   },
   "optionalDependencies": {
-    "@babel/code-frame": "^7.16.7"
+    "@babel/code-frame": "^8.0.0"
   },
   "jest": {
     "preset": "ts-jest/presets/js-with-ts",
